@@ -1,0 +1,46 @@
+cmake_minimum_required(VERSION 3.16)
+project(NseMQ)
+
+set(CMAKE_CXX_STANDARD 11)
+
+include_directories("include")
+
+link_directories("lib/vs2015/x64/Debug")
+link_libraries("librdkafka.dll")
+link_libraries("librdkafkacpp.dll")
+link_libraries("avrocpp.lib")
+link_libraries("boost_filesystem-vc140-mt-gd-x64-1_72.lib
+                boost_iostreams-vc140-mt-gd-x64-1_72.lib
+                boost_program_options-vc140-mt-gd-x64-1_72.lib
+                boost_regex-vc140-mt-gd-x64-1_72.lib
+                boost_system-vc140-mt-gd-x64-1_72.lib")
+
+# boost
+#[[find_package(Boost REQUIRED COMPONENTS system filesystem iostreams program_options regex)
+if(!Boost_FOUND)
+    message("Boost NOT FOUND")
+endif()
+include_directories(${Boost_INCLUDE_DIRS})
+link_directories(${Boost_LIBRARY_DIRS})]]
+
+
+add_library(NseMQ STATIC
+        NseMqProducer.cpp
+        NseMqConsumer.cpp
+        NseMqHandle.cpp)
+
+add_executable(NseMqProducer NseMqProducer.cpp)
+target_link_libraries(NseMqProducer librdkafkacpp)
+
+add_executable(NseMqConsumer NseMqConsumer.cpp)
+target_link_libraries(NseMqConsumer librdkafkacpp)
+
+add_executable(consumer_example examples/consumer_example.cpp)
+target_link_libraries(consumer_example NseMQ)
+
+add_executable(producer_example examples/producer_example.cpp)
+target_link_libraries(producer_example NseMQ)
+
+add_executable(serializer_example examples/serializer_example.cpp)
+target_link_libraries(serializer_example avrocpp NseMQ)
+
