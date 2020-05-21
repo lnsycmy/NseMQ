@@ -10,6 +10,11 @@ NseMqProducer::NseMqProducer() {
     producer_dr_cb_ = nullptr;
 }
 
+/**
+ * Constructor with parameters instead of init ()
+ * @param broker_addr
+ * @param producer_cb
+ */
 NseMqProducer::NseMqProducer(std::string broker_addr, RdKafka::DeliveryReportCb *producer_cb) {
     // initialize pointers
     producer_conf_ = nullptr;
@@ -19,15 +24,14 @@ NseMqProducer::NseMqProducer(std::string broker_addr, RdKafka::DeliveryReportCb 
 }
 
 NseMqProducer::~NseMqProducer() {
-    // std::cout << "~NseMqProducer()" << std::endl;
     this->close();
 }
 
 /**
  * initialize producer configuration and create producer.
- * configuration: create, set bootstrap.servers, set producer delivery report callback if exist.
- * producer: create producer with producer_conf_.
- * @return
+ * @param broker_addr set the broker address.
+ * @param producer_cb set the producer callback.
+ * @return NseMQ::ErrorCod suggest reference NseMqHandle.h
  */
 NseMQ::ErrorCode NseMqProducer::init(std::string broker_addr, RdKafka::DeliveryReportCb *producer_cb) {
     // set the broker address/partition/producer delievry callback
@@ -40,27 +44,37 @@ NseMQ::ErrorCode NseMqProducer::init(std::string broker_addr, RdKafka::DeliveryR
     // set bootstrap broker.
     if (producer_conf_->set("bootstrap.servers", getBrokerAddr(), errstr_) !=
         RdKafka::Conf::CONF_OK) {
-        return NseMQ::ERR_FAIL_INIT_SERVERS;
+        return NseMQ::ERR_P_INIT_BROKER_ADDRESS;
     }
 
     // set the producer delivery report callback
     if (nullptr != getProducerDrCb()) {
         if (producer_conf_->set("dr_cb", getProducerDrCb(), errstr_) != RdKafka::Conf::CONF_OK) {
-            return NseMQ::ERR_FAIL_INIT_DR_CB;
+            return NseMQ::ERR_P_INIT_DR_CALLBACK;
         }
     }
 
     // create producer instance using accumulated global configuration.
     this->setProducer(RdKafka::Producer::create(producer_conf_, errstr_));
     if (!getProducer()) {
-        return NseMQ::ERR_FAIL_CREATE_PRODUCER;
+        return NseMQ::ERR_P_CREATE_PRODUCER;
     }
     return NseMQ::ERR_NO_ERROR;
 }
 
-/* Send/Produce message. */
-NseMQ::ErrorCode NseMqProducer::produce(const char *msg, size_t msg_len, std::string topic_name,
+/**
+ * internal use produce message, called by 'produce(T &t, std::string topic_name)'
+ * @param msg:          message that wait to produce
+ * @param msg_len:      actual message length
+ * @param topic_name:   topic that wait to send
+ * @param msg_type:     message type, e.g. student, defalut std::string
+ */
+NseMQ::ErrorCode NseMqProducer::produce(char *msg, size_t msg_len, std::string topic_name,
                                         std::string msg_type /*default NULL*/) {
+    // judge message whether empty.
+    if(0 == msg_len){
+        return NseMQ::ERR_P_SEND_MSG_EMPTY;
+    }
     bool resend_flag = false;        // control queue full resend.
     RdKafka::Headers *headers = RdKafka::Headers::create();
     headers->add("type", msg_type);
@@ -72,7 +86,7 @@ NseMQ::ErrorCode NseMqProducer::produce(const char *msg, size_t msg_len, std::st
                     /* Make a copy of the value */
                     RdKafka::Producer::RK_MSG_COPY /* Copy payload */,
                     /* Value */
-                    (char*)msg, msg_len,
+                    msg, msg_len,
                     /* Key */
                     NULL, 0,
                     /* Timestamp (defaults to current time) */
@@ -87,32 +101,28 @@ NseMQ::ErrorCode NseMqProducer::produce(const char *msg, size_t msg_len, std::st
         this->writeErrorLog("% Failed to produce to topic(" + topic_name + "):"
                             + RdKafka::err2str(err));
         if (err == RdKafka::ERR__QUEUE_FULL) {
-            /* If the internal queue is full, wait for
-            * messages to be delivered and then retry.
-            * The internal queue represents both
-            * messages to be sent and messages that have
-            * been sent or failed, awaiting their
-            * delivery report callback to be called.
+            /* If the internal queue is full, wait for messages to be delivered and then retry.
+            * The internal queue represents both messages to be sent and messages that have
+            * been sent or failed, awaiting their delivery report callback to be called.
             *
-            * The internal queue is limited by the
-            * configuration property
+            * The internal queue is limited by the configuration property
             * queue.buffering.max.messages */
             producer_->poll(1000/*block for max 1000ms*/);
             if (!resend_flag) { // allow once resend.
                 resend_flag = true;
                 goto retry;
             } else {
-                err_temp =  NseMQ::ERR_SEND_QUEUE_FULL;
+                err_temp =  NseMQ::ERR_P_SEND_QUEUE_FULL;
             }
         } else if (err == RdKafka::ERR_MSG_SIZE_TOO_LARGE) {
             this->writeErrorLog("% message size it too large:" + RdKafka::err2str(err));
-            err_temp = NseMQ::ERR_SEND_MSG_TOO_LARGE;
+            err_temp = NseMQ::ERR_P_SEND_MSG_TOO_LARGE;
         } else if (err == RdKafka::ERR__UNKNOWN_TOPIC) {
             this->writeErrorLog("% broker don't have the topic [" + topic_name + "]:"
                                 + RdKafka::err2str(err));
-            err_temp = NseMQ::ERR_SEND_UNKNOWN_TOPIC;
+            err_temp = NseMQ::ERR_P_SEND_UNKNOWN_TOPIC;
         } else {
-            err_temp = NseMQ::ERR_SEND_FAIL;
+            err_temp = NseMQ::ERR_P_SEND_FAIL;
         }
     } else {
         /*std::cout << "% Enqueued message (" << strlen(msg) << " bytes) " <<
@@ -120,9 +130,13 @@ NseMQ::ErrorCode NseMqProducer::produce(const char *msg, size_t msg_len, std::st
         err_temp = NseMQ::ERR_NO_ERROR;
     }
     producer_->poll(1000);
-    delete msg;
+    delete msg;     // deleate the message memory
     return err_temp;
 }
+
+/**
+ * close producer and clear memory.
+ */
 NseMQ::ErrorCode NseMqProducer::close(){
     // flush message: make sure all outstanding requests are transmitted and handled
     producer_->flush(5 * 1000 /* wait for max 5 seconds */);
@@ -141,15 +155,14 @@ NseMQ::ErrorCode NseMqProducer::close(){
         delete producer_;
     }
 
-/*    if(nullptr != producer_dr_cb_){
+    if(nullptr != producer_dr_cb_){
         delete producer_dr_cb_;
-    }*/
+    }
 
     // wait for RdKafka to decommission.
     RdKafka::wait_destroyed(5000);
     return NseMQ::ERR_NO_ERROR;
 }
-
 
 bool NseMqProducer::judgeConnection() {
     return this->judgeConnectionImpl(this->getProducer());

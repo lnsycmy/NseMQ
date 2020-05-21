@@ -10,7 +10,6 @@
 #include <string>
 #include <vector>
 #include <fstream>
-
 #include "avro/Encoder.hh"
 #include "avro/Decoder.hh"
 #include "avro/ValidSchema.hh"
@@ -26,7 +25,7 @@ private:
 public:
     ~NseMqSerializer(){};
     template <typename T>
-    const unsigned char * encode(T &t){
+    void encode(T &t, char *msg, size_t &msg_len){
         // initialize the memoryOutputStream/encoder.
         out_ = avro::memoryOutputStream();
         encoder_ = avro::binaryEncoder();
@@ -34,12 +33,13 @@ public:
         // TODO:deal with empty value.
         avro::encode(*encoder_, t);
         in_ = avro::memoryInputStream(*out_);
-        size_t msg_len = 0, n = 0;
-        const unsigned char * msg;
-        while (in_->next(&msg, &n)){
-            msg_len += n;
+        size_t total = 0, n = 0;
+        const unsigned char *temp = NULL;
+        while(in_->next(&temp, &n)){
+            total += n;
+            strcat_s(msg, msg_len,(const char *)(char *)temp);
         }
-        return msg;
+        msg_len = total;
     }
     template <typename T>
     bool decode(T &t, const unsigned char * msg){

@@ -40,8 +40,11 @@ private:
     RdKafka::Conf *consumer_conf_;              // consumer configuration
     RdKafka::Consumer *consumer_;               // consumer object pointer
 
-    int64_t start_offset_;                      // consume message from some offset.
-                                                // Value:RdKafka::Topic::OFFSET_BEGINNING/OFFSET_END/OFFSET_STORED
+    int64_t start_offset_;                      /* consume message from some offset, optional value:
+                                                 * RdKafka::Topic::OFFSET_BEGINNING,
+                                                 * RdKafka::Topic::OFFSET_END,
+                                                 * RdKafka::Topic::OFFSET_STORED
+                                                 */
     int32_t partition_;                         // use default setting:0
 
     std::map<std::string, RdKafka::ConsumeCb *> topic_cb_map_; // topic and callback mapping.
@@ -118,6 +121,7 @@ public:
     void setTopicCbMap(const std::map<std::string, RdKafka::ConsumeCb *> &topicCbMap);
 };
 
+/* thread function used data */
 class NseMqThreadData{
 public:
     int index;

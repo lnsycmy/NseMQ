@@ -1,28 +1,62 @@
 # NseMQ
-NseMQ是NSE实验室内部使用的消息中间件，用于完成消息的统一封装和传送。
-NseMQ基于`C++`实现，集成了目前流行的`Kafka`消息系统和`Avro`序列化工具，屏蔽了大量的使用细节，简单易用。
+NseMQ是NSE实验室内部使用的消息中间件，用于完成消息的统一封装和传输。
+NseMQ基于`C++`实现，集成了目前流行的 [Kafka](http://kafka.apachecn.org/) 消息系统和 [Avro](http://avro.apache.org/) 序列化工具，
+底层使用`Kafka`的C/C++客户端库 [librdkafka](https://github.com/edenhill/librdkafka) 实现， 屏蔽了大量的使用细节，简单易用。
 
 ## 特点
 
-* 实现了`发布-订阅`通信模式；
-* 屏蔽数据的序列化过程；
+* 实现了消息`发布-订阅`通信模式；
+* 封装简化`librdkafka`和`Avro`库函数，并提供依赖的库文件；
+* 屏蔽了数据的`序列化/反序列化`过程，即生产者直接发送某一类对象，消费者接收处理对应的类对象；
 
 ## 安装
-
+**（待完成）**
 
 ## 使用
-NseMQ的API函数，通常返回`NseMQ::ErrorCode`错误回执码，函数执行成功返回`ERR_NO_ERROR`，其他回执码详见`NseMqHandle.h`。
+
+### 数据准备
+
+NseMQ库中的类数据对象使用JSON文件进行定义，可通过bin目录中的`avrogencpp.exe`生成对应的.hh头文件，包含类定义和`encode`, `decode`函数。
+
+例如，若定义一个`student`类数据对象，可通过如下步骤。
+
+* 创建`student.json`文件，写入如下JSON描述语句。
+
+```json
+{
+    "type": "record", 
+    "name": "student",
+    "fields" : [
+        {"name": "name","type" : "string",  "default": "null"},
+        {"name": "age", "type" : "int",     "default": 0},
+        {"name": "sex", "type" : "string",  "default": "null"}
+    ]
+}
+```
+上述JSON描述语句中，定义了`student`类及其三个属性`name`, `age`, `sex`，并为属性赋予默认值。
+
+* 进入`avrogencpp.exe`根目录，使用如下语句生成.hh头文件。
+
+```shell script
+avrogencpp -i student.json -o student.hh -n NseMQ
+```
+
+上述语句中，`-i student.json`指定输入的.json文件，`-o student.hh`指定输出的.hh文件，`-n NseMQ`指定类的命名空间。
+
+生成的`student.hh`详细内容请参考 [student.hh](examples/student.hh) 。
 
 ### 数据生产
 
-生产者类`NseMqProducer`，完成数据的序列化和发送。
+生产者类 [NseMqProducer](include/NseMqProducer.h)，完成数据的序列化和发送。
+
+> 注：NseMQ的API函数，通常返回`NseMQ::ErrorCode`错误回执码，函数执行成功返回`ERR_NO_ERROR`，其他回执码详见 [NseMqHandle.h](include/NseMqHandle.h) 。
 
 **生产者API**
 
 ```c++
-NseMQ::ErrorCode NseMqProducer::init(std::string broker_addr);
-NseMQ::ErrorCode NseMqProducer::produce(T &t, std::string topic_name);
-NseMQ::ErrorCode NseMqProducer::close();
+NseMQ::ErrorCode NseMqProducer::init(std::string broker_addr);          // initialize producer
+NseMQ::ErrorCode NseMqProducer::produce(T &t, std::string topic_name);  // produce message with object 't' and topic 'topic_name'
+NseMQ::ErrorCode NseMqProducer::close();                                // close producer and clear memory
 ```
 
 **生产者范例-1**
@@ -31,11 +65,12 @@ NseMQ::ErrorCode NseMqProducer::close();
 NseMqProducer producer;
 producer.init("localhost:9092");
 
-NseMQ::cpx c1;
-c1.re = 1.2;
-c1.im = 2.4;
+NseMQ::student s1;
+s1.name = "cmy";
+s1.sex = "boy";
+s1.age = 24;
 
-if(producer.produce<NseMQ::cpx>(c1, "test_topic") == NseMQ::ERR_NO_ERROR){
+if(producer.produce<NseMQ::student>(s1, "test_topic") == NseMQ::ERR_NO_ERROR){
     std::cout << "produce successful! " << std::endl;
 }
 ```
@@ -48,8 +83,12 @@ NseMQ::ErrorCode NseMqProducer::init(std::string broker_addr,
 ```
 
 **生产者范例-2**
+
+由用户定义类继承`RdKafka::DeliveryReportCb`，实现其`dr_cb()`函数，拿到参数`message`可查看发送信息。
+
+> 注：用户定义类需要使用对象指针，如`ProducerCallback *producer_cb`，从而保证它的生命周期长于`producer`。（后续版本将无此要求）
 ```c++
-// implement class RdKafka::DeliveryReportCb
+// implement class RdKafka::DeliveryReportCb dr_cb()
 class ProducerCallback : public RdKafka::DeliveryReportCb {
 public:
     void dr_cb(RdKafka::Message &message){
@@ -81,22 +120,22 @@ if(producer.produce<NseMQ::student>(s1, "test_topic") == NseMQ::ERR_NO_ERROR){
 
 ### 数据消费
 
-消费者类`NseMqConsumer`，完成数据的接收和反序列化。
+消费者类 [NseMqConsumer](include/NseMqConsumer.h) ，完成数据的接收和反序列化。
 
 **消费者API**
 
 ```c++
-NseMQ::ErrorCode NseMqConsumer::init(std::string broker_addr);
+NseMQ::ErrorCode NseMqConsumer::init(std::string broker_addr);                  // initialize consumer
 NseMQ::ErrorCode NseMqConsumer::subscribe(std::string topic_name,
                                           RdKafka::ConsumeCb &consume_cb,
-                                          int64_t start_offset /* optional property */);
-NseMQ::ErrorCode NseMqConsumer::unSubscribe(std::string topic_name);
-NseMQ::ErrorCode NseMqConsumer::subscription(std::vector<std::string> &topics);
-NseMQ::ErrorCode NseMqConsumer::start();
-NseMQ::ErrorCode NseMqConsumer::pause();
-NseMQ::ErrorCode NseMqConsumer::resume();
-NseMQ::ErrorCode NseMqConsumer::close();
-NseMQ::ErrorCode NseMqConsumer::poll();
+                                          int64_t start_offset/* optional */);  // subscribe topic and bind consume callback
+NseMQ::ErrorCode NseMqConsumer::unSubscribe(std::string topic_name);            // unsubscribe topic
+NseMQ::ErrorCode NseMqConsumer::subscription(std::vector<std::string> &topics); // get a list of subscribed topic names.
+NseMQ::ErrorCode NseMqConsumer::start();        // start to consume message from broker
+NseMQ::ErrorCode NseMqConsumer::pause();        // pause the consumer thread
+NseMQ::ErrorCode NseMqConsumer::resume();       // resume the consumer thread.
+NseMQ::ErrorCode NseMqConsumer::close();        // close the consumer
+NseMQ::ErrorCode NseMqConsumer::poll();         // self-polled to call the topic consumer callback
 ```
 
 **消费者范例-1:**
@@ -124,7 +163,7 @@ consumer.start();
 ```
 
 消费者类的`start()`函数实现了多线程循环调用`poll()`函数，使得程序可以正常触发回调函数。
-也可自己实现线程循环调用`poll()`函数，范例如下。
+也可以自己实现线程循环调用`poll()`函数，范例如下。
 
 **消费者范例-2:**
 ```c++
@@ -150,7 +189,7 @@ thread.join();
 
 
 ### 通用接口
-NseMqProducer类对象和NseMqConsumer类对象都可以调用通用接口。
+`NseMqProducer`类对象和`NseMqConsumer`类对象都可以调用通用接口，实现与`broker`的通信。
 
 **通用API**
 ```c++
@@ -158,7 +197,7 @@ bool judgeConnection();                                 // test connection with 
 void getBrokerTopics(std::vector<std::string> &topics); // get all topics from broker.
 ```
 
-**通用接口范例**
+**通用API范例**
 ```c++
 NseMqConsumer consumer;
 consumer.init("localhost:9092");

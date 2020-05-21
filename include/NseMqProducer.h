@@ -12,13 +12,11 @@
 #include <cstring>
 #include <typeinfo>
 
-#if _AIX
-#include <unistd.h>
-#endif
-
 #include "NseMqHandle.h"
 #include "NseMqSerializer.h"
 #include "librdkafka/rdkafkacpp.h"
+
+#define MESSAGE_MAX_SIZE 102400
 
 class NseMqProducer : public NseMqHandle{
 private:
@@ -29,8 +27,7 @@ private:
     RdKafka::Producer *producer_;               // producer object pointer
     RdKafka::DeliveryReportCb *producer_dr_cb_; // producer delivery report callback
     int32_t partition_;                         // use default setting:0
-    NseMqSerializer serializer_;                //
-
+    NseMqSerializer serializer_;                // serializer object
 
 public:
     NseMqProducer();
@@ -40,24 +37,25 @@ public:
     // initialize producer and producer configuration.
     NseMQ::ErrorCode init(std::string broker_addr, RdKafka::DeliveryReportCb *producer_cb = nullptr);
 
-    // produce the object 't' to broker, internal serialization.
+    // produce the object 't' to broker, finished serialization internally.
     template <typename T>
     NseMQ::ErrorCode produce(T &t, std::string topic_name){
         // get the data type.
         std::string t_type = typeid(t).name();
-        const unsigned char *uint8_t_msg = serializer_.encode(t);
+        // serialize the massage, message max size limit MESSAGE_MAX_SIZE.
+        char *msg = new char[MESSAGE_MAX_SIZE];
+        memset(msg, 0, MESSAGE_MAX_SIZE);
+        size_t msg_len = MESSAGE_MAX_SIZE;
+        serializer_.encode(t, msg, msg_len);
         // produce message.
-        size_t msg_len = strlen((char*)uint8_t_msg);
-        char * msg = new char[msg_len+1];
-        memcpy_s(msg, msg_len+1,uint8_t_msg,msg_len);
-        const char * msg_const = msg;
-        return produce(msg_const, msg_len+1, topic_name, t_type);
+        return produce(msg, strlen(msg), topic_name, t_type);
     }
 
     // produce message to broker.
-    NseMQ::ErrorCode produce(const char *msg, size_t msg_len,std::string topic_name,
+    NseMQ::ErrorCode produce(char *msg, size_t msg_len,std::string topic_name,
                              std::string msg_type = "std::string");
 
+    // close producer and clear memory.
     NseMQ::ErrorCode close();
 
     bool judgeConnection();                                     // test connection with broker.

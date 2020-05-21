@@ -14,31 +14,30 @@
 
 namespace NseMQ{
     enum ErrorCode{
-        ERR_NO_ERROR = 0,
+        ERR_NO_ERROR = 0,                   // execution succeed, no-error.
         /* producer error code. */
-        ERR_FAIL_INIT_SERVERS = -1,
-        ERR_FAIL_INIT_DR_CB = -2,
-        ERR_FAIL_CREATE_PRODUCER = -3,
-        ERR_SEND_MSG_EMPTY = -4,
-        ERR_SEND_FAIL = -5,
-        ERR_SEND_MSG_TOO_LARGE = -6,
-        ERR_SEND_QUEUE_FULL = -7,
-        ERR_SEND_UNKNOWN_TOPIC = -8,
+        ERR_P_INIT_BROKER_ADDRESS = -1,     // failed to set up broker address.
+        ERR_P_INIT_DR_CALLBACK = -2,        // failed to set up delivery report callback.
+        ERR_P_CREATE_PRODUCER = -3,         // failed to create kafka producer.
+        ERR_P_SEND_MSG_EMPTY = -4,          // send message is empty.
+        ERR_P_SEND_QUEUE_FULL = -5,         // send message queue is full.
+        ERR_P_SEND_MSG_TOO_LARGE = -6,      // send message is to large.
+        ERR_P_SEND_UNKNOWN_TOPIC = -7,      // send message but unknown topic.
+        ERR_P_SEND_FAIL = -8,               // failed to send message with other error.
         /* consumer error code */
-        ERR_CONF_BROKER_ADDR = -11,          // failed to set up broker address.
-        ERR_CONF_DR_CB = -12,                // failed to set up
-        ERR_CREATE_CONSUMER = -13,           // failed to create consumer.
-        ERR_CREATE_COMPLEX_CONSUMER = -14,   // failed to create complex consumer.
-        ERR_SUBS_FAIL_CREATE_TOPIC = -15,
-        ERR_SUBS_FAIL_START_CONSUMER = -16,
-        ERR_SUBS_FAIL_BIND_CALLBACK = -17,
-        ERR_SUBS_TOPIC_EMPTY = -24,
-        ERR_UNSUBS_TOPIC_EMPTY = -18,
-        ERR_UNSUBS_TOPIC_NO_FIND = -19,
-        ERR_UNSUNS_TOPIC_FAILED = -20,
-        ERR_START_TOPIC_EMPTY = -21,
-        ERR_START_CREATE_THREAD = -22,
-        ERR_FAIL_CONNECT_BROKER = -23,
+        ERR_C_INIT_BROKER_ADDRESS = -21,    // failed to set up broker address.
+        ERR_C_CREATE_CONSUMER = -22,        // failed to create consumer.
+        ERR_C_SUBS_CREATE_TOPIC = -23,      // failed to create topic with topic name.
+        ERR_C_SUBS_BROKER_TOPIC = -24,      // failed to subscribe topic from broker.
+        ERR_C_SUBS_LOCAL_TOPIC = -25,       // failed to subscribe topic from local.
+        ERR_C_UNSUBS_TOPIC_NO_FIND = -26,   // failed to find topic from local.
+        ERR_C_UNSUNS_BROKER_TOPIC = -27,    // failed to unsubscribe topic from broker.
+        ERR_C_SUBS_TOPIC_EMPTY = -28,       // failed to get topic list.
+        ERR_C_POLL_TOPIC_EMPTY = -29,       // failed to find topic as no have subscribed topic.
+        ERR_C_START_CREATE_THREAD = -30,    // failed to create thread when called start().
+
+        /* general error code */
+        ERR_FAIL_CONNECT_BROKER = -100,    // failed to connect broker.
 
 
     };
@@ -54,6 +53,5 @@ public:
     // write error log.
     void writeErrorLogImpl(std::string err_str, std::string write_object);
 };
-
 
 #endif // NSEMQ_NSEMQHANDLE_H_

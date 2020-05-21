@@ -41,35 +41,16 @@ int main(){
     ConsumerCallback<NseMQ::cpx> cb2;
     consumer.subscribe("test",cb1);
     consumer.subscribe("test2",cb2);
-    /*consumer->start();
-    Sleep(-1);*/
-   /* Sleep(10000);
-    consumer->pause();
-    Sleep(10000);
-    consumer->resume();
-    Sleep(5000);*/
-
-    auto threadFunction = [&consumer]() {
+    consumer.start();
+    Sleep(-1);
+    /*auto threadFunction = [&consumer]() {
         while (1){
             consumer.poll();
             std::cout << "receive poll()" << std::endl;
         }
     };
     std::thread thread(threadFunction);
-    thread.join();
-
-    /* test connection */
-    /*if(consumer->judgeConnection()){
-        std::cout << "connect to broker." << std::endl;
-    }
-    std::vector<std::string> topics;
-    consumer->getBrokerTopics(topics);
-    if(!topics.empty()){
-        for(std::vector<std::string>::iterator iter = topics.begin();
-            iter != topics.end(); iter++){
-            std::cout << *iter << std::endl;
-        }
-    }*/
+    thread.join();*/
     std::cout << "back to main" << std::endl;
     return 0;
 }

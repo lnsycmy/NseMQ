@@ -38,29 +38,18 @@ int main(){
 
     producer.init(broker_addr, producer_cb);
 
-    /*NseMQ::student s1;
+    NseMQ::student s1;
     s1.name = "cmy";
     s1.sex = "boy";
     s1.age = 24;
     if(producer.produce<NseMQ::student>(s1, topic_name) != NseMQ::ERR_NO_ERROR){
         std::cout << "failed produce student in main()"<< std::endl;
-    }*/
+    }
     NseMQ::cpx c1;
     c1.re = 1.2;
     c1.im = 2.4;
     if(producer.produce<NseMQ::cpx>(c1, topic_name2) != NseMQ::ERR_NO_ERROR){
         std::cout << "failed produce cpx in main()"<< std::endl;
     }
-    //Sleep(10000);
-
-    /*char msg[] = "124cccv";
-    std::string msg_str = "124cccv";
-    if(producer.produce<std::string>(msg_str,topic_name) != NseMQ::ERR_NO_ERROR){
-        std::cout << "failed produce string msg in main()"<< std::endl;
-    }*/
-
-/*    if(producer.produce(msg,strlen(msg), topic_name) != NseMQ::ERR_NO_ERROR){
-        std::cout << "failed produce string msg in main()"<< std::endl;
-    }*/
     return 0;
 }
