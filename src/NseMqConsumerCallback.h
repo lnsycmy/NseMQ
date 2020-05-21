@@ -42,9 +42,12 @@ public:
                 }
             }
         }
+        // get message length.
+        size_t msg_len = msg.len();
+        std::cout << "msg_len:" << msg_len << std::endl;
         // serialize the msg to t_.
         NseMqSerializer serializer;
-        serializer.decode(t_, static_cast<const unsigned char *>(msg.payload()));
+        serializer.decode(t_, static_cast<const unsigned char *>(msg.payload()), msg_len);
         consume_callback(t_);
         return true;
     }

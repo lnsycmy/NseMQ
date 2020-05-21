@@ -25,25 +25,27 @@ private:
 public:
     ~NseMqSerializer(){};
     template <typename T>
-    void encode(T &t, char *msg, size_t &msg_len){
+    unsigned char * encode(T &t, size_t &msg_len){
         // initialize the memoryOutputStream/encoder.
         out_ = avro::memoryOutputStream();
         encoder_ = avro::binaryEncoder();
         encoder_->init(*out_);
-        // TODO:deal with empty value.
         avro::encode(*encoder_, t);
+        encoder_->flush();                  // before byteCount() MUST called flush().
+        msg_len = encoder_->byteCount();    // get the
+        unsigned char *msg = new unsigned char[msg_len];
         in_ = avro::memoryInputStream(*out_);
-        size_t total = 0, n = 0;
-        const unsigned char *temp = NULL;
-        while(in_->next(&temp, &n)){
-            total += n;
-            strcat_s(msg, msg_len,(const char *)(char *)temp);
+        size_t used_byte = 0, n = 0;
+        unsigned char *data;
+        while(in_->next((const unsigned char**)(&data), &n)){
+            memcpy(msg + used_byte, data, n);
+            used_byte += n;
         }
-        msg_len = total;
+        return msg;
     }
     template <typename T>
-    bool decode(T &t, const unsigned char * msg){
-        in_ = avro::memoryInputStream(msg, strlen((char *)msg));
+    bool decode(T &t, const unsigned char * msg, size_t msg_len){
+        in_ = avro::memoryInputStream(msg, msg_len);
         decoder_ = avro::binaryDecoder();
         decoder_->init(*in_);
         avro::decode(*decoder_, t);

@@ -5,30 +5,28 @@
 #include <iostream>
 #include <thread>
 #include <map>
-#include "NseMqSerializer.h"
-#include "NseMqConsumer.h"
+#include "../src/NseMqSerializer.h"
+#include "../src/NseMqConsumer.h"
 #include "student.hh"
 #include "cpx.hh"
-#include "NseMqConsumerCallback.h"
-/*#include <windows.h>*/
-
+#include "../src/NseMqConsumerCallback.h"
 
 template<class T>
 class ConsumerCallback : public NseMqConsumerCallback<T>{
 public:
-    void consume_callback(NseMQ::student &t) {
+    void consume_callback(NseMQ::student &student) {
         std::cout << "ConsumerCallback student" << std::endl;
-        std::cout << " NseMQ::student cb name:" << t.name << std::endl;
-        std::cout << " NseMQ::student cb age:" << t.age << std::endl;
-        std::cout << " NseMQ::student cb sex:" << t.sex << std::endl;
+        std::cout << " NseMQ::student cb name:" << student.name << std::endl;
+        std::cout << " NseMQ::student cb age:" << student.age << std::endl;
+        std::cout << " NseMQ::student cb sex:" << student.sex << std::endl;
     };
-    void consume_callback(NseMQ::cpx &t) {
+    void consume_callback(NseMQ::cpx &cpx) {
         std::cout << "ConsumerCallback cpx" << std::endl;
-        std::cout << " NseMQ::cpx cb im:" << t.im << std::endl;
-        std::cout << " NseMQ::cpx cb re:" << t.re << std::endl;
+        std::cout << " NseMQ::cpx cb im:" << cpx.im << std::endl;
+        std::cout << " NseMQ::cpx cb re:" << cpx.re << std::endl;
     };
-    void consume_callback(std::string &t){
-        std::cout <<t <<std::endl;
+    void consume_callback(std::string &s){
+        std::cout << s <<std::endl;
     }
 };
 
@@ -42,7 +40,8 @@ int main(){
     consumer.subscribe("test",cb1);
     consumer.subscribe("test2",cb2);
     consumer.start();
-    Sleep(-1);
+    Sleep(10000);
+    consumer.close();
     /*auto threadFunction = [&consumer]() {
         while (1){
             consumer.poll();

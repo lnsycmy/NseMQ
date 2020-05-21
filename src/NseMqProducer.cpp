@@ -59,18 +59,26 @@ NseMQ::ErrorCode NseMqProducer::init(std::string broker_addr, RdKafka::DeliveryR
     if (!getProducer()) {
         return NseMQ::ERR_P_CREATE_PRODUCER;
     }
+    this->setRunStatus(INIT_STATUS);
     return NseMQ::ERR_NO_ERROR;
 }
 
 /**
  * internal use produce message, called by 'produce(T &t, std::string topic_name)'
- * @param msg:          message that wait to produce
- * @param msg_len:      actual message length
- * @param topic_name:   topic that wait to send
- * @param msg_type:     message type, e.g. student, defalut std::string
+ * @param msg: message that wait to produce
+ * @param msg_len: actual message length
+ * @param topic_name: topic that wait to send
+ * @param msg_type: message type, e.g. student, defalut std::string
  */
 NseMQ::ErrorCode NseMqProducer::produce(char *msg, size_t msg_len, std::string topic_name,
                                         std::string msg_type /*default NULL*/) {
+    // judge the run status.
+    if(run_status_ == CLOSE_STATUS){
+        this->writeErrorLog("Failed to produce: don't allow call produce() after close().");
+        return NseMQ::ERR_P_RUN_STATUS;
+    }else if(run_status_ != START_STATUS){
+        this->setRunStatus(START_STATUS);
+    }
     // judge message whether empty.
     if(0 == msg_len){
         return NseMQ::ERR_P_SEND_MSG_EMPTY;
@@ -138,6 +146,11 @@ NseMQ::ErrorCode NseMqProducer::produce(char *msg, size_t msg_len, std::string t
  * close producer and clear memory.
  */
 NseMQ::ErrorCode NseMqProducer::close(){
+    // judge the run status.
+    if(run_status_ == CLOSE_STATUS){
+        this->writeErrorLog("Failed to close: can't multiple called close() function.");
+        return NseMQ::ERR_P_RUN_STATUS;
+    }
     // flush message: make sure all outstanding requests are transmitted and handled
     producer_->flush(5 * 1000 /* wait for max 5 seconds */);
     while (producer_->outq_len() > 0) {
@@ -161,6 +174,7 @@ NseMQ::ErrorCode NseMqProducer::close(){
 
     // wait for RdKafka to decommission.
     RdKafka::wait_destroyed(5000);
+    this->setRunStatus(CLOSE_STATUS);
     return NseMQ::ERR_NO_ERROR;
 }
 
@@ -222,6 +236,14 @@ int32_t NseMqProducer::getPartition() const {
 
 void NseMqProducer::setPartition(int32_t partition) {
     partition_ = partition;
+}
+
+NseMqProducer::RunStatus NseMqProducer::getRunStatus() const {
+    return run_status_;
+}
+
+void NseMqProducer::setRunStatus(NseMqProducer::RunStatus runStatus) {
+    run_status_ = runStatus;
 }
 
 

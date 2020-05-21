@@ -24,6 +24,7 @@ namespace NseMQ{
         ERR_P_SEND_MSG_TOO_LARGE = -6,      // send message is to large.
         ERR_P_SEND_UNKNOWN_TOPIC = -7,      // send message but unknown topic.
         ERR_P_SEND_FAIL = -8,               // failed to send message with other error.
+        ERR_P_RUN_STATUS = -9,              // error to call function with limit run status.
         /* consumer error code */
         ERR_C_INIT_BROKER_ADDRESS = -21,    // failed to set up broker address.
         ERR_C_CREATE_CONSUMER = -22,        // failed to create consumer.
@@ -35,6 +36,7 @@ namespace NseMQ{
         ERR_C_SUBS_TOPIC_EMPTY = -28,       // failed to get topic list.
         ERR_C_POLL_TOPIC_EMPTY = -29,       // failed to find topic as no have subscribed topic.
         ERR_C_START_CREATE_THREAD = -30,    // failed to create thread when called start().
+        ERR_C_RUN_STATUS = -31,             // error to call function with limit run status.
 
         /* general error code */
         ERR_FAIL_CONNECT_BROKER = -100,    // failed to connect broker.

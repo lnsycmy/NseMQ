@@ -25,14 +25,14 @@ link_directories(${Boost_LIBRARY_DIRS})]]
 
 
 add_library(NseMQ STATIC
-        NseMqProducer.cpp
-        NseMqConsumer.cpp
-        NseMqHandle.cpp)
+        src/NseMqProducer.cpp
+        src/NseMqConsumer.cpp
+        src/NseMqHandle.cpp)
 
-add_executable(NseMqProducer NseMqProducer.cpp)
+add_executable(NseMqProducer src/NseMqProducer.cpp)
 target_link_libraries(NseMqProducer librdkafkacpp)
 
-add_executable(NseMqConsumer NseMqConsumer.cpp)
+add_executable(NseMqConsumer src/NseMqConsumer.cpp)
 target_link_libraries(NseMqConsumer librdkafkacpp)
 
 add_executable(consumer_example examples/consumer_example.cpp)
@@ -40,7 +40,3 @@ target_link_libraries(consumer_example NseMQ)
 
 add_executable(producer_example examples/producer_example.cpp)
 target_link_libraries(producer_example NseMQ)
-
-add_executable(serializer_example examples/serializer_example.cpp)
-target_link_libraries(serializer_example avrocpp NseMQ)
-

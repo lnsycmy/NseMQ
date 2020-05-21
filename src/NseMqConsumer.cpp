@@ -45,6 +45,7 @@ NseMQ::ErrorCode NseMqConsumer::init(std::string broker_addr) {
     }
     // create mutex lock
     hMutex = CreateMutex(NULL, FALSE, NULL);
+    this->setRunStatus(INIT_STATUS);
     return NseMQ::ERR_NO_ERROR;
 }
 
@@ -137,7 +138,7 @@ NseMQ::ErrorCode NseMqConsumer::poll(){
     }
     // all topics consume_callback use 1000ms every poll.
     size_t topic_count = topic_cb_map_.size();
-    int timeout_ms =  floor(1000/topic_count);
+    int timeout_ms =  floor(CALLBACK_TIMEOUT_MS/topic_count);
     for(std::map<std::string,RdKafka::ConsumeCb *>::iterator iter = topic_cb_map_.begin();
         iter != topic_cb_map_.end(); iter++){
         RdKafka::Topic *topic = RdKafka::Topic::create(getConsumer(), iter->first, NULL, errstr_);
@@ -152,6 +153,11 @@ NseMQ::ErrorCode NseMqConsumer::poll(){
  * one topic corresponds to one thread that cyclic called poll().
  */
 NseMQ::ErrorCode NseMqConsumer::start(){
+    // judge the run status.
+    if(run_status_ >= START_STATUS){
+        this->writeErrorLog("Failed to start: can't multiple called start() function.");
+        return NseMQ::ERR_C_RUN_STATUS;
+    }
     // judge subscribed topic is not empty.
     if(topic_cb_map_.empty()){
         this->writeErrorLog("Failed to consume: don't have subscribe one topic.");
@@ -163,21 +169,33 @@ NseMQ::ErrorCode NseMqConsumer::start(){
         return NseMQ::ERR_C_START_CREATE_THREAD;
     }
 #endif
+    this->setRunStatus(START_STATUS);
     return NseMQ::ERR_NO_ERROR;
 }
 
 /* close consumer and clear memory. */
 NseMQ::ErrorCode NseMqConsumer::close(){
+    // judge the run status.
+    if(run_status_ == CLOSE_STATUS){
+        this->writeErrorLog("Failed to close: can't multiple called close() function.");
+        return NseMQ::ERR_C_RUN_STATUS;
+    }
     // NO.1 stop the consume from broker.
     if(!topic_cb_map_.empty()){
         for(std::map<std::string,RdKafka::ConsumeCb *>::iterator iter = topic_cb_map_.begin();
             iter != topic_cb_map_.end(); iter++){
-            this->unSubscribe(iter->first);
+            // create topic, call consumer->stop(), cancle subscribe the topic.
+            RdKafka::Topic *topic = RdKafka::Topic::create(getConsumer(), iter->first, NULL, errstr_);
+            RdKafka::ErrorCode resp = consumer_->stop(topic,getPartition());
+            if(resp != RdKafka::ERR_NO_ERROR){
+                this->writeErrorLog("% Failed to stop consuming topic "+ iter->first +": " + RdKafka::err2str(resp));
+                return NseMQ::ERR_C_UNSUNS_BROKER_TOPIC;
+            }
         }
+        topic_cb_map_.clear();
     }
-    // TODO:NO.2 flush the local queue.
-
-    // NO.3 end the consumer thread.
+    // TODO:close error
+    // NO.2 end the consumer thread.
 #ifdef _WIN32
     for(int i = 0; i < THREAD_MAX_NUM; i++){
         if(uiThread1ID[i] != NULL){
@@ -185,20 +203,24 @@ NseMQ::ErrorCode NseMqConsumer::close(){
         }
     }
 #endif
-    // NO.4 delete other object.
+    // NO.3 delete other object.
     delete consumer_conf_;
-    if(!topic_cb_map_.empty()){
-        topic_cb_map_.clear();
-    }
-    // NO.5 delete consumer object.
+
+    // NO.4 delete consumer object.
     delete consumer_;
     // NO.6 wait for RdKafka to decommission.
     RdKafka::wait_destroyed(2000);
+    this->setRunStatus(CLOSE_STATUS);
     return NseMQ::ERR_NO_ERROR;
 }
 
  /* pause consume thread. */
 NseMQ::ErrorCode NseMqConsumer::pause(){
+     // judge the run status.
+     if(run_status_ != START_STATUS){
+         this->writeErrorLog("Failed to pause: only in START_STATUS arrow to call pause().");
+         return NseMQ::ERR_C_RUN_STATUS;
+     }
     // pause the consume thread.
 #ifdef _WIN32
     for(int i = 0; i < THREAD_MAX_NUM; i++){
@@ -207,11 +229,17 @@ NseMQ::ErrorCode NseMqConsumer::pause(){
         }
     }
 #endif
+    this->setRunStatus(PAUSE_STATUS);
     return NseMQ::ERR_NO_ERROR;
 }
 
 /* resume the consumer thread. */
 NseMQ::ErrorCode NseMqConsumer::resume(){
+    // judge the run status.
+    if(run_status_ != PAUSE_STATUS){
+        this->writeErrorLog("Failed to resume: only in PAUSE_STATUS arrow to call resume().");
+        return NseMQ::ERR_C_RUN_STATUS;
+    }
 #ifdef _WIN32
     for(int i = 0; i < THREAD_MAX_NUM; i++){
         if(handle[i] != NULL){
@@ -219,6 +247,7 @@ NseMQ::ErrorCode NseMqConsumer::resume(){
         }
     }
 #endif
+    this->setRunStatus(START_STATUS);
     return NseMQ::ERR_NO_ERROR;
 }
 
@@ -327,6 +356,14 @@ const std::map<std::string, RdKafka::ConsumeCb *> &NseMqConsumer::getTopicCbMap(
 
 void NseMqConsumer::setTopicCbMap(const std::map<std::string, RdKafka::ConsumeCb *> &topicCbMap) {
     topic_cb_map_ = topicCbMap;
+}
+
+NseMqConsumer::RunStatus NseMqConsumer::getRunStatus() const {
+    return run_status_;
+}
+
+void NseMqConsumer::setRunStatus(NseMqConsumer::RunStatus runStatus) {
+    run_status_ = runStatus;
 }
 
 

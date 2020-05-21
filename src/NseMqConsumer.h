@@ -15,7 +15,7 @@
 #include <math.h>
 
 #ifdef _WIN32
-#include <windows.h>
+#include <Windows.h>
 #include <process.h>
 #endif
 
@@ -59,7 +59,14 @@ private:
     NseMqThreadData *threadData;
     bool pollThreadWin();
 #endif
-
+public:
+    enum RunStatus{
+        INIT_STATUS = 0,
+        START_STATUS = 1,
+        PAUSE_STATUS = 2,
+        CLOSE_STATUS = 3,
+    };
+    RunStatus run_status_;
 public:
     NseMqConsumer();
     NseMqConsumer(std::string broker_addr);
@@ -119,6 +126,10 @@ public:
     const std::map<std::string, RdKafka::ConsumeCb *> &getTopicCbMap() const;
 
     void setTopicCbMap(const std::map<std::string, RdKafka::ConsumeCb *> &topicCbMap);
+
+    RunStatus getRunStatus() const;
+
+    void setRunStatus(RunStatus runStatus);
 };
 
 /* thread function used data */
