@@ -18,7 +18,9 @@ NseMqConsumer::NseMqConsumer(std::string broker_addr) {
 }
 
 NseMqConsumer::~NseMqConsumer() {
-    this->close();
+    if(run_status_ != CLOSE_STATUS){
+        this->close();
+    }
 }
 
 /**
@@ -198,8 +200,8 @@ NseMQ::ErrorCode NseMqConsumer::close(){
     // NO.2 end the consumer thread.
 #ifdef _WIN32
     for(int i = 0; i < THREAD_MAX_NUM; i++){
-        if(uiThread1ID[i] != NULL){
-            _endthreadex(uiThread1ID[i]);
+        if(handle[i] != NULL){
+            CloseHandle(handle[i]);
         }
     }
 #endif
@@ -262,16 +264,15 @@ bool NseMqConsumer::pollThreadWin(){
         threadData[i].topic_name = iter->first;
         threadData[i].consume_cb = iter->second;
         handle[i] = (HANDLE)_beginthreadex(NULL, 0,ThreadFun, &threadData[i],
-                                           0, &uiThread1ID[i]);
-        if(handle[i] == NULL){
+                                           0, &uiThreadID[i]);
+        if(handle[i] == NULL || uiThreadID[i] == NULL){
             return false;
         }else{
             threadData[i].handle = &handle[i];
+            threadData[i].uiThreadID = uiThreadID[i];
         }
         ++i;
     }
-    // WaitForMultipleObjects(i, handle, TRUE, INFINITE);
-    // std::cout << "after WaitForMultipleObjects()" << std::endl;
     return true;
 }
 
@@ -286,6 +287,7 @@ static unsigned int __stdcall ThreadFun(void *threadParam){
         consumer->getConsumer()->poll(0);
         std::cout << "% [NseMQ] receive poll()" << std::endl;
     }
+    _endthreadex(threadData->uiThreadID);
     return 0;
 }
 #endif

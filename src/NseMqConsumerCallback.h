@@ -44,7 +44,6 @@ public:
         }
         // get message length.
         size_t msg_len = msg.len();
-        std::cout << "msg_len:" << msg_len << std::endl;
         // serialize the msg to t_.
         NseMqSerializer serializer;
         serializer.decode(t_, static_cast<const unsigned char *>(msg.payload()), msg_len);
@@ -53,7 +52,6 @@ public:
     }
 
     void consume_cb(RdKafka::Message &msg, void *opaque){
-        // TODO:each case need to write log.
         switch (msg.err()) {
             case RdKafka::ERR_NO_ERROR:
                 // Real message

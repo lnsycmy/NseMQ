@@ -55,7 +55,7 @@ private:
 #define RELASE_MUTEX() do{ReleaseMutex(hMutex);}while(0==1)
     HANDLE handle[THREAD_MAX_NUM];
     HANDLE hMutex = INVALID_HANDLE_VALUE;
-    unsigned uiThread1ID[THREAD_MAX_NUM];
+    unsigned uiThreadID[THREAD_MAX_NUM];
     NseMqThreadData *threadData;
     bool pollThreadWin();
 #endif
@@ -141,6 +141,7 @@ public:
     RdKafka::ConsumeCb *consume_cb;
 #ifdef _WIN32
     HANDLE *handle;
+    unsigned uiThreadID;
 #endif
 };
 
