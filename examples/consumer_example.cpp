@@ -5,10 +5,11 @@
 #include <iostream>
 #include <thread>
 #include <map>
-#include "../src/NseMqSerializer.h"
-#include "../src/NseMqConsumer.h"
+
 #include "student.hh"
 #include "cpx.hh"
+#include "../src/NseMqSerializer.h"
+#include "../src/NseMqConsumer.h"
 #include "../src/NseMqConsumerCallback.h"
 
 template<class T>

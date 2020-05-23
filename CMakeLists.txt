@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 11)
 
 include_directories("include")
 
-link_directories("lib/vs2015/x64/Debug")
+link_directories("lib\\vs2015\\x64\\Debug")
 link_libraries("librdkafka.dll")
 link_libraries("librdkafkacpp.dll")
 link_libraries("avrocpp.lib")
@@ -14,8 +14,10 @@ link_libraries("boost_filesystem-vc140-mt-gd-x64-1_72.lib
                 boost_program_options-vc140-mt-gd-x64-1_72.lib
                 boost_regex-vc140-mt-gd-x64-1_72.lib
                 boost_system-vc140-mt-gd-x64-1_72.lib")
+link_libraries("boost_thread-vc140-mt-gd-x64-1_72.dll")
 
 # boost
+# set(Boost_USE_STATIC_LIBS ON)
 #[[find_package(Boost REQUIRED COMPONENTS system filesystem iostreams program_options regex)
 if(!Boost_FOUND)
     message("Boost NOT FOUND")
@@ -40,3 +42,6 @@ target_link_libraries(consumer_example NseMQ)
 
 add_executable(producer_example examples/producer_example.cpp)
 target_link_libraries(producer_example NseMQ)
+
+add_executable(boostThreadTest test/boostThreadTest.cpp)
+target_link_libraries(boostThreadTest boost_thread-vc140-mt-gd-x64-1_72)
