@@ -13,8 +13,8 @@ link_libraries("boost_filesystem-vc140-mt-gd-x64-1_72.lib
                 boost_iostreams-vc140-mt-gd-x64-1_72.lib
                 boost_program_options-vc140-mt-gd-x64-1_72.lib
                 boost_regex-vc140-mt-gd-x64-1_72.lib
-                boost_system-vc140-mt-gd-x64-1_72.lib")
-link_libraries("boost_thread-vc140-mt-gd-x64-1_72.dll")
+                boost_system-vc140-mt-gd-x64-1_72.lib
+                boost_thread-vc140-mt-gd-x64-1_72.dll")
 
 # boost
 # set(Boost_USE_STATIC_LIBS ON)

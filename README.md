@@ -127,16 +127,15 @@ if(producer.produce<NseMQ::student>(s1, "test_topic") == NseMQ::ERR_NO_ERROR){
 ```c++
 NseMQ::ErrorCode NseMqConsumer::init(std::string broker_addr);                  // initialize consumer
 NseMQ::ErrorCode NseMqConsumer::subscribe(std::string topic_name,
-                                          RdKafka::ConsumeCb &consume_cb,
+                                          RdKafka::ConsumeCb &consume_callback,
                                           int64_t start_offset/* optional */);  // subscribe topic and bind consume callback
 NseMQ::ErrorCode NseMqConsumer::unSubscribe(std::string topic_name);            // unsubscribe topic
 NseMQ::ErrorCode NseMqConsumer::subscription(std::vector<std::string> &topics); // get a list of subscribed topic names.
 NseMQ::ErrorCode NseMqConsumer::start();        // start to consume message from broker
-NseMQ::ErrorCode NseMqConsumer::pause();        // pause the consumer thread
-NseMQ::ErrorCode NseMqConsumer::resume();       // resume the consumer thread.
 NseMQ::ErrorCode NseMqConsumer::close();        // close the consumer
 NseMQ::ErrorCode NseMqConsumer::poll();         // self-polled to call the topic consumer callback
 ```
+* 一个`Topic`对应一个消费回调对象`consume_callback`，需要在订阅时将两者绑定。
 
 **消费者范例-1:**
 ```c++

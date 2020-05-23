@@ -5,13 +5,13 @@ std::string NseMqConsumer::errstr_ = "";
 
 // no-parameter constructor.
 NseMqConsumer::NseMqConsumer(){
-    // initialize pointers
+    // initialize pointers and run status.
     consumer_conf_ = NULL;
     consumer_ = NULL;
 }
 // Constructor with parameter instead of init()
 NseMqConsumer::NseMqConsumer(std::string broker_addr) {
-    // initialize pointers
+    // initialize pointers and run status.
     consumer_conf_ = NULL;
     consumer_ = NULL;
     this->init(broker_addr);    // initialize consumer.
@@ -36,7 +36,7 @@ NseMQ::ErrorCode NseMqConsumer::init(std::string broker_addr) {
     // set bootstrap broker address and port.
     if (getConsumerConf()->set("bootstrap.servers", getBrokerAddr(), errstr_) !=
         RdKafka::Conf::CONF_OK) {
-        this->writeErrorLog(errstr_);
+        this->writeErrorLog("[NSEMQ] "+errstr_);
         return NseMQ::ERR_C_INIT_BROKER_ADDRESS;
     }
     // Create consumer using accumulated global configuration.
@@ -45,8 +45,10 @@ NseMQ::ErrorCode NseMqConsumer::init(std::string broker_addr) {
         this->writeErrorLog(errstr_);
         return NseMQ::ERR_C_CREATE_CONSUMER;
     }
-    // create mutex lock
-    hMutex = CreateMutex(NULL, FALSE, NULL);
+    // judge connection with broker.
+    if(!this->judgeConnection()){
+        this->writeErrorLog("Failed to connect broker ("+ this->getBrokerAddr() + ")");
+    }
     this->setRunStatus(INIT_STATUS);
     return NseMQ::ERR_NO_ERROR;
 }
@@ -60,10 +62,10 @@ NseMQ::ErrorCode NseMqConsumer::init(std::string broker_addr) {
 NseMQ::ErrorCode NseMqConsumer::subscribe(std::string topic_name,
                                           RdKafka::ConsumeCb &consume_cb,
                                           int64_t start_offset){
-    // judge connection with broker.
-    if(!this->judgeConnection()){
-        this->writeErrorLog("Failed to connect broker ("+ this->getBrokerAddr() + ")");
-        return NseMQ::ERR_FAIL_CONNECT_BROKER;
+    // judge the run status.
+    if(run_status_ != INIT_STATUS){
+        this->writeErrorLog("Failed to ubscribe: only allow to subscribe topic before called start().");
+        return NseMQ::ERR_C_RUN_STATUS;
     }
     // create topic.
     RdKafka::Topic *topic = RdKafka::Topic::create(getConsumer(), topic_name, NULL, errstr_);
@@ -79,9 +81,9 @@ NseMQ::ErrorCode NseMqConsumer::subscribe(std::string topic_name,
         return NseMQ::ERR_C_SUBS_BROKER_TOPIC;
     }
     // add mutex lock, put topic name and callback into map.
-    GET_MUTEX();
+    topic_mutex.lock();
     topic_cb_map_.insert(std::pair<std::string, RdKafka::ConsumeCb *>(topic_name, &consume_cb));
-    RELASE_MUTEX();
+    topic_mutex.unlock();
     if(0 == topic_cb_map_.count(topic_name)){
         this->writeErrorLog("Failed to subscribe topic (" + RdKafka::err2str(resp) + ")");
         return NseMQ::ERR_C_SUBS_LOCAL_TOPIC;
@@ -93,6 +95,11 @@ NseMQ::ErrorCode NseMqConsumer::subscribe(std::string topic_name,
  * unsubscribe topic by topic name.
  */
 NseMQ::ErrorCode NseMqConsumer::unSubscribe(std::string topic_name){
+    // judge the run status.
+    if(run_status_ != INIT_STATUS){
+        this->writeErrorLog("Failed to unsubscribe: only allow to unsubscribe topic before called start().");
+        return NseMQ::ERR_C_RUN_STATUS;
+    }
     // verify that the topic callback map is empty or not includes topic_name.
     if(topic_cb_map_.empty() || 0 == topic_cb_map_.count(topic_name)){
         this->writeErrorLog("% topic subscription is empty or havn't subscribed the topic:" + topic_name);
@@ -106,9 +113,9 @@ NseMQ::ErrorCode NseMqConsumer::unSubscribe(std::string topic_name){
         return NseMQ::ERR_C_UNSUNS_BROKER_TOPIC;
     }
     // add mutex lock, delete topic from topic callback map.
-    GET_MUTEX();
+    topic_mutex.lock();
     topic_cb_map_.erase(topic_name);
-    RELASE_MUTEX();
+    topic_mutex.unlock();
     return NseMQ::ERR_NO_ERROR;
 }
 
@@ -165,14 +172,30 @@ NseMQ::ErrorCode NseMqConsumer::start(){
         this->writeErrorLog("Failed to consume: don't have subscribe one topic.");
         return NseMQ::ERR_C_POLL_TOPIC_EMPTY;
     }
-    // start the thread with different platforms.
-#ifdef _WIN32
-    if(!this->pollThreadWin()){
-        return NseMQ::ERR_C_START_CREATE_THREAD;
+    // start the poll thread.
+    for(std::map<std::string,RdKafka::ConsumeCb *>::iterator iter = topic_cb_map_.begin();
+        iter != topic_cb_map_.end(); iter++){
+        thread_group_.create_thread(boost::bind(&NseMqConsumer::pollThreadFunction,this,
+                                                iter->first, iter->second));
     }
-#endif
     this->setRunStatus(START_STATUS);
     return NseMQ::ERR_NO_ERROR;
+}
+
+void NseMqConsumer::pollThreadFunction(std::string topic_name, RdKafka::ConsumeCb *consume_cb) {
+    std::string err_str;
+    RdKafka::Topic *topic = RdKafka::Topic::create(this->getConsumer(), topic_name, NULL, err_str);
+    try{
+        while(1){
+            boost::this_thread::interruption_point();
+            this->getConsumer()->consume_callback(topic, this->getPartition(),
+                                                  CALLBACK_TIMEOUT_MS, consume_cb, NULL);
+            this->getConsumer()->poll(0);
+            std::cout << "% [NseMQ] receive poll()" << std::endl;
+        }
+    }catch(boost::thread_interrupted& ){
+        // std::cout << "internal thread interrupt." << std::endl;
+    }
 }
 
 /* close consumer and clear memory. */
@@ -196,18 +219,13 @@ NseMQ::ErrorCode NseMqConsumer::close(){
         }
         topic_cb_map_.clear();
     }
-    // TODO:close error
     // NO.2 end the consumer thread.
-#ifdef _WIN32
-    for(int i = 0; i < THREAD_MAX_NUM; i++){
-        if(handle[i] != NULL){
-            CloseHandle(handle[i]);
-        }
+    if(thread_group_.size() > 0){
+        thread_group_.interrupt_all();
+        thread_group_.join_all();
     }
-#endif
     // NO.3 delete other object.
     delete consumer_conf_;
-
     // NO.4 delete consumer object.
     delete consumer_;
     // NO.6 wait for RdKafka to decommission.
@@ -215,82 +233,6 @@ NseMQ::ErrorCode NseMqConsumer::close(){
     this->setRunStatus(CLOSE_STATUS);
     return NseMQ::ERR_NO_ERROR;
 }
-
- /* pause consume thread. */
-NseMQ::ErrorCode NseMqConsumer::pause(){
-     // judge the run status.
-     if(run_status_ != START_STATUS){
-         this->writeErrorLog("Failed to pause: only in START_STATUS arrow to call pause().");
-         return NseMQ::ERR_C_RUN_STATUS;
-     }
-    // pause the consume thread.
-#ifdef _WIN32
-    for(int i = 0; i < THREAD_MAX_NUM; i++){
-        if(handle[i] != NULL){
-            SuspendThread(handle[i]);
-        }
-    }
-#endif
-    this->setRunStatus(PAUSE_STATUS);
-    return NseMQ::ERR_NO_ERROR;
-}
-
-/* resume the consumer thread. */
-NseMQ::ErrorCode NseMqConsumer::resume(){
-    // judge the run status.
-    if(run_status_ != PAUSE_STATUS){
-        this->writeErrorLog("Failed to resume: only in PAUSE_STATUS arrow to call resume().");
-        return NseMQ::ERR_C_RUN_STATUS;
-    }
-#ifdef _WIN32
-    for(int i = 0; i < THREAD_MAX_NUM; i++){
-        if(handle[i] != NULL){
-            ResumeThread(handle[i]);
-        }
-    }
-#endif
-    this->setRunStatus(START_STATUS);
-    return NseMQ::ERR_NO_ERROR;
-}
-
-#ifdef _WIN32
-bool NseMqConsumer::pollThreadWin(){
-    threadData = new NseMqThreadData[topic_cb_map_.size()];
-    int i = 0;
-    for(std::map<std::string,RdKafka::ConsumeCb *>::iterator iter = topic_cb_map_.begin();
-        iter != topic_cb_map_.end(); iter++){
-        threadData[i].index = i;
-        threadData[i].consumer = this;
-        threadData[i].topic_name = iter->first;
-        threadData[i].consume_cb = iter->second;
-        handle[i] = (HANDLE)_beginthreadex(NULL, 0,ThreadFun, &threadData[i],
-                                           0, &uiThreadID[i]);
-        if(handle[i] == NULL || uiThreadID[i] == NULL){
-            return false;
-        }else{
-            threadData[i].handle = &handle[i];
-            threadData[i].uiThreadID = uiThreadID[i];
-        }
-        ++i;
-    }
-    return true;
-}
-
-static unsigned int __stdcall ThreadFun(void *threadParam){
-    NseMqThreadData *threadData = (NseMqThreadData *)threadParam;
-    NseMqConsumer *consumer = (NseMqConsumer *)(threadData->consumer);
-    std::string err_str;
-    while(1){
-        RdKafka::Topic *topic = RdKafka::Topic::create(consumer->getConsumer(), threadData->topic_name, NULL, err_str);
-        consumer->getConsumer()->consume_callback(topic, consumer->getPartition(),
-                                                  CALLBACK_TIMEOUT_MS, threadData->consume_cb, NULL);
-        consumer->getConsumer()->poll(0);
-        std::cout << "% [NseMQ] receive poll()" << std::endl;
-    }
-    _endthreadex(threadData->uiThreadID);
-    return 0;
-}
-#endif
 
 bool NseMqConsumer::judgeConnection() {
     return this->judgeConnectionImpl(this->getConsumer());

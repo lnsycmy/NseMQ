@@ -13,22 +13,12 @@
 #include <cstring>
 #include <typeinfo>
 #include <math.h>
-
-#ifdef _WIN32
-#include <Windows.h>
-#include <process.h>
-#endif
-
+#include <boost/thread.hpp>
 #include "NseMqHandle.h"
 #include "NseMqSerializer.h"
 #include "librdkafka/rdkafkacpp.h"
 
-#define THREAD_MAX_NUM 20
 #define CALLBACK_TIMEOUT_MS 1000
-
-#ifdef _WIN32
-static unsigned int __stdcall ThreadFun(void *consumer_ptr);
-#endif
 
 class NseMqThreadData;
 
@@ -49,24 +39,18 @@ private:
 
     std::map<std::string, RdKafka::ConsumeCb *> topic_cb_map_; // topic and callback mapping.
 
+    boost::thread_group thread_group_;
     /* private function about thread */
-#ifdef _WIN32
-#define GET_MUTEX() do{WaitForSingleObject(hMutex, INFINITE);}while(0==1)
-#define RELASE_MUTEX() do{ReleaseMutex(hMutex);}while(0==1)
-    HANDLE handle[THREAD_MAX_NUM];
-    HANDLE hMutex = INVALID_HANDLE_VALUE;
-    unsigned uiThreadID[THREAD_MAX_NUM];
-    NseMqThreadData *threadData;
-    bool pollThreadWin();
-#endif
+    void pollThreadFunction(std::string topic_name,
+                            RdKafka::ConsumeCb *consume_cb);    // start thread function.
 public:
     enum RunStatus{
         INIT_STATUS = 0,
         START_STATUS = 1,
-        PAUSE_STATUS = 2,
-        CLOSE_STATUS = 3,
+        CLOSE_STATUS = 2,
     };
     RunStatus run_status_;
+    boost::mutex topic_mutex;
 public:
     NseMqConsumer();
     NseMqConsumer(std::string broker_addr);
@@ -77,7 +61,7 @@ public:
 
     // subscribe to a topic, and bind a consume callback object to topic.
     NseMQ::ErrorCode subscribe(std::string topic_name,
-                               RdKafka::ConsumeCb &consume_cb,
+                               RdKafka::ConsumeCb &consume_callback,
                                int64_t start_offset = RdKafka::Topic::OFFSET_END);
     // unsubscribe topic by topic name and need to change topic map.
     NseMQ::ErrorCode unSubscribe(std::string topic_name);
@@ -85,10 +69,6 @@ public:
     NseMQ::ErrorCode subscription(std::vector<std::string> &topics);
 
     NseMQ::ErrorCode start();           // start to consume message from broker.
-
-    NseMQ::ErrorCode pause();           // pause the consumer thread.
-
-    NseMQ::ErrorCode resume();          // resume the consumer thread.
 
     NseMQ::ErrorCode poll();            // polled to call the topic consume callback.
 
@@ -130,19 +110,6 @@ public:
     RunStatus getRunStatus() const;
 
     void setRunStatus(RunStatus runStatus);
-};
-
-/* thread function used data */
-class NseMqThreadData{
-public:
-    int index;
-    NseMqConsumer *consumer;
-    std::string topic_name;
-    RdKafka::ConsumeCb *consume_cb;
-#ifdef _WIN32
-    HANDLE *handle;
-    unsigned uiThreadID;
-#endif
 };
 
 #endif //NSEMQ_NSEMQCONSUMER_H_
