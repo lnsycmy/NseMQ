@@ -5,9 +5,9 @@ std::string NseMqProducer::errstr_ = "";
 
 NseMqProducer::NseMqProducer() {
     // initialize pointers
-    producer_conf_ = nullptr;
-    producer_ = nullptr;
-    producer_dr_cb_ = nullptr;
+    producer_conf_ = NULL;
+    producer_ = NULL;
+    producer_dr_cb_ = NULL;
 }
 
 /**
@@ -17,9 +17,9 @@ NseMqProducer::NseMqProducer() {
  */
 NseMqProducer::NseMqProducer(std::string broker_addr, RdKafka::DeliveryReportCb *producer_cb) {
     // initialize pointers
-    producer_conf_ = nullptr;
-    producer_ = nullptr;
-    producer_dr_cb_ = nullptr;
+    producer_conf_ = NULL;
+    producer_ = NULL;
+    producer_dr_cb_ = NULL;
     this->init(broker_addr, producer_cb);
 }
 
@@ -48,7 +48,7 @@ NseMQ::ErrorCode NseMqProducer::init(std::string broker_addr, RdKafka::DeliveryR
     }
 
     // set the producer delivery report callback
-    if (nullptr != getProducerDrCb()) {
+    if (NULL != getProducerDrCb()) {
         if (producer_conf_->set("dr_cb", getProducerDrCb(), errstr_) != RdKafka::Conf::CONF_OK) {
             return NseMQ::ERR_P_INIT_DR_CALLBACK;
         }
@@ -159,16 +159,16 @@ NseMQ::ErrorCode NseMqProducer::close(){
     }
 
     // delete other object.
-    if(nullptr != producer_conf_){
+    if(NULL != producer_conf_){
         delete producer_conf_;
     }
 
     // delete producer object.
-    if(nullptr != producer_){
+    if(NULL != producer_){
         delete producer_;
     }
 
-    if(nullptr != producer_dr_cb_){
+    if(NULL != producer_dr_cb_){
         delete producer_dr_cb_;
     }
 

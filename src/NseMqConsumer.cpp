@@ -191,10 +191,11 @@ void NseMqConsumer::pollThreadFunction(std::string topic_name, RdKafka::ConsumeC
             this->getConsumer()->consume_callback(topic, this->getPartition(),
                                                   CALLBACK_TIMEOUT_MS, consume_cb, NULL);
             this->getConsumer()->poll(0);
+            boost::mutex::scoped_lock lock(io_mutex);
             std::cout << "% [NseMQ] receive poll()" << std::endl;
         }
     }catch(boost::thread_interrupted& ){
-        // std::cout << "internal thread interrupt." << std::endl;
+        // thread interrupted, no operation.
     }
 }
 
@@ -228,7 +229,7 @@ NseMQ::ErrorCode NseMqConsumer::close(){
     delete consumer_conf_;
     // NO.4 delete consumer object.
     delete consumer_;
-    // NO.6 wait for RdKafka to decommission.
+    // NO.5 wait for RdKafka to decommission.
     RdKafka::wait_destroyed(2000);
     this->setRunStatus(CLOSE_STATUS);
     return NseMQ::ERR_NO_ERROR;

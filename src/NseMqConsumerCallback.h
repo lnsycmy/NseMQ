@@ -11,26 +11,22 @@
 #include <cstring>
 #include <typeinfo>
 
-#if _AIX
-#include <unistd.h>
-#endif
-
 #include "NseMqHandle.h"
-#include "NseMqSerializer.h"
 #include "librdkafka/rdkafkacpp.h"
 
 template<class T>
 class NseMqConsumerCallback : public RdKafka::ConsumeCb, public NseMqHandle{
-private:
-    T t_;
 public:
+    // consume callback function which need to implement by user.
     virtual void consume_callback(T &t) = 0;
+
+    // deal with receive message and call the consume_callback(T &t).
     bool msg_package(RdKafka::Message &msg){
         // compare the type of T and message.
         const RdKafka::Headers *headers = msg.headers();
         if(headers){
             const RdKafka::Headers::Header hdr = headers->get_all()[0];
-            if(hdr.value() != NULL){
+            if(NULL != hdr.value()){
                 const char *msg_type = (const char *)hdr.value();
                 if(strcmp(msg_type, typeid(T).name()) != 0){
                     std::string err_str(typeid(T).name());
@@ -45,12 +41,12 @@ public:
         // get message length.
         size_t msg_len = msg.len();
         // serialize the msg to t_.
-        NseMqSerializer serializer;
-        serializer.decode(t_, static_cast<const unsigned char *>(msg.payload()), msg_len);
-        consume_callback(t_);
+        T t;
+        this->decode(t, static_cast<const unsigned char *>(msg.payload()), msg_len);
+        consume_callback(t);
         return true;
     }
-
+    // implement rdkafka consume callback function.
     void consume_cb(RdKafka::Message &msg, void *opaque){
         switch (msg.err()) {
             case RdKafka::ERR_NO_ERROR:

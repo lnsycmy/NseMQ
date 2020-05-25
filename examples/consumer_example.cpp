@@ -8,7 +8,6 @@
 
 #include "student.hh"
 #include "cpx.hh"
-#include "../src/NseMqSerializer.h"
 #include "../src/NseMqConsumer.h"
 #include "../src/NseMqConsumerCallback.h"
 

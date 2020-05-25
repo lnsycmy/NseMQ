@@ -11,10 +11,8 @@
 #include <cstdio>
 #include <cstring>
 #include <typeinfo>
-
+#include <librdkafka/rdkafkacpp.h>
 #include "NseMqHandle.h"
-#include "NseMqSerializer.h"
-#include "librdkafka/rdkafkacpp.h"
 
 class NseMqProducer : public NseMqHandle{
 private:
@@ -25,7 +23,6 @@ private:
     RdKafka::Producer *producer_;               // producer object pointer
     RdKafka::DeliveryReportCb *producer_dr_cb_; // producer delivery report callback
     int32_t partition_;                         // use default setting:0
-    NseMqSerializer serializer_;                // serializer object
 public:
     enum RunStatus{
         INIT_STATUS = 0,
@@ -48,7 +45,7 @@ public:
         std::string t_type = typeid(t).name();
         // serialize the massage
         size_t msg_len = 0;
-        unsigned char * msg = serializer_.encode(t, msg_len);
+        unsigned char * msg = this->encode(t, msg_len);
         // produce message.
         return produce((char *)msg, msg_len, topic_name, t_type);
     }

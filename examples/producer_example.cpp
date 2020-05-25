@@ -41,7 +41,7 @@ int main(){
     NseMQ::student s1;
     s1.name = "cmy";
     s1.sex = "boy";
-    // s1.age = 24;
+    s1.age = 24;
     if(producer.produce<NseMQ::student>(s1, topic_name) != NseMQ::ERR_NO_ERROR){
         std::cout << "failed produce student in main()"<< std::endl;
     }
@@ -49,7 +49,7 @@ int main(){
     c1.re = 1.2;
     c1.im = 2.4;
     if(producer.produce<NseMQ::cpx>(c1, topic_name2) != NseMQ::ERR_NO_ERROR){
-        std::cout << "failed produce cpx in main()"<< std::endl;
+        std::cout << "failed cpx student in main()"<< std::endl;
     }
     return 0;
 }

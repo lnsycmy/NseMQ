@@ -14,13 +14,10 @@
 #include <typeinfo>
 #include <math.h>
 #include <boost/thread.hpp>
+#include <librdkafka/rdkafkacpp.h>
 #include "NseMqHandle.h"
-#include "NseMqSerializer.h"
-#include "librdkafka/rdkafkacpp.h"
 
 #define CALLBACK_TIMEOUT_MS 1000
-
-class NseMqThreadData;
 
 class NseMqConsumer : public NseMqHandle{
 private:
@@ -70,8 +67,6 @@ public:
     NseMQ::ErrorCode subscription(std::vector<std::string> &topics);
 
     NseMQ::ErrorCode start();           // start to consume message from broker.
-
-    NseMQ::ErrorCode pause();
 
     NseMQ::ErrorCode poll();            // polled to call the topic consume callback.
 

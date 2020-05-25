@@ -10,7 +10,12 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cstring>
-#include "librdkafka/rdkafkacpp.h"
+#include <librdkafka/rdkafkacpp.h>
+#include "avro/Encoder.hh"
+#include "avro/Decoder.hh"
+#include "avro/ValidSchema.hh"
+#include "avro/Compiler.hh"
+#include "avro/Specific.hh"
 
 namespace NseMQ{
     enum ErrorCode{
@@ -40,14 +45,43 @@ namespace NseMQ{
 
         /* general error code */
         ERR_FAIL_CONNECT_BROKER = -100,    // failed to connect broker.
-
-
     };
 }
 class NseMqHandle{
 public:
     NseMqHandle();
     ~NseMqHandle();
+
+    // encode t object to msg
+    template <typename T>
+    unsigned char * encode(T &t, size_t &msg_len){
+        // initialize the memoryOutputStream/encoder.
+        std::unique_ptr<avro::OutputStream> out = avro::memoryOutputStream();
+        avro::EncoderPtr encoder = avro::binaryEncoder();
+        encoder->init(*out);
+        avro::encode(*encoder, t);
+        encoder->flush();                  // before byteCount() MUST called flush().
+        msg_len = encoder->byteCount();    // get the
+        unsigned char *msg = new unsigned char[msg_len];
+        std::unique_ptr<avro::InputStream> in = avro::memoryInputStream(*out);
+        size_t used_byte = 0, n = 0;
+        unsigned char *data;
+        while(in->next((const unsigned char**)(&data), &n)){
+            memcpy(msg + used_byte, data, n);
+            used_byte += n;
+        }
+        return msg;
+    }
+    // decode message to object 't'
+    template <typename T>
+    bool decode(T &t, const unsigned char * msg, size_t msg_len){
+        std::unique_ptr<avro::InputStream> in = avro::memoryInputStream(msg, msg_len);
+        avro::DecoderPtr decoder = avro::binaryDecoder();
+        decoder->init(*in);
+        avro::decode(*decoder, t);
+        return true;
+    }
+
     // test connection with broker.
     bool judgeConnectionImpl(RdKafka::Handle *handle);
     // get all topics from broker.
