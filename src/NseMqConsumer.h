@@ -51,6 +51,7 @@ public:
     };
     RunStatus run_status_;
     boost::mutex topic_mutex;
+    boost::mutex io_mutex;
 public:
     NseMqConsumer();
     NseMqConsumer(std::string broker_addr);
@@ -69,6 +70,8 @@ public:
     NseMQ::ErrorCode subscription(std::vector<std::string> &topics);
 
     NseMQ::ErrorCode start();           // start to consume message from broker.
+
+    NseMQ::ErrorCode pause();
 
     NseMQ::ErrorCode poll();            // polled to call the topic consume callback.
 
