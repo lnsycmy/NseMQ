@@ -30,7 +30,7 @@ link_directories(${Boost_LIBRARY_DIRS})]]
 add_library(NseMQ STATIC
         src/NseMqProducer.cpp
         src/NseMqConsumer.cpp
-        src/NseMqHandle.cpp)
+        src/NseMqBase.cpp)
 
 add_executable(NseMqProducer src/NseMqProducer.cpp)
 target_link_libraries(NseMqProducer librdkafkacpp)

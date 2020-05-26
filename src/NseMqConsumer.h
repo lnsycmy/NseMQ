@@ -15,11 +15,11 @@
 #include <math.h>
 #include <boost/thread.hpp>
 #include <librdkafka/rdkafkacpp.h>
-#include "NseMqHandle.h"
+#include "NseMqBase.h"
 
 #define CALLBACK_TIMEOUT_MS 1000
 
-class NseMqConsumer : public NseMqHandle{
+class NseMqConsumer : public NseMqBase{
 private:
     std::string broker_addr_;                   // broker address by hostname:port(ie. 127.0.0.1:9092)
     static std::string errstr_;                 // error string from function.

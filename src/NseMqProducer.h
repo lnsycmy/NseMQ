@@ -12,9 +12,9 @@
 #include <cstring>
 #include <typeinfo>
 #include <librdkafka/rdkafkacpp.h>
-#include "NseMqHandle.h"
+#include "NseMqBase.h"
 
-class NseMqProducer : public NseMqHandle{
+class NseMqProducer : public NseMqBase{
 private:
     std::string broker_addr_;                   // broker address by hostname:port(ie. 127.0.0.1:9092)
     static std::string errstr_;                 // error string from function.

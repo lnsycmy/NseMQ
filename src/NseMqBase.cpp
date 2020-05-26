@@ -3,24 +3,24 @@
  * @author cmy
  * @date 2020/4/26.
  */
-#include "NseMqHandle.h"
+#include "NseMqBase.h"
 
-NseMqHandle::NseMqHandle(){
-    //std::cout << "NseMqHandle()" << std::endl;
+NseMqBase::NseMqBase(){
+    //std::cout << "NseMqBase()" << std::endl;
 }
 
-NseMqHandle::~NseMqHandle(){
-    // std::cout << "~NseMqHandle()" << std::endl;
+NseMqBase::~NseMqBase(){
+    // std::cout << "NseMqBase" << std::endl;
 }
 
-bool NseMqHandle::judgeConnectionImpl(RdKafka::Handle *handle){
+bool NseMqBase::judgeConnectionImpl(RdKafka::Handle *handle){
     RdKafka::Metadata *metadata;
     RdKafka::ErrorCode err = handle->metadata(true, NULL,
                                                            &metadata, 1000);
     return (err == RdKafka::ERR_NO_ERROR)?true:false;
 }
 
-void NseMqHandle::getBrokerTopicsImpl(std::vector<std::string> &topics, RdKafka::Handle *handle){
+void NseMqBase::getBrokerTopicsImpl(std::vector<std::string> &topics, RdKafka::Handle *handle){
     RdKafka::Metadata *metadata;
     RdKafka::ErrorCode err = handle->metadata(true, NULL,
                                                            &metadata, 1000);
@@ -36,7 +36,7 @@ void NseMqHandle::getBrokerTopicsImpl(std::vector<std::string> &topics, RdKafka:
     }
 }
 
-void NseMqHandle::writeErrorLogImpl(std::string err_str, std::string write_object){
+void NseMqBase::writeErrorLogImpl(std::string err_str, std::string write_object){
     if(write_object.empty()){
         std::cerr << "% [NseMQ]" << err_str << std::endl;
     }else{

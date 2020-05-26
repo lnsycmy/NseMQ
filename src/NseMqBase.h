@@ -47,10 +47,10 @@ namespace NseMQ{
         ERR_FAIL_CONNECT_BROKER = -100,    // failed to connect broker.
     };
 }
-class NseMqHandle{
+class NseMqBase{
 public:
-    NseMqHandle();
-    ~NseMqHandle();
+    NseMqBase();
+    ~NseMqBase();
 
     // encode t object to msg
     template <typename T>

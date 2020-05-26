@@ -11,11 +11,11 @@
 #include <cstring>
 #include <typeinfo>
 
-#include "NseMqHandle.h"
+#include "NseMqBase.h"
 #include "librdkafka/rdkafkacpp.h"
 
 template<class T>
-class NseMqConsumerCallback : public RdKafka::ConsumeCb, public NseMqHandle{
+class NseMqConsumerCallback : public RdKafka::ConsumeCb, public NseMqBase{
 public:
     // consume callback function which need to implement by user.
     virtual void consume_callback(T &t) = 0;
@@ -40,7 +40,7 @@ public:
         }
         // get message length.
         size_t msg_len = msg.len();
-        // serialize the msg to t_.
+        // serialize the msg to t.
         T t;
         this->decode(t, static_cast<const unsigned char *>(msg.payload()), msg_len);
         consume_callback(t);

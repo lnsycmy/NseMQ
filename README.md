@@ -49,7 +49,7 @@ avrogencpp -i student.json -o student.hh -n NseMQ
 
 生产者类 [NseMqProducer](src/NseMqProducer.h)，完成数据的序列化和发送。
 
-> 注：NseMQ的API函数，通常返回`NseMQ::ErrorCode`错误回执码，函数执行成功返回`ERR_NO_ERROR`，其他回执码详见 [NseMqHandle.h](src/NseMqHandle.h) 。
+> 注：NseMQ的API函数，通常返回`NseMQ::ErrorCode`错误回执码，函数执行成功返回`ERR_NO_ERROR`，其他回执码详见 [NseMqHandle.h](src/NseMqBase.h) 。
 
 **生产者API**
 

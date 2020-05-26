@@ -31,7 +31,7 @@ NseMqProducer::~NseMqProducer() {
  * initialize producer configuration and create producer.
  * @param broker_addr set the broker address.
  * @param producer_cb set the producer callback.
- * @return NseMQ::ErrorCod suggest reference NseMqHandle.h
+ * @return NseMQ::ErrorCod suggest reference NseMqBase.h
  */
 NseMQ::ErrorCode NseMqProducer::init(std::string broker_addr, RdKafka::DeliveryReportCb *producer_cb) {
     // set the broker address/partition/producer delievry callback
