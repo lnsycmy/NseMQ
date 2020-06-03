@@ -33,7 +33,10 @@ public:
 int main(){
     std::cout << "enter main()" <<std::endl;
     NseMqConsumer consumer;
-    consumer.init("localhost:9092");
+
+    if(consumer.init("localhost:9092") != NseMQ::ERR_NO_ERROR){
+        return -1;
+    }
 
     ConsumerCallback<NseMQ::student> cb1;
     ConsumerCallback<NseMQ::cpx> cb2;

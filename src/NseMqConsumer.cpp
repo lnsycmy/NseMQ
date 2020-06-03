@@ -1,8 +1,5 @@
 #include "NseMqConsumer.h"
 
-// initialize the static variable errstr_.
-std::string NseMqConsumer::errstr_ = "";
-
 // no-parameter constructor.
 NseMqConsumer::NseMqConsumer(){
     // initialize pointers and run status.
@@ -48,6 +45,7 @@ NseMQ::ErrorCode NseMqConsumer::init(std::string broker_addr) {
     // judge connection with broker.
     if(!this->judgeConnection()){
         this->writeErrorLog("Failed to connect broker ("+ this->getBrokerAddr() + ")");
+        return NseMQ::ERR_FAIL_CONNECT_BROKER;
     }
     this->setRunStatus(INIT_STATUS);
     return NseMQ::ERR_NO_ERROR;
@@ -254,13 +252,6 @@ const std::string &NseMqConsumer::getBrokerAddr() const {
 
 void NseMqConsumer::setBrokerAddr(const std::string &brokerAddr) {
     broker_addr_ = brokerAddr;
-}
-const std::string &NseMqConsumer::getErrstr() {
-    return errstr_;
-}
-
-void NseMqConsumer::setErrstr(const std::string &errstr) {
-    errstr_ = errstr;
 }
 
 RdKafka::Conf *NseMqConsumer::getConsumerConf() const {

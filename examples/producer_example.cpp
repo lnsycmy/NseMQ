@@ -5,7 +5,6 @@
 #include "student.hh"
 #include "cpx.hh"
 #include "../src/NseMqProducer.h"
-#include <windows.h>
 /* the delivery report callback.
  * This callback will be called once per message to inform
  * the application if delivery succeeded or failed.
@@ -36,14 +35,16 @@ int main(){
     NseMqProducer producer;
     ProducerCallback *producer_cb = new ProducerCallback();
 
-    producer.init(broker_addr, producer_cb);
+    if(producer.init(broker_addr, producer_cb) != NseMQ::ERR_NO_ERROR){
+        return -1;
+    }
 
     NseMQ::student s1;
     s1.name = "cmy";
     s1.sex = "boy";
     s1.age = 24;
     if(producer.produce<NseMQ::student>(s1, topic_name) != NseMQ::ERR_NO_ERROR){
-        std::cout << "failed produce student in main()"<< std::endl;
+        std::cout << "failed produce student in main()" << std::endl;
     }
     NseMQ::cpx c1;
     c1.re = 1.2;

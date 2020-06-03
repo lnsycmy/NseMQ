@@ -5,6 +5,12 @@
  * @author cmy
  * @date 2020/4/26
  */
+#ifdef NseMQ_EXPORTS
+#define NSE_EXPORT _declspec(dllexport)
+#else
+#define NSE_EXPORT  _declspec(dllimport)
+#endif
+
 #include <iostream>
 #include <string>
 #include <map>
@@ -13,16 +19,16 @@
 #include <cstring>
 #include <typeinfo>
 #include <math.h>
+#define BOOST_ALL_DYN_LINK
 #include <boost/thread.hpp>
 #include <librdkafka/rdkafkacpp.h>
 #include "NseMqBase.h"
 
 #define CALLBACK_TIMEOUT_MS 1000
 
-class NseMqConsumer : public NseMqBase{
+class NSE_EXPORT NseMqConsumer : public NseMqBase{
 private:
     std::string broker_addr_;                   // broker address by hostname:port(ie. 127.0.0.1:9092)
-    static std::string errstr_;                 // error string from function.
 
     RdKafka::Conf *consumer_conf_;              // consumer configuration
     RdKafka::Consumer *consumer_;               // consumer object pointer
@@ -36,7 +42,7 @@ private:
 
     std::map<std::string, RdKafka::ConsumeCb *> topic_cb_map_; // topic and callback mapping.
 
-    boost::thread_group thread_group_;
+    boost::thread_group thread_group_;          // consumer thread group.
     /* private function about thread */
     void pollThreadFunction(std::string topic_name,
                             RdKafka::ConsumeCb *consume_cb);    // start thread function.
@@ -46,9 +52,9 @@ public:
         START_STATUS = 1,
         CLOSE_STATUS = 2,
     };
-    RunStatus run_status_;
-    boost::mutex topic_mutex;
-    boost::mutex io_mutex;
+    RunStatus run_status_;                      // consumer class current status.
+    boost::mutex topic_mutex;                   // topic mutex.
+    boost::mutex io_mutex;                      // iostream mutex.
 public:
     NseMqConsumer();
     NseMqConsumer(std::string broker_addr);

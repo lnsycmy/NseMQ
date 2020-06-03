@@ -16,7 +16,7 @@ NseMQ基于`C++`实现，集成了目前流行的 [Kafka](http://kafka.apachecn.
 
 ### 数据准备
 
-NseMQ库中的类数据对象使用JSON文件进行定义，可通过bin目录中的`avrogencpp.exe`生成对应的.hh头文件，包含类定义和`encode`, `decode`函数。
+NseMQ库中的类数据对象使用JSON文件进行定义，可通过`avro`工具中的`avrogencpp.exe`生成对应的.hh头文件，包含类定义和`encode`, `decode`函数。
 
 例如，若定义一个`student`类数据对象，可通过如下步骤。
 
@@ -49,7 +49,7 @@ avrogencpp -i student.json -o student.hh -n NseMQ
 
 生产者类 [NseMqProducer](src/NseMqProducer.h)，完成数据的序列化和发送。
 
-> 注：NseMQ的API函数，通常返回`NseMQ::ErrorCode`错误回执码，函数执行成功返回`ERR_NO_ERROR`，其他回执码详见 [NseMqHandle.h](src/NseMqBase.h) 。
+> 注：NseMQ的API函数，通常返回`NseMQ::ErrorCode`错误回执码，函数执行成功返回`ERR_NO_ERROR`，其他回执码详见 [NseMqBase.h](src/NseMqBase.h) 。
 
 **生产者API**
 

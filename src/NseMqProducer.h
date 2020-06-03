@@ -5,6 +5,12 @@
  * @author cmy
  * @date 2020/4/26.
  */
+#ifdef NseMQ_EXPORTS
+#define NSE_EXPORT _declspec(dllexport)
+#else
+#define NSE_EXPORT _declspec(dllimport)
+#endif
+
 #include <iostream>
 #include <string>
 #include <cstdlib>
@@ -14,10 +20,9 @@
 #include <librdkafka/rdkafkacpp.h>
 #include "NseMqBase.h"
 
-class NseMqProducer : public NseMqBase{
+class NSE_EXPORT NseMqProducer : public NseMqBase{
 private:
     std::string broker_addr_;                   // broker address by hostname:port(ie. 127.0.0.1:9092)
-    static std::string errstr_;                 // error string from function.
 
     RdKafka::Conf *producer_conf_;              // producer configuration
     RdKafka::Producer *producer_;               // producer object pointer

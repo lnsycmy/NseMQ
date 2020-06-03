@@ -1,8 +1,4 @@
 #include  "NseMqProducer.h"
-
-// initialize the static variable errstr_.
-std::string NseMqProducer::errstr_ = "";
-
 NseMqProducer::NseMqProducer() {
     // initialize pointers
     producer_conf_ = NULL;
@@ -58,6 +54,11 @@ NseMQ::ErrorCode NseMqProducer::init(std::string broker_addr, RdKafka::DeliveryR
     this->setProducer(RdKafka::Producer::create(producer_conf_, errstr_));
     if (!getProducer()) {
         return NseMQ::ERR_P_CREATE_PRODUCER;
+    }
+    // judge connection with broker.
+    if(!this->judgeConnection()){
+        this->writeErrorLog("Failed to connect broker ("+ this->getBrokerAddr() + ")");
+        return NseMQ::ERR_FAIL_CONNECT_BROKER;
     }
     this->setRunStatus(INIT_STATUS);
     return NseMQ::ERR_NO_ERROR;
@@ -138,7 +139,7 @@ NseMQ::ErrorCode NseMqProducer::produce(char *msg, size_t msg_len, std::string t
         err_temp = NseMQ::ERR_NO_ERROR;
     }
     producer_->poll(1000);
-    delete msg;     // deleate the message memory
+    delete msg;     // release the message memory
     return err_temp;
 }
 
@@ -212,14 +213,6 @@ const std::string &NseMqProducer::getBrokerAddr() const {
 
 void NseMqProducer::setBrokerAddr(const std::string &brokerAddr) {
     broker_addr_ = brokerAddr;
-}
-
-const std::string &NseMqProducer::getErrstr() {
-    return errstr_;
-}
-
-void NseMqProducer::setErrstr(const std::string &errstr) {
-    errstr_ = errstr;
 }
 
 RdKafka::DeliveryReportCb *NseMqProducer::getProducerDrCb() const {

@@ -31,7 +31,7 @@ namespace avro {
 /// 
 /// The concept classes are used to simplify NodeImpl.  Since different types
 /// of avro types carry different attributes, such as names, or field names for
-/// record members.  Using the concept class of NoAttribute vs Attribute, the
+/// record members.  Using the concept class of NoAttribute vs2010 Attribute, the
 /// NodeImpl object can enable/disable the attribute, but the code is the same
 /// in either case.
 ///

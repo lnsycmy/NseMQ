@@ -5,6 +5,12 @@
  * @author cmy
  * @date 2020/4/26.
  */
+#ifdef NseMQ_EXPORTS
+#define NSE_EXPORT _declspec(dllexport)
+#else
+#define NSE_EXPORT _declspec(dllimport)
+#endif
+
 #include <iostream>
 #include <string>
 #include <cstdlib>
@@ -18,7 +24,7 @@
 #include "avro/Specific.hh"
 
 namespace NseMQ{
-    enum ErrorCode{
+    enum NSE_EXPORT ErrorCode{
         ERR_NO_ERROR = 0,                   // execution succeed, no-error.
         /* producer error code. */
         ERR_P_INIT_BROKER_ADDRESS = -1,     // failed to set up broker address.
@@ -47,7 +53,9 @@ namespace NseMQ{
         ERR_FAIL_CONNECT_BROKER = -100,    // failed to connect broker.
     };
 }
-class NseMqBase{
+class NSE_EXPORT NseMqBase{
+public:
+    std::string errstr_;                   // error string from function.
 public:
     NseMqBase();
     ~NseMqBase();
@@ -60,9 +68,9 @@ public:
         avro::EncoderPtr encoder = avro::binaryEncoder();
         encoder->init(*out);
         avro::encode(*encoder, t);
-        encoder->flush();                  // before byteCount() MUST called flush().
-        msg_len = encoder->byteCount();    // get the
-        unsigned char *msg = new unsigned char[msg_len];
+        encoder->flush();                  // NOITCE:before byteCount() MUST called flush().
+        msg_len = encoder->byteCount();    // get the actually size.
+        unsigned char *msg = new unsigned char[msg_len];    // Create here, released in NseMqProducer::produce()
         std::unique_ptr<avro::InputStream> in = avro::memoryInputStream(*out);
         size_t used_byte = 0, n = 0;
         unsigned char *data;

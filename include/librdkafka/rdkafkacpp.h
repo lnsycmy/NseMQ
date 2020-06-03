@@ -3219,8 +3219,6 @@ class BrokerMetadata {
   virtual ~BrokerMetadata() = 0;
 };
 
-
-
 /**
  * @brief Metadata: Partition information
  */

@@ -1,8 +1,3 @@
-/**
- * handle implement.
- * @author cmy
- * @date 2020/4/26.
- */
 #include "NseMqBase.h"
 
 NseMqBase::NseMqBase(){

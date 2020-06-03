@@ -20,7 +20,7 @@ Because of the way the C++ standardization process works the
 defined version year will not be the commonly known year of the standard.
 Specifically the defined versions are:
 
-[table Detected Version Number vs. C++ Standard Year
+[table Detected Version Number vs2010. C++ Standard Year
   [[Detected Version Number] [Standard Year] [C++ Standard]]
   [[27.11.1] [1998] [ISO/IEC 14882:1998]]
   [[41.12.1] [2011] [ISO/IEC 14882:2011]]

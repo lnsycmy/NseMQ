@@ -792,7 +792,7 @@ namespace boost { namespace numeric { namespace ublas {
             if (this != &vs) {
                 BOOST_UBLAS_CHECK (size () == vs.size (), bad_size ());
                 // Sparse ranges may be nonconformant now.
-                // std::swap_ranges (begin (), end (), vs.begin ());
+                // std::swap_ranges (begin (), end (), vs2010.begin ());
                 vector_swap<scalar_swap> (*this, vs);
             }
         }

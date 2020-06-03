@@ -1,16 +1,15 @@
+#ifndef NSEMQ_NSEMQCONSUMERCALLBACK_H
+#define NSEMQ_NSEMQCONSUMERCALLBACK_H
 //
 // Created by cmy on 2020/5/14.
 //
 
-#ifndef NSEMQ_NSEMQCONSUMERCALLBACK_H
-#define NSEMQ_NSEMQCONSUMERCALLBACK_H
 #include <iostream>
 #include <string>
 #include <cstdlib>
 #include <cstdio>
 #include <cstring>
 #include <typeinfo>
-
 #include "NseMqBase.h"
 #include "librdkafka/rdkafkacpp.h"
 

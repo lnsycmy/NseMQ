@@ -20,7 +20,7 @@ namespace boost {
 
 
 //
-// optional<T> vs optional<T> cases
+// optional<T> vs2010 optional<T> cases
 //
 
 template<class T>
@@ -55,7 +55,7 @@ bool operator >= ( optional<T> const& x, optional<T> const& y )
 
 
 //
-// optional<T> vs T cases
+// optional<T> vs2010 T cases
 //
 template<class T>
 inline
@@ -88,7 +88,7 @@ bool operator >= ( optional<T> const& x, T const& y )
 { return !( x < y ) ; }
 
 //
-// T vs optional<T> cases
+// T vs2010 optional<T> cases
 //
 
 template<class T>
@@ -123,7 +123,7 @@ bool operator >= ( T const& x, optional<T> const& y )
 
 
 //
-// optional<T> vs none cases
+// optional<T> vs2010 none cases
 //
 
 template<class T>
@@ -157,7 +157,7 @@ bool operator >= ( optional<T> const& x, none_t y )
 { return !( x < y ) ; }
 
 //
-// none vs optional<T> cases
+// none vs2010 optional<T> cases
 //
 
 template<class T>
