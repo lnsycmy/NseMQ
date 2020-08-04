@@ -43,13 +43,13 @@ avrogencpp -i student.json -o student.hh -n NseMQ
 
 上述语句中，`-i student.json`指定输入的.json文件，`-o student.hh`指定输出的.hh文件，`-n NseMQ`指定类的命名空间。
 
-生成的`student.hh`详细内容请参考 [student.hh](examples/student.hh) 。
+生成的`student.hh`详细内容请参考 [student.hh](c++/examples/student.hh) 。
 
 ### 数据生产
 
-生产者类 [NseMqProducer](src/NseMqProducer.h)，完成数据的序列化和发送。
+生产者类 [NseMqProducer](c++/src/NseMqProducer.h)，完成数据的序列化和发送。
 
-> 注：NseMQ的API函数，通常返回`NseMQ::ErrorCode`错误回执码，函数执行成功返回`ERR_NO_ERROR`，其他回执码详见 [NseMqBase.h](src/NseMqBase.h) 。
+> 注：NseMQ的API函数，通常返回`NseMQ::ErrorCode`错误回执码，函数执行成功返回`ERR_NO_ERROR`，其他回执码详见 [NseMqBase.h](c++/src/NseMqBase.h) 。
 
 **生产者API**
 
@@ -120,7 +120,7 @@ if(producer.produce<NseMQ::student>(s1, "test_topic") == NseMQ::ERR_NO_ERROR){
 
 ### 数据消费
 
-消费者类 [NseMqConsumer](src/NseMqConsumer.h) ，完成数据的接收和反序列化。
+消费者类 [NseMqConsumer](c++/src/NseMqConsumer.h) ，完成数据的接收和反序列化。
 
 **消费者API**
 

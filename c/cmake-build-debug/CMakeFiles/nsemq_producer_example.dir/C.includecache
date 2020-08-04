@@ -1,0 +1,44 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../../include/librdkafka/rdkafka.h
+stdio.h
+-
+inttypes.h
+-
+sys/types.h
+-
+basetsd.h
+-
+Winsock2.h
+-
+sys/socket.h
+-
+
+E:/Project/NseMQ/c/examples/nsemq_producer_example.c
+stdio.h
+-
+../src/nsemq_producer.h
+E:/Project/NseMQ/c/src/nsemq_producer.h
+
+E:/Project/NseMQ/c/src/nsemq_base.h
+stdio.h
+-
+
+E:/Project/NseMQ/c/src/nsemq_producer.h
+stdio.h
+-
+signal.h
+-
+string.h
+-
+librdkafka/rdkafka.h
+-
+nsemq_base.h
+E:/Project/NseMQ/c/src/nsemq_base.h
+

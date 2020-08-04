@@ -2,6 +2,6 @@
 /target/
 /cmake-build-debug/
 /test/
-/bin/
-/lib/
+/c++/bin/
+/c++/lib/
 /.idea/
