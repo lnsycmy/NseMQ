@@ -20,13 +20,19 @@ Winsock2.h
 sys/socket.h
 -
 
+E:/Project/NseMQ/c/examples/nsemq_consumer_example.c
+stdio.h
+-
+string.h
+-
+librdkafka/rdkafka.h
+-
+../src/nsemq_consumer.h
+E:/Project/NseMQ/c/src/nsemq_consumer.h
+
 E:/Project/NseMQ/c/src/nsemq_base.h
 stdio.h
 -
-
-E:/Project/NseMQ/c/src/nsemq_consumer.c
-nsemq_consumer.h
-E:/Project/NseMQ/c/src/nsemq_consumer.h
 
 E:/Project/NseMQ/c/src/nsemq_consumer.h
 stdio.h

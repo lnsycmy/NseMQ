@@ -121,16 +121,6 @@
 					<DistClean command="nmake /NOLOGO /f E:\Project\NseMQ\c\cmake-build-debug\Makefile VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
-			<Target title="edit_cache">
-				<Option working_dir="E:/Project/NseMQ/c/cmake-build-debug"/>
-				<Option type="4"/>
-				<MakeCommands>
-					<Build command="nmake /NOLOGO /f E:\Project\NseMQ\c\cmake-build-debug\Makefile VERBOSE=1 edit_cache"/>
-					<CompileFile command="nmake /NOLOGO /f E:\Project\NseMQ\c\cmake-build-debug\Makefile VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="nmake /NOLOGO /f E:\Project\NseMQ\c\cmake-build-debug\Makefile VERBOSE=1 clean"/>
-					<DistClean command="nmake /NOLOGO /f E:\Project\NseMQ\c\cmake-build-debug\Makefile VERBOSE=1 clean"/>
-				</MakeCommands>
-			</Target>
 			<Target title="rebuild_cache">
 				<Option working_dir="E:/Project/NseMQ/c/cmake-build-debug"/>
 				<Option type="4"/>
@@ -141,11 +131,82 @@
 					<DistClean command="nmake /NOLOGO /f E:\Project\NseMQ\c\cmake-build-debug\Makefile VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
+			<Target title="nsemq_consumer_example">
+				<Option output="E:/Project/NseMQ/c/cmake-build-debug/nsemq_consumer_example.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="E:/Project/NseMQ/c/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="msvc8"/>
+				<Compiler>
+					<Add directory="E:/Project/NseMQ/c/../include"/>
+					<Add directory="D:\Development\Visual Studio 2015\VC\INCLUDE"/>
+					<Add directory="D:\Development\Visual Studio 2015\VC\ATLMFC\INCLUDE"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.10240.0\ucrt"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\include\um"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\8.1\include\\shared"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\8.1\include\\um"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\8.1\include\\winrt"/>
+					<Add directory="D:\Development\Visual Studio 2010\VC\INCLUDE"/>
+					<Add directory="D:\Development\Visual Studio 2010\VC\ATLMFC\INCLUDE"/>
+					<Add directory="C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="nmake /NOLOGO /f E:\Project\NseMQ\c\cmake-build-debug\Makefile VERBOSE=1 nsemq_consumer_example"/>
+					<CompileFile command="nmake /NOLOGO /f E:\Project\NseMQ\c\cmake-build-debug\Makefile VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="nmake /NOLOGO /f E:\Project\NseMQ\c\cmake-build-debug\Makefile VERBOSE=1 clean"/>
+					<DistClean command="nmake /NOLOGO /f E:\Project\NseMQ\c\cmake-build-debug\Makefile VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="nsemq_consumer_example/fast">
+				<Option output="E:/Project/NseMQ/c/cmake-build-debug/nsemq_consumer_example.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="E:/Project/NseMQ/c/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="msvc8"/>
+				<Compiler>
+					<Add directory="E:/Project/NseMQ/c/../include"/>
+					<Add directory="D:\Development\Visual Studio 2015\VC\INCLUDE"/>
+					<Add directory="D:\Development\Visual Studio 2015\VC\ATLMFC\INCLUDE"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.10240.0\ucrt"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\include\um"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\8.1\include\\shared"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\8.1\include\\um"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\8.1\include\\winrt"/>
+					<Add directory="D:\Development\Visual Studio 2010\VC\INCLUDE"/>
+					<Add directory="D:\Development\Visual Studio 2010\VC\ATLMFC\INCLUDE"/>
+					<Add directory="C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="nmake /NOLOGO /f E:\Project\NseMQ\c\cmake-build-debug\Makefile VERBOSE=1 nsemq_consumer_example/fast"/>
+					<CompileFile command="nmake /NOLOGO /f E:\Project\NseMQ\c\cmake-build-debug\Makefile VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="nmake /NOLOGO /f E:\Project\NseMQ\c\cmake-build-debug\Makefile VERBOSE=1 clean"/>
+					<DistClean command="nmake /NOLOGO /f E:\Project\NseMQ\c\cmake-build-debug\Makefile VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="E:/Project/NseMQ/c/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="nmake /NOLOGO /f E:\Project\NseMQ\c\cmake-build-debug\Makefile VERBOSE=1 edit_cache"/>
+					<CompileFile command="nmake /NOLOGO /f E:\Project\NseMQ\c\cmake-build-debug\Makefile VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="nmake /NOLOGO /f E:\Project\NseMQ\c\cmake-build-debug\Makefile VERBOSE=1 clean"/>
+					<DistClean command="nmake /NOLOGO /f E:\Project\NseMQ\c\cmake-build-debug\Makefile VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
 		</Build>
+		<Unit filename="E:/Project/NseMQ/c/examples/nsemq_consumer_example.c">
+			<Option target="nsemq_consumer_example"/>
+		</Unit>
 		<Unit filename="E:/Project/NseMQ/c/examples/nsemq_producer_example.c">
 			<Option target="nsemq_producer_example"/>
 		</Unit>
 		<Unit filename="E:/Project/NseMQ/c/src/nsemq_base.h">
+			<Option target="NseMQ"/>
+		</Unit>
+		<Unit filename="E:/Project/NseMQ/c/src/nsemq_consumer.c">
+			<Option target="NseMQ"/>
+		</Unit>
+		<Unit filename="E:/Project/NseMQ/c/src/nsemq_consumer.h">
 			<Option target="NseMQ"/>
 		</Unit>
 		<Unit filename="E:/Project/NseMQ/c/src/nsemq_producer.c">

@@ -1,7 +1,7 @@
-##ignore this file##
+##ignore file or directory##
 /target/
 /cmake-build-debug/
 /test/
-/c++/bin/
-/c++/lib/
+/bin/
+/lib/
 /.idea/

@@ -60,17 +60,6 @@ CMAKE_BINARY_DIR = E:\Project\NseMQ\c\cmake-build-debug
 #=============================================================================
 # Targets provided globally by CMake.
 
-# Special rule for the target edit_cache
-edit_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
-	echo >nul && "D:\Development\JetBrains Clion\CLion 2020.1.1\bin\cmake\win\bin\cmake.exe" -E echo "No interactive CMake dialog available."
-.PHONY : edit_cache
-
-# Special rule for the target edit_cache
-edit_cache\fast: edit_cache
-
-.PHONY : edit_cache\fast
-
 # Special rule for the target rebuild_cache
 rebuild_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
@@ -81,6 +70,17 @@ rebuild_cache:
 rebuild_cache\fast: rebuild_cache
 
 .PHONY : rebuild_cache\fast
+
+# Special rule for the target edit_cache
+edit_cache:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
+	echo >nul && "D:\Development\JetBrains Clion\CLion 2020.1.1\bin\cmake\win\bin\cmake.exe" -E echo "No interactive CMake dialog available."
+.PHONY : edit_cache
+
+# Special rule for the target edit_cache
+edit_cache\fast: edit_cache
+
+.PHONY : edit_cache\fast
 
 # The main all target
 all: cmake_check_build_system
@@ -140,6 +140,46 @@ NseMQ\fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\NseMQ.dir\build.make /nologo -$(MAKEFLAGS) CMakeFiles\NseMQ.dir\build
 .PHONY : NseMQ\fast
 
+#=============================================================================
+# Target rules for targets named nsemq_consumer_example
+
+# Build rule for target.
+nsemq_consumer_example: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 /nologo -$(MAKEFLAGS) nsemq_consumer_example
+.PHONY : nsemq_consumer_example
+
+# fast build rule for target.
+nsemq_consumer_example\fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\nsemq_consumer_example.dir\build.make /nologo -$(MAKEFLAGS) CMakeFiles\nsemq_consumer_example.dir\build
+.PHONY : nsemq_consumer_example\fast
+
+examples\nsemq_consumer_example.obj: examples\nsemq_consumer_example.c.obj
+
+.PHONY : examples\nsemq_consumer_example.obj
+
+# target to build an object file
+examples\nsemq_consumer_example.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\nsemq_consumer_example.dir\build.make /nologo -$(MAKEFLAGS) CMakeFiles\nsemq_consumer_example.dir\examples\nsemq_consumer_example.c.obj
+.PHONY : examples\nsemq_consumer_example.c.obj
+
+examples\nsemq_consumer_example.i: examples\nsemq_consumer_example.c.i
+
+.PHONY : examples\nsemq_consumer_example.i
+
+# target to preprocess a source file
+examples\nsemq_consumer_example.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\nsemq_consumer_example.dir\build.make /nologo -$(MAKEFLAGS) CMakeFiles\nsemq_consumer_example.dir\examples\nsemq_consumer_example.c.i
+.PHONY : examples\nsemq_consumer_example.c.i
+
+examples\nsemq_consumer_example.s: examples\nsemq_consumer_example.c.s
+
+.PHONY : examples\nsemq_consumer_example.s
+
+# target to generate assembly for a file
+examples\nsemq_consumer_example.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\nsemq_consumer_example.dir\build.make /nologo -$(MAKEFLAGS) CMakeFiles\nsemq_consumer_example.dir\examples\nsemq_consumer_example.c.s
+.PHONY : examples\nsemq_consumer_example.c.s
+
 examples\nsemq_producer_example.obj: examples\nsemq_producer_example.c.obj
 
 .PHONY : examples\nsemq_producer_example.obj
@@ -166,6 +206,33 @@ examples\nsemq_producer_example.s: examples\nsemq_producer_example.c.s
 examples\nsemq_producer_example.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\nsemq_producer_example.dir\build.make /nologo -$(MAKEFLAGS) CMakeFiles\nsemq_producer_example.dir\examples\nsemq_producer_example.c.s
 .PHONY : examples\nsemq_producer_example.c.s
+
+src\nsemq_consumer.obj: src\nsemq_consumer.c.obj
+
+.PHONY : src\nsemq_consumer.obj
+
+# target to build an object file
+src\nsemq_consumer.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\NseMQ.dir\build.make /nologo -$(MAKEFLAGS) CMakeFiles\NseMQ.dir\src\nsemq_consumer.c.obj
+.PHONY : src\nsemq_consumer.c.obj
+
+src\nsemq_consumer.i: src\nsemq_consumer.c.i
+
+.PHONY : src\nsemq_consumer.i
+
+# target to preprocess a source file
+src\nsemq_consumer.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\NseMQ.dir\build.make /nologo -$(MAKEFLAGS) CMakeFiles\NseMQ.dir\src\nsemq_consumer.c.i
+.PHONY : src\nsemq_consumer.c.i
+
+src\nsemq_consumer.s: src\nsemq_consumer.c.s
+
+.PHONY : src\nsemq_consumer.s
+
+# target to generate assembly for a file
+src\nsemq_consumer.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\NseMQ.dir\build.make /nologo -$(MAKEFLAGS) CMakeFiles\NseMQ.dir\src\nsemq_consumer.c.s
+.PHONY : src\nsemq_consumer.c.s
 
 src\nsemq_producer.obj: src\nsemq_producer.c.obj
 
@@ -203,10 +270,17 @@ help:
 	@echo ... edit_cache
 	@echo ... rebuild_cache
 	@echo ... NseMQ
+	@echo ... nsemq_consumer_example
 	@echo ... nsemq_producer_example
+	@echo ... examples/nsemq_consumer_example.obj
+	@echo ... examples/nsemq_consumer_example.i
+	@echo ... examples/nsemq_consumer_example.s
 	@echo ... examples/nsemq_producer_example.obj
 	@echo ... examples/nsemq_producer_example.i
 	@echo ... examples/nsemq_producer_example.s
+	@echo ... src/nsemq_consumer.obj
+	@echo ... src/nsemq_consumer.i
+	@echo ... src/nsemq_consumer.s
 	@echo ... src/nsemq_producer.obj
 	@echo ... src/nsemq_producer.i
 	@echo ... src/nsemq_producer.s

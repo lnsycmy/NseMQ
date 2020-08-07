@@ -49,4 +49,5 @@ set(CMAKE_MAKEFILE_PRODUCTS
 set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/nsemq_producer_example.dir/DependInfo.cmake"
   "CMakeFiles/NseMQ.dir/DependInfo.cmake"
+  "CMakeFiles/nsemq_consumer_example.dir/DependInfo.cmake"
   )
