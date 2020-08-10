@@ -207,6 +207,33 @@ examples\nsemq_producer_example.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\nsemq_producer_example.dir\build.make /nologo -$(MAKEFLAGS) CMakeFiles\nsemq_producer_example.dir\examples\nsemq_producer_example.c.s
 .PHONY : examples\nsemq_producer_example.c.s
 
+src\nsemq_base.obj: src\nsemq_base.c.obj
+
+.PHONY : src\nsemq_base.obj
+
+# target to build an object file
+src\nsemq_base.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\NseMQ.dir\build.make /nologo -$(MAKEFLAGS) CMakeFiles\NseMQ.dir\src\nsemq_base.c.obj
+.PHONY : src\nsemq_base.c.obj
+
+src\nsemq_base.i: src\nsemq_base.c.i
+
+.PHONY : src\nsemq_base.i
+
+# target to preprocess a source file
+src\nsemq_base.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\NseMQ.dir\build.make /nologo -$(MAKEFLAGS) CMakeFiles\NseMQ.dir\src\nsemq_base.c.i
+.PHONY : src\nsemq_base.c.i
+
+src\nsemq_base.s: src\nsemq_base.c.s
+
+.PHONY : src\nsemq_base.s
+
+# target to generate assembly for a file
+src\nsemq_base.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\NseMQ.dir\build.make /nologo -$(MAKEFLAGS) CMakeFiles\NseMQ.dir\src\nsemq_base.c.s
+.PHONY : src\nsemq_base.c.s
+
 src\nsemq_consumer.obj: src\nsemq_consumer.c.obj
 
 .PHONY : src\nsemq_consumer.obj
@@ -278,6 +305,9 @@ help:
 	@echo ... examples/nsemq_producer_example.obj
 	@echo ... examples/nsemq_producer_example.i
 	@echo ... examples/nsemq_producer_example.s
+	@echo ... src/nsemq_base.obj
+	@echo ... src/nsemq_base.i
+	@echo ... src/nsemq_base.s
 	@echo ... src/nsemq_consumer.obj
 	@echo ... src/nsemq_consumer.i
 	@echo ... src/nsemq_consumer.s

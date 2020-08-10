@@ -200,6 +200,9 @@
 		<Unit filename="E:/Project/NseMQ/c/examples/nsemq_producer_example.c">
 			<Option target="nsemq_producer_example"/>
 		</Unit>
+		<Unit filename="E:/Project/NseMQ/c/src/nsemq_base.c">
+			<Option target="NseMQ"/>
+		</Unit>
 		<Unit filename="E:/Project/NseMQ/c/src/nsemq_base.h">
 			<Option target="NseMQ"/>
 		</Unit>

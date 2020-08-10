@@ -6,6 +6,10 @@
 
 #IncludeRegexTransform: 
 
+../../include/inttypes.h
+stdint.h
+../../include/stdint.h
+
 ../../include/librdkafka/rdkafka.h
 stdio.h
 -
@@ -29,15 +33,13 @@ E:/Project/NseMQ/c/src/nsemq_producer.h
 E:/Project/NseMQ/c/src/nsemq_base.h
 stdio.h
 -
-
-E:/Project/NseMQ/c/src/nsemq_producer.h
-stdio.h
--
-signal.h
--
 string.h
 -
 librdkafka/rdkafka.h
+-
+
+E:/Project/NseMQ/c/src/nsemq_producer.h
+stdio.h
 -
 nsemq_base.h
 E:/Project/NseMQ/c/src/nsemq_base.h

@@ -11,8 +11,6 @@ static void dr_msg_cb (rd_kafka_t *rk,
                 "%% Message delivered (%zd bytes, "
                 "partition %"PRId32")\n",
                 rkmessage->len, rkmessage->partition);
-
-    /* The rkmessage is destroyed automatically by librdkafka */
 }
 
 char* join_char(char *s1, char *s2)
@@ -29,11 +27,12 @@ char* join_char(char *s1, char *s2)
 int main(){
     const char * broker_addr = "localhost:9092";
     printf("*** main() start.\n");
-    nsemq_init(broker_addr,dr_msg_cb);
+    nsemq_producer_init(broker_addr, dr_msg_cb);
     const char * topic_name = "test";
-    for(int i=0; i<100; i++){
-        char * data = "this is a message";
-        nsemq_produce(data, topic_name);
-    }
-    nsemq_close();
+    char * data = "this is first message.";
+    nsemq_producer_produce(data, topic_name);
+    char * data2 = "this is second message.";
+    nsemq_producer_produce(data2, topic_name);
+    nsemq_producer_close();
+
 }

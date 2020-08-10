@@ -6,9 +6,11 @@ set(CMAKE_C_STANDARD 11)
 include_directories(../include)
 link_directories("lib")
 link_libraries("librdkafka.dll")
+link_libraries("pthreadVC2.dll")
 
 add_library(NseMQ
             src/nsemq_base.h
+            src/nsemq_base.c
             src/nsemq_producer.h
             src/nsemq_producer.c
             src/nsemq_consumer.h

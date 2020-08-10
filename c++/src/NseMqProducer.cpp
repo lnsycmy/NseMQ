@@ -82,6 +82,7 @@ NseMQ::ErrorCode NseMqProducer::produce(char *msg, size_t msg_len, std::string t
     }
     // judge message whether empty.
     if(0 == msg_len){
+        producer_->poll(0);
         return NseMQ::ERR_P_SEND_MSG_EMPTY;
     }
     bool resend_flag = false;        // control queue full resend.
