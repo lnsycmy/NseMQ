@@ -30,7 +30,7 @@
 
 namespace avro {
 
-/// Class for writing avro data to a stream.
+/// Class for writing avroc data to a stream.
 
 template<class ValidatorType>
 class WriterImpl : private boost::noncopyable
@@ -181,6 +181,6 @@ class WriterImpl : private boost::noncopyable
 typedef WriterImpl<NullValidator> Writer;
 typedef WriterImpl<Validator> ValidatingWriter;
 
-} // namespace avro
+} // namespace avroc
 
 #endif

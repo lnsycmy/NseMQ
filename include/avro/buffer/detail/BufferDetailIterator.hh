@@ -34,7 +34,7 @@ namespace detail {
 /** 
  * \brief Implements conversion from a chunk to asio::const_buffer
  * 
- * Iterators for an InputBuffer will iterate over the avro of chunks, so
+ * Iterators for an InputBuffer will iterate over the avroc of chunks, so
  * internally they contain an iterator.  But the iterator needs to be
  * convertable to an asio buffer for use in boost::asio functions.  This class
  * wraps the iterator with a cast operator to do this conversion.
@@ -77,7 +77,7 @@ struct InputIteratorHelper
 /** 
  * \brief Implements conversion from a chunk to asio::buffer 
  * 
- * Iterators for an OutputBuffer will iterate over the avro of chunks, so
+ * Iterators for an OutputBuffer will iterate over the avroc of chunks, so
  * internally they contain an iterator.  But the iterator needs to be
  * convertable to an asio buffer for use in boost::asio functions.  This class
  * wraps the iterator with a cast operator to do this conversion.

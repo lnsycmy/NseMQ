@@ -111,6 +111,6 @@ DEFINE_PRIMITIVE(std::string, AVRO_STRING)
 DEFINE_PRIMITIVE(std::vector<uint8_t>, AVRO_BYTES)
 
 
-} // namespace avro
+} // namespace avroc
 
 #endif

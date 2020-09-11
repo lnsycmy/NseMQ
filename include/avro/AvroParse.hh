@@ -80,6 +80,6 @@ void translatingParse(ResolvingReader &p, T& val, const std::true_type &) {
 
 // @}
 
-} // namespace avro
+} // namespace avroc
 
 #endif

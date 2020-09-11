@@ -81,19 +81,19 @@ protected:
     void init(const NodePtr& schema);
 public:
     /**
-     * The avro data type this datum holds.
+     * The avroc data type this datum holds.
      */
     Type type() const;
 
     /**
-     * The avro logical type that augments the main data type this datum holds.
+     * The avroc logical type that augments the main data type this datum holds.
      */
     LogicalType logicalType() const;
 
     /**
      * Returns the value held by this datum.
      * T The type for the value. This must correspond to the
-     * avro type returned by type().
+     * avroc type returned by type().
      */
     template<typename T> const T& value() const;
 
@@ -104,7 +104,7 @@ public:
      * be changed.
      *
      * T The type for the value. This must correspond to the
-     * avro type returned by type().
+     * avroc type returned by type().
      */
     template<typename T> T& value();
 
@@ -158,17 +158,17 @@ public:
         type_(AVRO_BYTES), logicalType_(LogicalType::NONE), value_(v) { }
 
     /**
-     * Constructs a datum corresponding to the given avro type.
+     * Constructs a datum corresponding to the given avroc type.
      * The value will the appropraite default corresponding to the
      * data type.
-     * \param schema The schema that defines the avro type.
+     * \param schema The schema that defines the avroc type.
      */
     GenericDatum(const NodePtr& schema);
 
     /**
-     * Constructs a datum corresponding to the given avro type and set
+     * Constructs a datum corresponding to the given avroc type and set
      * the value. 
-     * \param schema The schema that defines the avro type.
+     * \param schema The schema that defines the avroc type.
      * \param v The value for this type.
      */
     template<typename T>
@@ -183,10 +183,10 @@ public:
     }
 
     /**
-     * Constructs a datum corresponding to the given avro type.
+     * Constructs a datum corresponding to the given avroc type.
      * The value will the appropraite default corresponding to the
      * data type.
-     * \param schema The schema that defines the avro type.
+     * \param schema The schema that defines the avroc type.
      */
     GenericDatum(const ValidSchema& schema);
 };
@@ -572,5 +572,5 @@ inline void GenericDatum::selectBranch(size_t branch) {
 #endif
 }
 
-}   // namespace avro
+}   // namespace avroc
 #endif // avro_GenericDatum_hh__

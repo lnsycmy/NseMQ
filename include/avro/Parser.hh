@@ -146,6 +146,6 @@ inline bool nextFieldName(Parser<ValidatingReader> &p, std::string &name) {
     return p.reader_.nextFieldName(name);
 }
 
-} // namespace avro
+} // namespace avroc
 
 #endif

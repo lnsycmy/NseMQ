@@ -74,7 +74,7 @@ inline bool isCompound(Type t) {
 }
 
 /**
- * Returns true if and only if the given type is a valid avro type.
+ * Returns true if and only if the given type is a valid avroc type.
  */
 inline bool isAvroType(Type t) {
     return (t >= AVRO_STRING) && (t < AVRO_NUM_TYPES);
@@ -108,7 +108,7 @@ struct AVRO_DECL Null { };
  */
 std::ostream& operator<< (std::ostream &os, const Null &null);
 
-} // namespace avro
+} // namespace avroc
 
 
 #endif

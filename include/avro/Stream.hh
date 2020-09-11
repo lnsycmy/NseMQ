@@ -477,7 +477,7 @@ inline void copy(InputStream& in, OutputStream& out)
     w.flush();
 }
 
-}   // namespace avro
+}   // namespace avroc
 #endif
 
 

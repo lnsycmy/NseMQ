@@ -403,5 +403,5 @@ public:
     int64_t previousSync() { return base_->previousSync(); }
 };
 
-}   // namespace avro
+}   // namespace avroc
 #endif

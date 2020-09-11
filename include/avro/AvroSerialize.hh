@@ -61,6 +61,6 @@ void serialize(Writer &s, const std::vector<uint8_t> &val, const std::true_type 
 
 // @}
 
-} // namespace avro
+} // namespace avroc
 
 #endif

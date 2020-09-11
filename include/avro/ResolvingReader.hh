@@ -49,6 +49,6 @@ class AVRO_DECL ResolvingReader : private boost::noncopyable
     ResolverSchema schema_;
 };
 
-} // namespace avro
+} // namespace avroc
 
 #endif

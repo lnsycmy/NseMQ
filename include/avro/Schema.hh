@@ -25,7 +25,7 @@
 
 /// \file
 ///
-/// Schemas for representing all the avro types.  The compound schema objects
+/// Schemas for representing all the avroc types.  The compound schema objects
 /// allow composition from other schemas.
 ///
 
@@ -141,6 +141,6 @@ class AVRO_DECL SymbolicSchema : public Schema {
 public:
     SymbolicSchema(const Name& name, const NodePtr& link);
 };
-} // namespace avro
+} // namespace avroc
 
 #endif

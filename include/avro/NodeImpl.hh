@@ -34,7 +34,7 @@
 
 namespace avro {
 
-/// Implementation details for Node.  NodeImpl represents all the avro types,
+/// Implementation details for Node.  NodeImpl represents all the avroc types,
 /// whose properties are enabled and disabled by selecting concept classes.
 
 template
@@ -614,6 +614,6 @@ inline std::string intToHex(T i)
   return stream.str();
 }
 
-} // namespace avro
+} // namespace avroc
 
 #endif

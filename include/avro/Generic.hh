@@ -144,6 +144,6 @@ template <> struct codec_traits<GenericDatum> {
     }
 };
     
-}   // namespace avro
+}   // namespace avroc
 #endif
 

@@ -52,6 +52,6 @@ std::unique_ptr<Resolver> constructResolver(
 
 
 
-} // namespace avro
+} // namespace avroc
 
 #endif

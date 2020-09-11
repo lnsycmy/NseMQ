@@ -41,6 +41,6 @@ class AVRO_DECL Exception : public virtual std::runtime_error
     { }  
 };
 
-} // namespace avro
+} // namespace avroc
 
 #endif

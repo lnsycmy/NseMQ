@@ -51,6 +51,6 @@ class AVRO_DECL ResolverSchema {
 
 };
 
-} // namespace avro
+} // namespace avroc
 
 #endif

@@ -71,7 +71,7 @@ std::ostream& operator << (std::ostream& os, const Name& n) {
     return os << n.fullname();
 }
 
-/// Node is the building block for parse trees.  Each node represents an avro
+/// Node is the building block for parse trees.  Each node represents an avroc
 /// type.  Compound types have leaf nodes that represent the types they are
 /// composed of.
 ///
@@ -197,7 +197,7 @@ class AVRO_DECL Node : private boost::noncopyable
     bool locked_;
 };
 
-} // namespace avro
+} // namespace avroc
 
 namespace std {
 inline std::ostream& operator<<(std::ostream& os, const avro::Node& n)

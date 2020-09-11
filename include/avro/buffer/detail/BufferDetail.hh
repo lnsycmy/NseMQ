@@ -325,22 +325,22 @@ class BufferImpl : boost::noncopyable
         }
     }
 
-    /// Return the chunk avro's begin iterator for reading.
+    /// Return the chunk avroc's begin iterator for reading.
     ChunkList::const_iterator beginRead() const {
         return readChunks_.begin();
     }
     
-    /// Return the chunk avro's end iterator for reading.
+    /// Return the chunk avroc's end iterator for reading.
     ChunkList::const_iterator endRead() const {
         return readChunks_.end();
     }
 
-    /// Return the chunk avro's begin iterator for writing.
+    /// Return the chunk avroc's begin iterator for writing.
     ChunkList::const_iterator beginWrite() const {
         return writeChunks_.begin();
     }
     
-    /// Return the chunk avro's end iterator for writing.
+    /// Return the chunk avroc's end iterator for writing.
     ChunkList::const_iterator endWrite() const {
         return writeChunks_.end();
     }

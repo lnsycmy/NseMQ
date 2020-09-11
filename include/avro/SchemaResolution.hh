@@ -50,6 +50,6 @@ enum SchemaResolution {
 
 };
 
-} // namespace avro 
+} // namespace avroc
 
 #endif

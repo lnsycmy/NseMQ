@@ -30,7 +30,7 @@
 
 /// \file
 ///
-/// Low level support for encoding avro values.
+/// Low level support for encoding avroc values.
 /// This class has two types of funtions.  One type of functions support
 /// the writing of leaf values (for example, encodeLong and
 /// encodeString).  These functions have analogs in Decoder.
@@ -168,6 +168,6 @@ AVRO_DECL EncoderPtr jsonEncoder(const ValidSchema& schema);
  */
 AVRO_DECL EncoderPtr jsonPrettyEncoder(const ValidSchema& schema);
 
-}   // namespace avro
+}   // namespace avroc
 
 #endif

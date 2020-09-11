@@ -33,8 +33,8 @@
 namespace avro {
 
 ///
-/// Parses from an avro encoding to the requested type.  Assumes the next item
-/// in the avro binary data is the expected type.
+/// Parses from an avroc encoding to the requested type.  Assumes the next item
+/// in the avroc binary data is the expected type.
 ///
 
 template<class ValidatorType>
@@ -204,6 +204,6 @@ class ReaderImpl : private boost::noncopyable
 typedef ReaderImpl<NullValidator> Reader;
 typedef ReaderImpl<Validator> ValidatingReader;
 
-} // namespace avro
+} // namespace avroc
 
 #endif

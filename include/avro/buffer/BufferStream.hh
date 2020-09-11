@@ -96,6 +96,6 @@ class AVRO_DECL istream : public std::istream {
     istreambuf ibuf_;
 };
 
-} // namespace avro
+} // namespace avroc
 
 #endif 

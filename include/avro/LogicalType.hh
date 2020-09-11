@@ -59,6 +59,6 @@ class AVRO_DECL LogicalType {
     int scale_;
 };
 
-}  // namespace avro
+}  // namespace avroc
 
 #endif

@@ -7,6 +7,7 @@ include_directories(../include)
 link_directories("lib")
 link_libraries("librdkafka.dll")
 link_libraries("pthreadVC2.dll")
+link_libraries("avro.lib")
 
 add_library(NseMQ
             src/nsemq_base.h

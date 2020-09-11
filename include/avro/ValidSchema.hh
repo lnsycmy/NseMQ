@@ -61,6 +61,6 @@ public:
     static std::string compactSchema(const std::string &schema);
 };
 
-} // namespace avro
+} // namespace avroc
 
 #endif

@@ -30,7 +30,7 @@
 
 /// \file
 ///
-/// Low level support for decoding avro values.
+/// Low level support for decoding avroc values.
 /// This class has two types of funtions.  One type of functions support
 /// decoding of leaf values (for example, decodeLong and
 /// decodeString). These functions have analogs in Encoder.
@@ -164,9 +164,9 @@ public:
     /// those extra fields of the current record. It would still leave
     /// the extra fields at the end of the last record in the stream.
     /// This would mean that the stream is not in a good state. For example,
-    /// if some non-avro information is stored at the end of the stream,
+    /// if some non-avroc information is stored at the end of the stream,
     /// the consumers of such data would see the bytes left behind
-    /// by the avro decoder. Similar set of problems occur if the Decoder
+    /// by the avroc decoder. Similar set of problems occur if the Decoder
     /// consumes more than what it should.
     virtual void drain() = 0;
 };
@@ -212,7 +212,7 @@ AVRO_DECL DecoderPtr validatingDecoder(const ValidSchema& schema,
 AVRO_DECL DecoderPtr jsonDecoder(const ValidSchema& schema);
 
 /**
- *  Returns a decoder that decodes avro data from base written according to
+ *  Returns a decoder that decodes avroc data from base written according to
  *  writerSchema and resolves against readerSchema.
  *  The client uses the decoder as if the data were written using readerSchema.
  *  // FIXME: Handle out of order fields.
@@ -221,6 +221,6 @@ AVRO_DECL ResolvingDecoderPtr resolvingDecoder(const ValidSchema& writer,
     const ValidSchema& reader, const DecoderPtr& base);
 
 
-}   // namespace avro
+}   // namespace avroc
 
 #endif

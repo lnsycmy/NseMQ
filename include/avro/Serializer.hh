@@ -130,6 +130,6 @@ class Serializer : private boost::noncopyable
 
 };
 
-} // namespace avro
+} // namespace avroc
 
 #endif

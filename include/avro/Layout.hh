@@ -78,6 +78,6 @@ class AVRO_DECL CompoundLayout : public Layout {
     std::vector<std::unique_ptr<Layout> > layouts_;
 };
 
-} // namespace avro
+} // namespace avroc
 
 #endif

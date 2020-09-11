@@ -44,7 +44,7 @@
  * as an Avro map with value type T.
  * 
  * Users can have their custom types encoded/decoded by specializing
- * avro::codec_traits class for their types.
+ * avroc::codec_traits class for their types.
  */
 namespace avro {
 
@@ -54,7 +54,7 @@ template <typename T> void encode(Encoder& e, const T& t);
 template <typename T> void decode(Decoder& d, T& t);
 
 /**
- * Codec_traits tells avro how to encode and decode an object of given type.
+ * Codec_traits tells avroc how to encode and decode an object of given type.
  *
  * The class is expected to have two static methods:
  * \li static void encode(Encoder& e, const T& value);
@@ -341,7 +341,7 @@ void decode(Decoder& d, T& t) {
     codec_traits<T>::decode(d, t);
 }
 
-}   // namespace avro
+}   // namespace avroc
 
 #endif // avro_Codec_hh__
 

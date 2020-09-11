@@ -156,6 +156,6 @@ class AVRO_DECL Validator : private boost::noncopyable
 
 };
 
-} // namespace avro
+} // namespace avroc
 
 #endif

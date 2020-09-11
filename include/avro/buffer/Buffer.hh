@@ -71,7 +71,7 @@ class AVRO_DECL OutputBuffer
 
     /** 
      * The asio library expects a const_iterator (the const-ness refers to the
-     * fact that the underlying avro of buffers will not be modified, even
+     * fact that the underlying avroc of buffers will not be modified, even
      * though the data in those buffers is being modified).  The iterator
      * provides the list of addresses an operation can write to.
      **/
