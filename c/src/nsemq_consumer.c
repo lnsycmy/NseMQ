@@ -3,96 +3,17 @@ rd_kafka_t *consumer_;               // consumer instance handle.
 rd_kafka_conf_t *consumer_conf_;     // consumer configuration object.
 rd_kafka_topic_conf_t *topic_conf_;  // topic configuration object.
 rd_kafka_resp_err_t err_;            // kafka error code.
+rd_kafka_queue_t *topic_queue_;      // topic queue.
 
-RunStatus run_status_ = NO_INIT;     // consumer current status.
+RunStatus consumer_run_status_ = NO_INIT;     // consumer current status.
 char errstr_[512];                   // librdkafka API error reporting buffer.
 char errtemp_[512];                  // inner function error.
 char consumer_group_id_;             // consumer group id.
-TopicList topic_list_;               // topic and consume callback mapping list.
-pthread_t thread_array_[MAX_THREAD_NUM];  // consumer thread array.
+pthread_t consume_thread_;           // consumer thread.
 pthread_mutex_t topic_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t status_mutex = PTHREAD_MUTEX_INITIALIZER;
 
-/* list function */
-void insert_list(TopicList *topic_list,
-                 const char *topic_name,
-                 rd_kafka_topic_t *topic_object,
-                 void (*consume_callback)(rd_kafka_message_t *, void *)) {
-    TopicList curNode = *topic_list;
-    TopicList newNode = malloc(sizeof(struct TopicNode));
-    if (!newNode || consumer_ == NULL) {
-        return;
-    }
-    topic_object = rd_kafka_topic_new(consumer_, topic_name, NULL);
-    newNode->topic_name = (char *)topic_name;
-    newNode->topic_object = topic_object;
-    newNode->consume_callback = consume_callback;
-    newNode->next = NULL;
-    // if link list is empty, add new node directly
-    if (!*topic_list) {
-        *topic_list = newNode;
-        return;
-    }
-    // traverse to last node, add a new node.
-    while (curNode->next) {
-        curNode = curNode->next;
-    }
-    curNode->next = newNode;
-}
-
-void display_list(TopicList topic_list) {
-    TopicList curNode = topic_list;
-    while (curNode) {
-        printf("%s ", curNode->topic_name);
-        curNode = curNode->next;
-    }
-    printf("\n");
-}
-
-TopicList find_item(TopicList topic_list,const char *topic_name) {
-    while (topic_list) {
-        if (strcmp(topic_list->topic_name, topic_name) == 0) {
-            return topic_list;
-        }
-        topic_list = topic_list->next;
-    }
-    return NULL;
-}
-
-void delete_item(TopicList *topic_list,const char *topic_name) {
-	TopicList p1, p2 = NULL;
-    if (!*topic_list) {
-        return;
-    }
-    p1 = *topic_list;
-    while (p1 != NULL) {
-        if (strcmp(p1->topic_name, topic_name) != 0) {
-            p2 = p1;
-            p1 = p1->next;
-        } else {
-            break;
-        }
-    }
-    if (p1 == topic_list_) {
-        *topic_list = p1->next;
-        free(p1);
-    } else if (p1 != NULL) {
-        p2->next = p1->next;
-        free(p1);
-    } else {
-        printf("not exist.\n");
-    }
-}
-
-void clear_list(TopicList *topic_list) {
-    TopicList curNode, preNode = NULL;
-    curNode = *topic_list;
-    while (curNode) {
-        preNode = curNode;
-        curNode = curNode->next;
-        free(preNode);  // free the topic node memory.
-    }
-}
+extern TopicList topic_list_;        // topic and consume callback mapping list.
 
 /* consumer function */
 ErrorCode nsemq_consumer_init(const char *broker_addr) {
@@ -102,7 +23,7 @@ ErrorCode nsemq_consumer_init(const char *broker_addr) {
     consumer_conf_ = rd_kafka_conf_new(); // Kafka configuration
     topic_conf_ = rd_kafka_topic_conf_new(); // Topic configuration
     // judge current status
-    if(run_status_ != NO_INIT){
+    if(consumer_run_status_ != NO_INIT){
         nsemq_write_error("Don't initialize consumer multiple times.");
         return ERR_C_INIT_MULTIPLE_INIT;
     }
@@ -130,16 +51,21 @@ ErrorCode nsemq_consumer_init(const char *broker_addr) {
         nsemq_write_error("Failed to connect broker.");
         return ERR_FAIL_CONNECT_BROKER;
     }
-    run_status_ = INIT_STATUS;
+    // initialize the consumer queue.
+    topic_queue_ =  rd_kafka_queue_new(consumer_);
+
+    consumer_run_status_ = INIT_STATUS;
     return ERR_NO_ERROR;
 }
 
-ErrorCode nsemq_consumer_subscribe(const char *topic_name, void *consume_callback) {
+ErrorCode _nsemq_consumer_subscribe(const char *topic_name,
+                                   deserialize_func d_fun,
+                                   void (*consume_callback)(void *, char *, char *)) {
     TopicList findNode;
     int start_res = 0;
     rd_kafka_topic_t *topic_object;
     // judge the run status.
-    if(INIT_STATUS != run_status_){
+    if(INIT_STATUS != consumer_run_status_){
         nsemq_write_error("Failed to subscribe: only allow to subscribe topic in init_status.");
         return ERR_C_RUN_STATUS;
     }
@@ -150,7 +76,8 @@ ErrorCode nsemq_consumer_subscribe(const char *topic_name, void *consume_callbac
     }
     // start to consume message from broker, and save the message to local queue.
     topic_object = rd_kafka_topic_new(consumer_, topic_name, NULL);
-    start_res = rd_kafka_consume_start(topic_object, NSEMQ_DEFAULT_PARTITION, NSEMQ_DEFAULT_OFFSET);
+    start_res = rd_kafka_consume_start_queue(topic_object, NSEMQ_DEFAULT_PARTITION, NSEMQ_DEFAULT_OFFSET, topic_queue_);
+    // start_res = rd_kafka_consume_start(topic_object, NSEMQ_DEFAULT_PARTITION, NSEMQ_DEFAULT_OFFSET);
     if (start_res == -1) {
         err_ = rd_kafka_last_error();
         strcpy_s(errtemp_, sizeof(errtemp_), "Failed to start consuming:");
@@ -163,7 +90,8 @@ ErrorCode nsemq_consumer_subscribe(const char *topic_name, void *consume_callbac
     }
     // save the mapping by topic name、topic object、msg_consume
     pthread_mutex_lock(&topic_mutex);
-    insert_list(&topic_list_, topic_name, topic_object, consume_callback);
+    insert_list(&topic_list_, topic_name, topic_object,
+                d_fun, consume_callback);
     pthread_mutex_unlock(&topic_mutex);
     return ERR_NO_ERROR;
 }
@@ -173,7 +101,7 @@ ErrorCode nsemq_consumer_unSubscribe(const char *topic_name){
     rd_kafka_topic_t *rkt;
     int stop_res;
     // judge the run status.
-    if(INIT_STATUS != run_status_){
+    if(INIT_STATUS != consumer_run_status_){
         nsemq_write_error("Failed to unsubscribe: only allow to unsubscribe topic before called start().");
         return ERR_C_RUN_STATUS;
     }
@@ -222,41 +150,35 @@ ErrorCode nsemq_consumer_subscription(TopicList *topic_array){
 }
 
 void *thread_function(void *agr){
-    TopicList curNode = (TopicList)agr;
-    rd_kafka_topic_t *topic_object = NULL;
-    while(run_status_ == START_STATUS){
-        printf("enter %s poll()\n", curNode->topic_name);
-        rd_kafka_consume_callback(curNode->topic_object,
-                                  NSEMQ_DEFAULT_PARTITION,
-                                  1000,/* timeout_ms */
-                                  curNode->consume_callback,/* consumer callback function */
-                                  NULL/*	void* opaque */);
+    int consume_res, i = 0;
+    while(consumer_run_status_ == START_STATUS) {
+        // consume multiple messages from queue with callback.
+        printf("enter poll()\n");
+        consume_res = rd_kafka_consume_callback_queue(topic_queue_, 1000,/* timeout_ms */
+                                                      nsemq_consume_callback, NULL);
+        if(consume_res == -1){ // error
+            nsemq_write_error("Failed to start consume callback.");
+            break;
+        }
         rd_kafka_poll(consumer_, 0);
     }
     pthread_exit(NULL);
     return NULL;
 }
-
-ErrorCode nsemq_consumer_start() {
+ErrorCode nsemq_consumer_start(){
     int create_res, i = 0;
     TopicList curNode = topic_list_;
     // judge the run status.
-    if(run_status_ != INIT_STATUS){
+    if(consumer_run_status_ != INIT_STATUS){
         nsemq_write_error("Failed to start: only allow to start consumer in init_status.");
         return ERR_C_RUN_STATUS;
     }
-    // set start status, make sure the thread can be run.
+    // set start status
     pthread_mutex_lock(&status_mutex);
-    run_status_ = START_STATUS;
+    consumer_run_status_ = START_STATUS;
     pthread_mutex_unlock(&status_mutex);
-    while(curNode){
-        create_res = pthread_create(&thread_array_[i],NULL,thread_function, curNode);
-        i ++;
-        curNode = curNode->next;
-    }
-    for(int j = 0; j < i; j++){
-        pthread_detach(thread_array_[j]);
-    }
+    create_res = pthread_create(&consume_thread_,NULL,thread_function, curNode);
+    pthread_detach(consume_thread_);
     return ERR_NO_ERROR;
 }
 
@@ -264,7 +186,7 @@ ErrorCode nsemq_consumer_start() {
 ErrorCode nsemq_consumer_close() {
     TopicList curNode = topic_list_;
     // NO.0 judge the run status.
-    if(run_status_ == CLOSE_STATUS){
+    if(consumer_run_status_ == CLOSE_STATUS){
         nsemq_write_error("Failed to close: can't multiple called close() function.");
         return ERR_C_RUN_STATUS;
     }
@@ -287,13 +209,10 @@ ErrorCode nsemq_consumer_close() {
     }
     // NO.3 ending the consumer thread.
     pthread_mutex_lock(&status_mutex);
-    run_status_ = CLOSE_STATUS;
+    consumer_run_status_ = CLOSE_STATUS;
     pthread_mutex_unlock(&status_mutex);
-    for(int i = 0; i < MAX_THREAD_NUM; i++){
-        if(thread_array_[i].p){
-            pthread_cancel(thread_array_[i]);
-        }
-    }
+    pthread_cancel(consume_thread_);
+
     // NO.4 destroy topic and clear topic list.
     curNode = topic_list_;
     while (curNode) {

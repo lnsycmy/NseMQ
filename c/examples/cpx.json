@@ -1,0 +1,20 @@
+{
+    "type": "record", 
+    "name": "cpx",
+    "fields" : [
+        {"name": "re", "type": "double"},    
+        {"name": "im", "type" : "double"},
+        {"name": "s", "type": {
+            "type": "record",
+            "name": "Person",
+            "fields": [
+                {"name": "name", "type": "string"},
+                {"name": "age", "type": "int"}
+            ]
+        }},
+        {"name": "arr", "type": {
+            "type": "array",
+            "items": "string"
+        }}
+    ]
+}

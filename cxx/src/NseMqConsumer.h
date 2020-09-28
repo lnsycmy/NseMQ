@@ -16,9 +16,11 @@
 #include <time.h>
 #include <boost/thread.hpp>
 #include "NseMqBase.h"
+#include "NseMqConsumerCallback.h"
 
 #define CALLBACK_TIMEOUT_MS 1000
 
+// NSE_EXPORT
 class NSE_EXPORT NseMqConsumer : public NseMqBase{
 private:
     std::string broker_addr_;                   // broker address by hostname:port(ie. 127.0.0.1:9092)
@@ -34,7 +36,8 @@ private:
                                                  */
     int32_t partition_;                         // use default setting:0
 
-    std::map<std::string,void *> topic_cb_map_; // topic and callback mapping.
+    // 目前传递函数地址，kafka调用回调函数后，再调用对应参数类型的函数；
+    std::map<std::string, void *> topic_cb_map_; // topic and callback mapping.
 
     boost::thread_group thread_group_;          // consumer thread group.
     /* private function about thread */
@@ -54,7 +57,7 @@ public:
 
     // subscribe to a topic, and bind a consume callback object to topic.
     NseMQ::ErrorCode subscribe(std::string topic_name,
-                               void (*consumer_callback)(rd_kafka_message_t *, void *),
+                               void *consume_cb,
                                int64_t start_offset = RD_KAFKA_OFFSET_END);
     // unsubscribe topic by topic name and need to change topic map.
     NseMQ::ErrorCode unSubscribe(std::string topic_name);
@@ -92,13 +95,13 @@ public:
 
     void setPartition(int32_t partition);
 
-    const std::map<std::string, void *> &getTopicCbMap() const;
-
-    void setTopicCbMap(const std::map<std::string, void *> &topicCbMap);
-
     NseMQ::RunStatus getRunStatus() const;
 
     void setRunStatus(NseMQ::RunStatus runStatus);
+
+    const std::map<std::string, void *> &getTopicCbMap() const;
+
+    void setTopicCbMap(const std::map<std::string, void *> &topicCbMap);
 };
 
 #endif //NSEMQ_NSEMQCONSUMER_H_

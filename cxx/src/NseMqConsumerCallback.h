@@ -7,7 +7,7 @@
 #include "NseMqBase.h"
 
 template<class T>
-class NseMqConsumerCallback : public NseMqBase{
+class NseMqConsumerCallback{
 public:
     // consume callback function which need to implement by user.
     virtual void consume_callback(T &t) = 0;

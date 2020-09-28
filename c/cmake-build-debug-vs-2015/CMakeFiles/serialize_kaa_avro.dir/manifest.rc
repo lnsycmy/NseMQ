@@ -1,0 +1,2 @@
+#pragma code_page(65001)
+1 /* CREATEPROCESS_MANIFEST_RESOURCE_ID */ 24 /* RT_MANIFEST */ "E:/Project/NseMQ/c/cmake-build-debug-vs-2015/CMakeFiles/serialize_kaa_avro.dir/embed.manifest"

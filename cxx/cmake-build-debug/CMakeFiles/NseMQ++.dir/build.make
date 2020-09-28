@@ -38,10 +38,10 @@ NULL=nul
 SHELL = cmd.exe
 
 # The CMake executable.
-CMAKE_COMMAND = "D:\Development\JetBrains Clion\CLion 2020.2.1\bin\cmake\win\bin\cmake.exe"
+CMAKE_COMMAND = "D:\Development\CLion\CLion 2020.2.1\bin\cmake\win\bin\cmake.exe"
 
 # The command to remove a file.
-RM = "D:\Development\JetBrains Clion\CLion 2020.2.1\bin\cmake\win\bin\cmake.exe" -E rm -f
+RM = "D:\Development\CLion\CLion 2020.2.1\bin\cmake\win\bin\cmake.exe" -E rm -f
 
 # Escaping for special characters.
 EQUALS = =
@@ -133,7 +133,7 @@ NseMQ++.dll: CMakeFiles\NseMQ++.dir\src\NseMqBase.cpp.obj
 NseMQ++.dll: CMakeFiles\NseMQ++.dir\build.make
 NseMQ++.dll: CMakeFiles\NseMQ++.dir\objects1.rsp
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=E:\Project\NseMQ\cxx\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX shared library NseMQ++.dll"
-	"D:\Development\JetBrains Clion\CLion 2020.2.1\bin\cmake\win\bin\cmake.exe" -E vs_link_dll --intdir=CMakeFiles\NseMQ++.dir --rc=C:\PROGRA~2\WI3CF2~1\8.1\bin\x64\rc.exe --mt=C:\PROGRA~2\WI3CF2~1\8.1\bin\x64\mt.exe --manifests  -- "D:\Development\Visual Studio 2015\VC\bin\amd64\link.exe" /nologo @CMakeFiles\NseMQ++.dir\objects1.rsp @<<
+	"D:\Development\CLion\CLion 2020.2.1\bin\cmake\win\bin\cmake.exe" -E vs_link_dll --intdir=CMakeFiles\NseMQ++.dir --rc=C:\PROGRA~2\WI3CF2~1\8.1\bin\x64\rc.exe --mt=C:\PROGRA~2\WI3CF2~1\8.1\bin\x64\mt.exe --manifests  -- "D:\Development\Visual Studio 2015\VC\bin\amd64\link.exe" /nologo @CMakeFiles\NseMQ++.dir\objects1.rsp @<<
  /out:NseMQ++.dll /implib:NseMQ++.lib /pdb:E:\Project\NseMQ\cxx\cmake-build-debug\NseMQ++.pdb /dll /version:0.0 /machine:x64 /debug /INCREMENTAL   -LIBPATH:E:\Project\NseMQ\cxx\lib  -LIBPATH:D:\Program\boost1.72.0\boost_1_72_0\lib64-msvc-14.0  librdkafka.lib avrocpp.lib kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib  
 <<
 

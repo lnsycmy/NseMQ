@@ -38,10 +38,10 @@ NULL=nul
 SHELL = cmd.exe
 
 # The CMake executable.
-CMAKE_COMMAND = "D:\Development\JetBrains Clion\CLion 2020.2.1\bin\cmake\win\bin\cmake.exe"
+CMAKE_COMMAND = "D:\Development\CLion\CLion 2020.2.1\bin\cmake\win\bin\cmake.exe"
 
 # The command to remove a file.
-RM = "D:\Development\JetBrains Clion\CLion 2020.2.1\bin\cmake\win\bin\cmake.exe" -E rm -f
+RM = "D:\Development\CLion\CLion 2020.2.1\bin\cmake\win\bin\cmake.exe" -E rm -f
 
 # Escaping for special characters.
 EQUALS = =
@@ -92,7 +92,7 @@ consumer_example.exe: CMakeFiles\consumer_example.dir\build.make
 consumer_example.exe: NseMQ++.lib
 consumer_example.exe: CMakeFiles\consumer_example.dir\objects1.rsp
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=E:\Project\NseMQ\cxx\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable consumer_example.exe"
-	"D:\Development\JetBrains Clion\CLion 2020.2.1\bin\cmake\win\bin\cmake.exe" -E vs_link_exe --intdir=CMakeFiles\consumer_example.dir --rc=C:\PROGRA~2\WI3CF2~1\8.1\bin\x64\rc.exe --mt=C:\PROGRA~2\WI3CF2~1\8.1\bin\x64\mt.exe --manifests  -- "D:\Development\Visual Studio 2015\VC\bin\amd64\link.exe" /nologo @CMakeFiles\consumer_example.dir\objects1.rsp @<<
+	"D:\Development\CLion\CLion 2020.2.1\bin\cmake\win\bin\cmake.exe" -E vs_link_exe --intdir=CMakeFiles\consumer_example.dir --rc=C:\PROGRA~2\WI3CF2~1\8.1\bin\x64\rc.exe --mt=C:\PROGRA~2\WI3CF2~1\8.1\bin\x64\mt.exe --manifests  -- "D:\Development\Visual Studio 2015\VC\bin\amd64\link.exe" /nologo @CMakeFiles\consumer_example.dir\objects1.rsp @<<
  /out:consumer_example.exe /implib:consumer_example.lib /pdb:E:\Project\NseMQ\cxx\cmake-build-debug\consumer_example.pdb /version:0.0  /machine:x64 /debug /INCREMENTAL /subsystem:console   -LIBPATH:E:\Project\NseMQ\cxx\lib  -LIBPATH:D:\Program\boost1.72.0\boost_1_72_0\lib64-msvc-14.0  librdkafka.lib avrocpp.lib NseMQ++.lib librdkafka.lib avrocpp.lib kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib 
 <<
 

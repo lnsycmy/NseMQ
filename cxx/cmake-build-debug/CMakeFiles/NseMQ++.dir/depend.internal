@@ -1679,6 +1679,7 @@ CMakeFiles/NseMQ++.dir/src/NseMqConsumer.cpp.obj
  E:/Project/NseMQ/cxx/src/NseMqBase.h
  E:/Project/NseMQ/cxx/src/NseMqConsumer.cpp
  E:/Project/NseMQ/cxx/src/NseMqConsumer.h
+ E:/Project/NseMQ/cxx/src/NseMqConsumerCallback.h
 CMakeFiles/NseMQ++.dir/src/NseMqProducer.cpp.obj
  ../../include/avro/AvroTraits.hh
  ../../include/avro/Compiler.hh
@@ -2178,3 +2179,4 @@ CMakeFiles/NseMQ++.dir/src/NseMqProducer.cpp.obj
  E:/Project/NseMQ/cxx/src/NseMqBase.h
  E:/Project/NseMQ/cxx/src/NseMqProducer.cpp
  E:/Project/NseMQ/cxx/src/NseMqProducer.h
+ E:/Project/NseMQ/cxx/src/NseMqProducerCallback.h

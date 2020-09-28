@@ -39,10 +39,10 @@ NULL=nul
 SHELL = cmd.exe
 
 # The CMake executable.
-CMAKE_COMMAND = "D:\Development\JetBrains Clion\CLion 2020.2.1\bin\cmake\win\bin\cmake.exe"
+CMAKE_COMMAND = "D:\Development\CLion\CLion 2020.2.1\bin\cmake\win\bin\cmake.exe"
 
 # The command to remove a file.
-RM = "D:\Development\JetBrains Clion\CLion 2020.2.1\bin\cmake\win\bin\cmake.exe" -E rm -f
+RM = "D:\Development\CLion\CLion 2020.2.1\bin\cmake\win\bin\cmake.exe" -E rm -f
 
 # Escaping for special characters.
 EQUALS = =

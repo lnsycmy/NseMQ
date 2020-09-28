@@ -1,4 +1,4 @@
-The system is: Windows - 10.0.18363 - AMD64
+The system is: Windows - 10.0.19041 - AMD64
 Compiling the C compiler identification source file "CMakeCCompilerId.c" succeeded.
 Compiler: D:/Development/Visual Studio 2015/VC/bin/amd64/cl.exe 
 Build flags: 
@@ -50,48 +50,48 @@ The CXX compiler identification is MSVC, found in "E:/Project/NseMQ/cxx/cmake-bu
 Determining if the C compiler works passed with the following output:
 Change Dir: E:/Project/NseMQ/cxx/cmake-build-debug/CMakeFiles/CMakeTmp
 
-Run Build Command(s):nmake /nologo cmTC_2665c\fast && 	"D:\Development\Visual Studio 2015\VC\BIN\amd64\nmake.exe"  -f CMakeFiles\cmTC_2665c.dir\build.make /nologo -L                  CMakeFiles\cmTC_2665c.dir\build
-Building C object CMakeFiles/cmTC_2665c.dir/testCCompiler.c.obj
-	"D:\Development\Visual Studio 2015\VC\bin\amd64\cl.exe" @C:\Users\cmy\AppData\Local\Temp\nm4077.tmp
+Run Build Command(s):nmake /nologo cmTC_4f1b7\fast && 	"D:\Development\Visual Studio 2015\VC\BIN\amd64\nmake.exe"  -f CMakeFiles\cmTC_4f1b7.dir\build.make /nologo -L                  CMakeFiles\cmTC_4f1b7.dir\build
+Building C object CMakeFiles/cmTC_4f1b7.dir/testCCompiler.c.obj
+	"D:\Development\Visual Studio 2015\VC\bin\amd64\cl.exe" @C:\Users\cmy\AppData\Local\Temp\nmFCA7.tmp
 testCCompiler.c
-Linking C executable cmTC_2665c.exe
-	"D:\Development\JetBrains Clion\CLion 2020.2.1\bin\cmake\win\bin\cmake.exe" -E vs_link_exe --intdir=CMakeFiles\cmTC_2665c.dir --rc=C:\PROGRA~2\WI3CF2~1\8.1\bin\x64\rc.exe --mt=C:\PROGRA~2\WI3CF2~1\8.1\bin\x64\mt.exe --manifests  -- "D:\Development\Visual Studio 2015\VC\bin\amd64\link.exe" /nologo @CMakeFiles\cmTC_2665c.dir\objects1.rsp @C:\Users\cmy\AppData\Local\Temp\nm420F.tmp
+Linking C executable cmTC_4f1b7.exe
+	"D:\Development\CLion\CLion 2020.2.1\bin\cmake\win\bin\cmake.exe" -E vs_link_exe --intdir=CMakeFiles\cmTC_4f1b7.dir --rc=C:\PROGRA~2\WI3CF2~1\8.1\bin\x64\rc.exe --mt=C:\PROGRA~2\WI3CF2~1\8.1\bin\x64\mt.exe --manifests  -- "D:\Development\Visual Studio 2015\VC\bin\amd64\link.exe" /nologo @CMakeFiles\cmTC_4f1b7.dir\objects1.rsp @C:\Users\cmy\AppData\Local\Temp\nmFDF1.tmp
 
 
 
 Detecting C compiler ABI info compiled with the following output:
 Change Dir: E:/Project/NseMQ/cxx/cmake-build-debug/CMakeFiles/CMakeTmp
 
-Run Build Command(s):nmake /nologo cmTC_0b01a\fast && 	"D:\Development\Visual Studio 2015\VC\BIN\amd64\nmake.exe"  -f CMakeFiles\cmTC_0b01a.dir\build.make /nologo -L                  CMakeFiles\cmTC_0b01a.dir\build
-Building C object CMakeFiles/cmTC_0b01a.dir/CMakeCCompilerABI.c.obj
-	"D:\Development\Visual Studio 2015\VC\bin\amd64\cl.exe" @C:\Users\cmy\AppData\Local\Temp\nm47BA.tmp
+Run Build Command(s):nmake /nologo cmTC_b6892\fast && 	"D:\Development\Visual Studio 2015\VC\BIN\amd64\nmake.exe"  -f CMakeFiles\cmTC_b6892.dir\build.make /nologo -L                  CMakeFiles\cmTC_b6892.dir\build
+Building C object CMakeFiles/cmTC_b6892.dir/CMakeCCompilerABI.c.obj
+	"D:\Development\Visual Studio 2015\VC\bin\amd64\cl.exe" @C:\Users\cmy\AppData\Local\Temp\nm468.tmp
 CMakeCCompilerABI.c
-Linking C executable cmTC_0b01a.exe
-	"D:\Development\JetBrains Clion\CLion 2020.2.1\bin\cmake\win\bin\cmake.exe" -E vs_link_exe --intdir=CMakeFiles\cmTC_0b01a.dir --rc=C:\PROGRA~2\WI3CF2~1\8.1\bin\x64\rc.exe --mt=C:\PROGRA~2\WI3CF2~1\8.1\bin\x64\mt.exe --manifests  -- "D:\Development\Visual Studio 2015\VC\bin\amd64\link.exe" /nologo @CMakeFiles\cmTC_0b01a.dir\objects1.rsp @C:\Users\cmy\AppData\Local\Temp\nm4867.tmp
+Linking C executable cmTC_b6892.exe
+	"D:\Development\CLion\CLion 2020.2.1\bin\cmake\win\bin\cmake.exe" -E vs_link_exe --intdir=CMakeFiles\cmTC_b6892.dir --rc=C:\PROGRA~2\WI3CF2~1\8.1\bin\x64\rc.exe --mt=C:\PROGRA~2\WI3CF2~1\8.1\bin\x64\mt.exe --manifests  -- "D:\Development\Visual Studio 2015\VC\bin\amd64\link.exe" /nologo @CMakeFiles\cmTC_b6892.dir\objects1.rsp @C:\Users\cmy\AppData\Local\Temp\nm505.tmp
 
 
 
 Determining if the CXX compiler works passed with the following output:
 Change Dir: E:/Project/NseMQ/cxx/cmake-build-debug/CMakeFiles/CMakeTmp
 
-Run Build Command(s):nmake /nologo cmTC_0a6ef\fast && 	"D:\Development\Visual Studio 2015\VC\BIN\amd64\nmake.exe"  -f CMakeFiles\cmTC_0a6ef.dir\build.make /nologo -L                  CMakeFiles\cmTC_0a6ef.dir\build
-Building CXX object CMakeFiles/cmTC_0a6ef.dir/testCXXCompiler.cxx.obj
-	"D:\Development\Visual Studio 2015\VC\bin\amd64\cl.exe" @C:\Users\cmy\AppData\Local\Temp\nm4C9C.tmp
+Run Build Command(s):nmake /nologo cmTC_3d7b7\fast && 	"D:\Development\Visual Studio 2015\VC\BIN\amd64\nmake.exe"  -f CMakeFiles\cmTC_3d7b7.dir\build.make /nologo -L                  CMakeFiles\cmTC_3d7b7.dir\build
+Building CXX object CMakeFiles/cmTC_3d7b7.dir/testCXXCompiler.cxx.obj
+	"D:\Development\Visual Studio 2015\VC\bin\amd64\cl.exe" @C:\Users\cmy\AppData\Local\Temp\nm811.tmp
 testCXXCompiler.cxx
-Linking CXX executable cmTC_0a6ef.exe
-	"D:\Development\JetBrains Clion\CLion 2020.2.1\bin\cmake\win\bin\cmake.exe" -E vs_link_exe --intdir=CMakeFiles\cmTC_0a6ef.dir --rc=C:\PROGRA~2\WI3CF2~1\8.1\bin\x64\rc.exe --mt=C:\PROGRA~2\WI3CF2~1\8.1\bin\x64\mt.exe --manifests  -- "D:\Development\Visual Studio 2015\VC\bin\amd64\link.exe" /nologo @CMakeFiles\cmTC_0a6ef.dir\objects1.rsp @C:\Users\cmy\AppData\Local\Temp\nm4D88.tmp
+Linking CXX executable cmTC_3d7b7.exe
+	"D:\Development\CLion\CLion 2020.2.1\bin\cmake\win\bin\cmake.exe" -E vs_link_exe --intdir=CMakeFiles\cmTC_3d7b7.dir --rc=C:\PROGRA~2\WI3CF2~1\8.1\bin\x64\rc.exe --mt=C:\PROGRA~2\WI3CF2~1\8.1\bin\x64\mt.exe --manifests  -- "D:\Development\Visual Studio 2015\VC\bin\amd64\link.exe" /nologo @CMakeFiles\cmTC_3d7b7.dir\objects1.rsp @C:\Users\cmy\AppData\Local\Temp\nm8AF.tmp
 
 
 
 Detecting CXX compiler ABI info compiled with the following output:
 Change Dir: E:/Project/NseMQ/cxx/cmake-build-debug/CMakeFiles/CMakeTmp
 
-Run Build Command(s):nmake /nologo cmTC_b33e7\fast && 	"D:\Development\Visual Studio 2015\VC\BIN\amd64\nmake.exe"  -f CMakeFiles\cmTC_b33e7.dir\build.make /nologo -L                  CMakeFiles\cmTC_b33e7.dir\build
-Building CXX object CMakeFiles/cmTC_b33e7.dir/CMakeCXXCompilerABI.cpp.obj
-	"D:\Development\Visual Studio 2015\VC\bin\amd64\cl.exe" @C:\Users\cmy\AppData\Local\Temp\nm514F.tmp
+Run Build Command(s):nmake /nologo cmTC_56114\fast && 	"D:\Development\Visual Studio 2015\VC\BIN\amd64\nmake.exe"  -f CMakeFiles\cmTC_56114.dir\build.make /nologo -L                  CMakeFiles\cmTC_56114.dir\build
+Building CXX object CMakeFiles/cmTC_56114.dir/CMakeCXXCompilerABI.cpp.obj
+	"D:\Development\Visual Studio 2015\VC\bin\amd64\cl.exe" @C:\Users\cmy\AppData\Local\Temp\nmC28.tmp
 CMakeCXXCompilerABI.cpp
-Linking CXX executable cmTC_b33e7.exe
-	"D:\Development\JetBrains Clion\CLion 2020.2.1\bin\cmake\win\bin\cmake.exe" -E vs_link_exe --intdir=CMakeFiles\cmTC_b33e7.dir --rc=C:\PROGRA~2\WI3CF2~1\8.1\bin\x64\rc.exe --mt=C:\PROGRA~2\WI3CF2~1\8.1\bin\x64\mt.exe --manifests  -- "D:\Development\Visual Studio 2015\VC\bin\amd64\link.exe" /nologo @CMakeFiles\cmTC_b33e7.dir\objects1.rsp @C:\Users\cmy\AppData\Local\Temp\nm521B.tmp
+Linking CXX executable cmTC_56114.exe
+	"D:\Development\CLion\CLion 2020.2.1\bin\cmake\win\bin\cmake.exe" -E vs_link_exe --intdir=CMakeFiles\cmTC_56114.dir --rc=C:\PROGRA~2\WI3CF2~1\8.1\bin\x64\rc.exe --mt=C:\PROGRA~2\WI3CF2~1\8.1\bin\x64\mt.exe --manifests  -- "D:\Development\Visual Studio 2015\VC\bin\amd64\link.exe" /nologo @CMakeFiles\cmTC_56114.dir\objects1.rsp @C:\Users\cmy\AppData\Local\Temp\nmD04.tmp
 
 
 
@@ -100,12 +100,12 @@ Linking CXX executable cmTC_b33e7.exe
 Detecting CXX [] compiler features compiled with the following output:
 Change Dir: E:/Project/NseMQ/cxx/cmake-build-debug/CMakeFiles/CMakeTmp
 
-Run Build Command(s):nmake /nologo cmTC_1acec\fast && 	"D:\Development\Visual Studio 2015\VC\BIN\amd64\nmake.exe"  -f CMakeFiles\cmTC_1acec.dir\build.make /nologo -L                  CMakeFiles\cmTC_1acec.dir\build
-Building CXX object CMakeFiles/cmTC_1acec.dir/feature_tests.cxx.obj
-	"D:\Development\Visual Studio 2015\VC\bin\amd64\cl.exe" @C:\Users\cmy\AppData\Local\Temp\nm5585.tmp
+Run Build Command(s):nmake /nologo cmTC_89524\fast && 	"D:\Development\Visual Studio 2015\VC\BIN\amd64\nmake.exe"  -f CMakeFiles\cmTC_89524.dir\build.make /nologo -L                  CMakeFiles\cmTC_89524.dir\build
+Building CXX object CMakeFiles/cmTC_89524.dir/feature_tests.cxx.obj
+	"D:\Development\Visual Studio 2015\VC\bin\amd64\cl.exe" @C:\Users\cmy\AppData\Local\Temp\nm10FB.tmp
 feature_tests.cxx
-Linking CXX executable cmTC_1acec.exe
-	"D:\Development\JetBrains Clion\CLion 2020.2.1\bin\cmake\win\bin\cmake.exe" -E vs_link_exe --intdir=CMakeFiles\cmTC_1acec.dir --rc=C:\PROGRA~2\WI3CF2~1\8.1\bin\x64\rc.exe --mt=C:\PROGRA~2\WI3CF2~1\8.1\bin\x64\mt.exe --manifests  -- "D:\Development\Visual Studio 2015\VC\bin\amd64\link.exe" /nologo @CMakeFiles\cmTC_1acec.dir\objects1.rsp @C:\Users\cmy\AppData\Local\Temp\nm5652.tmp
+Linking CXX executable cmTC_89524.exe
+	"D:\Development\CLion\CLion 2020.2.1\bin\cmake\win\bin\cmake.exe" -E vs_link_exe --intdir=CMakeFiles\cmTC_89524.dir --rc=C:\PROGRA~2\WI3CF2~1\8.1\bin\x64\rc.exe --mt=C:\PROGRA~2\WI3CF2~1\8.1\bin\x64\mt.exe --manifests  -- "D:\Development\Visual Studio 2015\VC\bin\amd64\link.exe" /nologo @CMakeFiles\cmTC_89524.dir\objects1.rsp @C:\Users\cmy\AppData\Local\Temp\nm1205.tmp
 
 
 

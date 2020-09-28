@@ -1,0 +1,15 @@
+Determining if the include file pthread.h exists failed with the following output:
+Change Dir: E:/Project/NseMQ/c++/cmake-build-debug-vs-2015/CMakeFiles/CMakeTmp
+
+Run Build Command(s):nmake /nologo cmTC_77aea\fast && 	"D:\Development\Visual Studio 2015\VC\BIN\amd64\nmake.exe"  -f CMakeFiles\cmTC_77aea.dir\build.make /nologo -L                  CMakeFiles\cmTC_77aea.dir\build
+Building C object CMakeFiles/cmTC_77aea.dir/CheckIncludeFile.c.obj
+	"D:\Development\Visual Studio 2015\VC\bin\amd64\cl.exe" @C:\Users\cmy\AppData\Local\Temp\nm1B1C.tmp
+CheckIncludeFile.c
+E:\Project\NseMQ\c++\cmake-build-debug-vs-2015\CMakeFiles\CMakeTmp\CheckIncludeFile.c(1): fatal error C1083: 无法打开包括文件: “pthread.h”: No such file or directory
+NMAKE : fatal error U1077: “"D:\Development\Visual Studio 2015\VC\bin\amd64\cl.exe"”: 返回代码“0x2”
+Stop.
+NMAKE : fatal error U1077: “"D:\Development\Visual Studio 2015\VC\BIN\amd64\nmake.exe"”: 返回代码“0x2”
+Stop.
+
+
+

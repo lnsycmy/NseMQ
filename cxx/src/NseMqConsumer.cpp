@@ -67,7 +67,7 @@ NseMQ::ErrorCode NseMqConsumer::init(std::string broker_addr) {
  * @param start_offset  consume message from which paration, default RdKafka::Topic::OFFSET_END
  */
 NseMQ::ErrorCode NseMqConsumer::subscribe(std::string topic_name,
-                                          void (*consumer_callback)(rd_kafka_message_t *, void *),
+                                          void *consume_cb,
                                           int64_t start_offset){
     // judge the run status.
     if(run_status_ != NseMQ::INIT_STATUS){
@@ -93,9 +93,8 @@ NseMQ::ErrorCode NseMqConsumer::subscribe(std::string topic_name,
     }
     // add mutex lock, put topic name and callback into map.
     topic_mutex.lock();
-    topic_cb_map_.insert(std::pair<std::string,
-                        void (*)(rd_kafka_message_t *, void *)>
-                         (topic_name, consumer_callback));
+    topic_cb_map_.insert(std::pair<std::string, void (*)>
+                         (topic_name, consume_cb));
     topic_mutex.unlock();
     if(0 == topic_cb_map_.count(topic_name)){
         this->writeErrorLog("Failed to subscribe topic.");
@@ -315,13 +314,7 @@ void NseMqConsumer::setPartition(int32_t partition) {
     partition_ = partition;
 }
 
-const std::map<std::string, void *> &NseMqConsumer::getTopicCbMap() const {
-    return topic_cb_map_;
-}
 
-void NseMqConsumer::setTopicCbMap(const std::map<std::string, void *> &topicCbMap) {
-    topic_cb_map_ = topicCbMap;
-}
 
 NseMQ::RunStatus NseMqConsumer::getRunStatus() const {
     return run_status_;
@@ -330,6 +323,16 @@ NseMQ::RunStatus NseMqConsumer::getRunStatus() const {
 void NseMqConsumer::setRunStatus(NseMQ::RunStatus runStatus) {
     run_status_ = runStatus;
 }
+
+const std::map<std::string, void *> &NseMqConsumer::getTopicCbMap() const {
+    return topic_cb_map_;
+}
+
+void NseMqConsumer::setTopicCbMap(const std::map<std::string, void *> &topicCbMap) {
+    topic_cb_map_ = topicCbMap;
+}
+
+
 
 
 

@@ -40,10 +40,10 @@ int main(){
 
     ConsumerCallback<NseMQ::student> cb1;
     ConsumerCallback<NseMQ::cpx> cb2;
-    consumer.subscribe("test",cb1);
-    consumer.subscribe("test2",cb2);
+    consumer.subscribe("test", &ConsumerCallback<NseMQ::student>::consume_cb);
+    consumer.subscribe("test2", cb2::consume_cb);
     consumer.start();
-    Sleep(10000);
+/*    Sleep(10000);
     consumer.close();
     auto threadFunction = [&consumer]() {
         while (1){
@@ -52,7 +52,7 @@ int main(){
         }
     };
     std::thread thread(threadFunction);
-    thread.join();
+    thread.join();*/
     std::cout << "back to main()" << std::endl;
     return 0;
 }

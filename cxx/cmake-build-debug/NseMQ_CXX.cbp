@@ -46,9 +46,6 @@
 					<Add directory="D:\Development\Visual Studio 2010\VC\INCLUDE"/>
 					<Add directory="D:\Development\Visual Studio 2010\VC\ATLMFC\INCLUDE"/>
 					<Add directory="C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\include"/>
-					<Add directory="D:\Program\jansson2.13\jansson-2.13\build\include"/>
-					<Add directory="D:\Program\boost1.74.0\boost_1_74_0\boost"/>
-					<Add directory="C:\OpenSSL-Win64\include"/>
 				</Compiler>
 				<MakeCommands>
 					<Build command="nmake /NOLOGO /f E:\Project\NseMQ\cxx\cmake-build-debug\Makefile VERBOSE=1 test_C++"/>
@@ -76,9 +73,6 @@
 					<Add directory="D:\Development\Visual Studio 2010\VC\INCLUDE"/>
 					<Add directory="D:\Development\Visual Studio 2010\VC\ATLMFC\INCLUDE"/>
 					<Add directory="C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\include"/>
-					<Add directory="D:\Program\jansson2.13\jansson-2.13\build\include"/>
-					<Add directory="D:\Program\boost1.74.0\boost_1_74_0\boost"/>
-					<Add directory="C:\OpenSSL-Win64\include"/>
 				</Compiler>
 				<MakeCommands>
 					<Build command="nmake /NOLOGO /f E:\Project\NseMQ\cxx\cmake-build-debug\Makefile VERBOSE=1 test_C++/fast"/>
@@ -106,9 +100,6 @@
 					<Add directory="D:\Development\Visual Studio 2010\VC\INCLUDE"/>
 					<Add directory="D:\Development\Visual Studio 2010\VC\ATLMFC\INCLUDE"/>
 					<Add directory="C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\include"/>
-					<Add directory="D:\Program\jansson2.13\jansson-2.13\build\include"/>
-					<Add directory="D:\Program\boost1.74.0\boost_1_74_0\boost"/>
-					<Add directory="C:\OpenSSL-Win64\include"/>
 				</Compiler>
 				<MakeCommands>
 					<Build command="nmake /NOLOGO /f E:\Project\NseMQ\cxx\cmake-build-debug\Makefile VERBOSE=1 NseMQ++"/>
@@ -136,9 +127,6 @@
 					<Add directory="D:\Development\Visual Studio 2010\VC\INCLUDE"/>
 					<Add directory="D:\Development\Visual Studio 2010\VC\ATLMFC\INCLUDE"/>
 					<Add directory="C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\include"/>
-					<Add directory="D:\Program\jansson2.13\jansson-2.13\build\include"/>
-					<Add directory="D:\Program\boost1.74.0\boost_1_74_0\boost"/>
-					<Add directory="C:\OpenSSL-Win64\include"/>
 				</Compiler>
 				<MakeCommands>
 					<Build command="nmake /NOLOGO /f E:\Project\NseMQ\cxx\cmake-build-debug\Makefile VERBOSE=1 NseMQ++/fast"/>
@@ -166,9 +154,6 @@
 					<Add directory="D:\Development\Visual Studio 2010\VC\INCLUDE"/>
 					<Add directory="D:\Development\Visual Studio 2010\VC\ATLMFC\INCLUDE"/>
 					<Add directory="C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\include"/>
-					<Add directory="D:\Program\jansson2.13\jansson-2.13\build\include"/>
-					<Add directory="D:\Program\boost1.74.0\boost_1_74_0\boost"/>
-					<Add directory="C:\OpenSSL-Win64\include"/>
 				</Compiler>
 				<MakeCommands>
 					<Build command="nmake /NOLOGO /f E:\Project\NseMQ\cxx\cmake-build-debug\Makefile VERBOSE=1 consumer_example"/>
@@ -196,9 +181,6 @@
 					<Add directory="D:\Development\Visual Studio 2010\VC\INCLUDE"/>
 					<Add directory="D:\Development\Visual Studio 2010\VC\ATLMFC\INCLUDE"/>
 					<Add directory="C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\include"/>
-					<Add directory="D:\Program\jansson2.13\jansson-2.13\build\include"/>
-					<Add directory="D:\Program\boost1.74.0\boost_1_74_0\boost"/>
-					<Add directory="C:\OpenSSL-Win64\include"/>
 				</Compiler>
 				<MakeCommands>
 					<Build command="nmake /NOLOGO /f E:\Project\NseMQ\cxx\cmake-build-debug\Makefile VERBOSE=1 consumer_example/fast"/>
@@ -226,9 +208,6 @@
 					<Add directory="D:\Development\Visual Studio 2010\VC\INCLUDE"/>
 					<Add directory="D:\Development\Visual Studio 2010\VC\ATLMFC\INCLUDE"/>
 					<Add directory="C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\include"/>
-					<Add directory="D:\Program\jansson2.13\jansson-2.13\build\include"/>
-					<Add directory="D:\Program\boost1.74.0\boost_1_74_0\boost"/>
-					<Add directory="C:\OpenSSL-Win64\include"/>
 				</Compiler>
 				<MakeCommands>
 					<Build command="nmake /NOLOGO /f E:\Project\NseMQ\cxx\cmake-build-debug\Makefile VERBOSE=1 producer_example"/>
@@ -256,9 +235,6 @@
 					<Add directory="D:\Development\Visual Studio 2010\VC\INCLUDE"/>
 					<Add directory="D:\Development\Visual Studio 2010\VC\ATLMFC\INCLUDE"/>
 					<Add directory="C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\include"/>
-					<Add directory="D:\Program\jansson2.13\jansson-2.13\build\include"/>
-					<Add directory="D:\Program\boost1.74.0\boost_1_74_0\boost"/>
-					<Add directory="C:\OpenSSL-Win64\include"/>
 				</Compiler>
 				<MakeCommands>
 					<Build command="nmake /NOLOGO /f E:\Project\NseMQ\cxx\cmake-build-debug\Makefile VERBOSE=1 producer_example/fast"/>

@@ -3,18 +3,22 @@
 #include <librdkafka/rdkafka.h>
 #include "../src/nsemq_consumer.h"
 
-static void msg_callback1 (rd_kafka_message_t *rkmessage,
-                         void *opaque) {
-    printf("enter msg_callback1\n");
-    printf("received data:%s \n", (char *)rkmessage->payload);
-    //rd_kafka_message_destroy(rkmessage);
+#include "cpx.h"
+
+void msg_callback1(void *msg_data, char *msg_topic, char *msg_type){
+    printf("this is msg_callback1!\n");
+    if(strcmp(msg_type, "nse_cpx") == 0){
+        nse_cpx_t *cpx2 = (nse_cpx_t *)msg_data;
+        printf("cpx2: im: %lf, re: %lf, name: %s, age: %d\n", cpx2->im, cpx2->re, cpx2->s->name->data, cpx2->s->age);
+        printf("cpx2 msg_topic:%s\n",msg_topic);
+    }else if(strcmp(msg_type, "nse_person") == 0){
+        nse_person_t *person = (nse_person_t *)msg_data;
+        printf("nse_person: name: %s, age: %d\n", person->name->data, person->age);
+    }
 }
 
-static void msg_callback2 (rd_kafka_message_t *rkmessage,
-                           void *opaque) {
-    printf("enter msg_callback2\n");
-    printf("received data:%s \n", (char *)rkmessage->payload);
-    // rd_kafka_message_destroy(rkmessage);
+void msg_callback2(void *msg_data, char *msg_topic, char *msg_type){
+    printf("this is msg_callback2!\n");
 }
 
 int main(){
@@ -24,12 +28,14 @@ int main(){
 	if(nsemq_consumer_init("localhost:9092") != ERR_NO_ERROR) {
         return -1;
     }
-    nsemq_consumer_subscribe("test",msg_callback1);
-    nsemq_consumer_subscribe("test1",msg_callback2);
+
+    nsemq_consumer_subscribe("test", nse_cpx, msg_callback1);
+    nsemq_consumer_subscribe("test1", nse_person, msg_callback1);
+
     nsemq_consumer_start();
     printf("reback main();\n");
 
-    while(time_count < 10){
+    while(time_count < 100){
         Sleep(1000);
         time_count++;
     }

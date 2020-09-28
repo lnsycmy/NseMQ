@@ -1678,6 +1678,7 @@ CMakeFiles\NseMQ++.dir\src\NseMqConsumer.cpp.obj: D:\Program\boost1.72.0\boost_1
 CMakeFiles\NseMQ++.dir\src\NseMqConsumer.cpp.obj: ..\src\NseMqBase.h
 CMakeFiles\NseMQ++.dir\src\NseMqConsumer.cpp.obj: ..\src\NseMqConsumer.cpp
 CMakeFiles\NseMQ++.dir\src\NseMqConsumer.cpp.obj: ..\src\NseMqConsumer.h
+CMakeFiles\NseMQ++.dir\src\NseMqConsumer.cpp.obj: ..\src\NseMqConsumerCallback.h
 
 CMakeFiles\NseMQ++.dir\src\NseMqProducer.cpp.obj: ..\..\include\avro\AvroTraits.hh
 CMakeFiles\NseMQ++.dir\src\NseMqProducer.cpp.obj: ..\..\include\avro\Compiler.hh
@@ -2177,4 +2178,5 @@ CMakeFiles\NseMQ++.dir\src\NseMqProducer.cpp.obj: ..\..\include\librdkafka\rdkaf
 CMakeFiles\NseMQ++.dir\src\NseMqProducer.cpp.obj: ..\src\NseMqBase.h
 CMakeFiles\NseMQ++.dir\src\NseMqProducer.cpp.obj: ..\src\NseMqProducer.cpp
 CMakeFiles\NseMQ++.dir\src\NseMqProducer.cpp.obj: ..\src\NseMqProducer.h
+CMakeFiles\NseMQ++.dir\src\NseMqProducer.cpp.obj: ..\src\NseMqProducerCallback.h
 

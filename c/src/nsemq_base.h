@@ -4,6 +4,19 @@
 #include <stdio.h>
 #include <string.h>
 #include <librdkafka/rdkafka.h>
+#include "kaa_common_schema.h"
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
+typedef void* (*deserialize_func)(void*);
+
+#define TRUE 1
+#define FALSE 0
+typedef int BOOL;
 
 typedef  enum{
     ERR_NO_ERROR = 0,                   // execution succeed, no-error.
@@ -37,6 +50,7 @@ typedef  enum{
     ERR_FAIL_CONNECT_BROKER = -100,    // failed to connect broker.
 } ErrorCode;
 
+/*** Value of running status ***/
 typedef enum {
     NO_INIT = -1,
     INIT_STATUS = 0,
@@ -44,16 +58,50 @@ typedef enum {
     CLOSE_STATUS = 2,
 } RunStatus;
 
-typedef int BOOL;
-#define TRUE 1
-#define FALSE 0
+/*** Basic types of data ***/
+typedef struct {
+    serialize_fn serialize;
+    get_size_fn  get_size;
+    get_type_fn  get_type;
+    destroy_fn   destroy;
+} BaseType;
+
+/*** topic list ***/
+struct TopicNode {
+    char *topic_name;      // topic name
+    rd_kafka_topic_t *topic_object;  // topic object
+    void* (*deserialize_func)(void*);   // deserialize function
+    void (*consume_callback)(void *, char*, char *);  // consumer callback function.
+    struct TopicNode *next;
+};
+typedef struct TopicNode *TopicList;
+
+/*** list function ***/
+void insert_list(TopicList *topic_list,
+                 const char *topic_name,
+                 rd_kafka_topic_t *topic_object,
+                 void* (*deserialize_func)(void*),
+                 void (*consume_callback)(void *, char*, char *));
+void display_list(TopicList topic_list);
+void delete_item(TopicList *topic_list,const char *topic_name);
+void clear_list(TopicList *topic_list);
+TopicList find_item(TopicList topic_list,const char *topic_name);
+
+/*** encoder and decoder function ***/
+int nsemq_encode(void *msg_struct, char **msg_buf, char **msg_type);
+void* nsemq_decode(char *msg_buf, int buf_size, deserialize_func d_func);
+
+
+/*** consumer and deliver report callback function ***/
+void nsemq_consume_callback(rd_kafka_message_t *rkmessage, void *opaque);
+void nsemq_produce_callback();
 
 // print the log
 void nsemq_write_error(char *errstr);
 void nsemq_write_info(char *infostr);
-
 BOOL nsemq_judge_connect(rd_kafka_t *handle);
 
-
-
+#ifdef __cplusplus
+}      /* extern "C" */
+#endif
 #endif //NSEMQ_C_NSEMQ_BASE_H

@@ -1,0 +1,5 @@
+E:/Project/NseMQ/c++/cmake-build-debug-vs-2015/CMakeFiles/rebuild_cache.dir
+E:/Project/NseMQ/c++/cmake-build-debug-vs-2015/CMakeFiles/NseMQ++.dir
+E:/Project/NseMQ/c++/cmake-build-debug-vs-2015/CMakeFiles/consumer_example.dir
+E:/Project/NseMQ/c++/cmake-build-debug-vs-2015/CMakeFiles/producer_example.dir
+E:/Project/NseMQ/c++/cmake-build-debug-vs-2015/CMakeFiles/edit_cache.dir

@@ -1,1 +1,0 @@
-Visual Studio not found at: D:\Development\Visual Studio 2010 Configure

@@ -3,13 +3,13 @@ rd_kafka_t *producer_;                  // Producer instance handle.
 rd_kafka_conf_t *producer_conf_;        // Temporary configuration object.
 rd_kafka_topic_conf_t *topic_conf_;     // topic configuration object.
 
-RunStatus run_status_ = NO_INIT;        // consumer current status.
+RunStatus producer_run_status_ = NO_INIT;        // consumer current status.
 char errstr_[512];                      // librdkafka API error reporting buffer.
 char errtemp_[512];                     // inner function error.
 
 ErrorCode nsemq_producer_init(const char * broker_addr, void *dr_msg_cb){
     // judge current status
-    if(run_status_ != NO_INIT){
+    if(producer_run_status_ != NO_INIT){
         nsemq_write_error("Don't initialize producer multiple times.");
         return ERR_P_INIT_MULTIPLE_INIT;
     }
@@ -38,24 +38,30 @@ ErrorCode nsemq_producer_init(const char * broker_addr, void *dr_msg_cb){
         nsemq_write_error("Failed to connect broker.");
         return ERR_FAIL_CONNECT_BROKER;
     }
-    run_status_ = INIT_STATUS;
+    producer_run_status_ = INIT_STATUS;
     return ERR_NO_ERROR;
 }
 
-ErrorCode nsemq_producer_produce(char * msg, const char * topic_name){
+ErrorCode nsemq_producer_produce(void *msg, const char *topic_name){
     rd_kafka_resp_err_t err;
     BOOL resend_flag = FALSE;
     ErrorCode err_temp = ERR_NO_ERROR;
-    size_t len = strlen(msg);
+    char *msg_buf;      // 序列化后的字符数组
+    char *msg_type;     // 原结构体的类型。
+    // struct is serialized into char*
+    int buf_size = nsemq_encode(msg, &msg_buf, &msg_type);
+
+    printf("msg_type:%s, len:%d\n", msg_type, strlen(msg_type)+1);
+
     // judge the run status.
-    if(run_status_ == CLOSE_STATUS){
+    if(producer_run_status_ == CLOSE_STATUS){
         nsemq_write_error("Failed to produce: don't allow call produce() after close().");
         return ERR_P_RUN_STATUS;
-    }else if(run_status_ != START_STATUS){
-        run_status_ = START_STATUS;
+    }else if(producer_run_status_ != START_STATUS){
+        producer_run_status_ = START_STATUS;
     }
     // judge message whether empty.
-    if (len == 0) {
+    if (buf_size == 0) {
         rd_kafka_poll(producer_, 0/*non-blocking */);
         return ERR_P_SEND_MSG_EMPTY; // 退出
     }
@@ -69,7 +75,9 @@ ErrorCode nsemq_producer_produce(char * msg, const char * topic_name){
             /* Make a copy of the payload. */
             RD_KAFKA_V_MSGFLAGS(RD_KAFKA_MSG_F_COPY),
             /* Message value and length */
-            RD_KAFKA_V_VALUE(msg, len),
+            RD_KAFKA_V_VALUE(msg_buf, buf_size),
+            /* Message key pointer and length (const void *, size_t) */
+            RD_KAFKA_V_KEY(msg_type,strlen(msg_type)+1),
             /* Per-Message opaque */
             RD_KAFKA_V_OPAQUE(NULL),
             /* End sentinel */
@@ -105,10 +113,12 @@ ErrorCode nsemq_producer_produce(char * msg, const char * topic_name){
             err_temp = ERR_P_SEND_FAIL;
         }
     } else {
-        fprintf(stderr, "%% Enqueued message (%zd bytes) for topic %s\n", len, topic_name);
+        printf("%% Enqueued message (%d bytes) for topic %s\n", buf_size, topic_name);
         err_temp = ERR_NO_ERROR;
     }
     rd_kafka_poll(producer_, 0/*non-blocking*/);
+    // 4. release the buffer memory
+    free(msg_buf);
     return err_temp;
 }
 /*
@@ -116,21 +126,21 @@ ErrorCode nsemq_producer_produce(char * msg, const char * topic_name){
  */
 ErrorCode nsemq_producer_close(){
     // judge the run status.
-    if(run_status_ == CLOSE_STATUS){
+    if(producer_run_status_ == CLOSE_STATUS){
         nsemq_write_error("Failed to close: can't multiple called close() function.");
         return ERR_P_RUN_STATUS;
     }
     // flush message: make sure all outstanding requests are transmitted and handled
     rd_kafka_flush(producer_, 5 * 1000 /* wait for max 5 seconds */);
     if (rd_kafka_outq_len(producer_) > 0){
-        strcpy_s(errtemp_, sizeof(errtemp_), (char *)rd_kafka_outq_len(producer_));
+        // strcpy_s(errtemp_, sizeof(errtemp_), rd_kafka_outq_len(producer_));
         strcat_s(errtemp_, sizeof(errtemp_), "message(s) were not delivered");
         nsemq_write_info(errtemp_);
     }
     // Destroy the producer instance
     rd_kafka_destroy(producer_);
     rd_kafka_wait_destroyed(5000);
-    run_status_ = CLOSE_STATUS;
+    producer_run_status_ = CLOSE_STATUS;
     return ERR_NO_ERROR;
 }
 
