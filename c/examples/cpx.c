@@ -18,14 +18,13 @@
 # include <string.h>
 # include "stdio.h"
 # include "cpx.h"
-# include "avro_src/avro/io.h"
-# include "avro_src/encoding.h"
-# include "utilities/kaa_mem.h"
+# include "kaa/avro_src/avro/io.h"
+# include "kaa/avro_src/encoding.h"
+# include "kaa/kaa_mem.h"
 
 /*
  * AUTO-GENERATED CODE
  */
-
 
 
 static void nse_person_destroy(void *data)
@@ -62,7 +61,6 @@ static size_t nse_person_get_size(void *data)
 
     return 0;
 }
-
 
 static char* nse_person_get_type(void *data)
 {
@@ -132,14 +130,6 @@ static void nse_cpx_serialize(avro_writer_t writer, void *data)
         }
 }
 
-static char* nse_cpx_get_type(void *data)
-{
-    if (data) {
-        return "nse_cpx";
-    }
-    return "";
-}
-
 static size_t nse_cpx_get_size(void *data)
 {
     if (data) {
@@ -149,12 +139,20 @@ static size_t nse_cpx_get_size(void *data)
         record_size += AVRO_DOUBLE_SIZE;
         record_size += AVRO_DOUBLE_SIZE;
         record_size += record->s->get_size(record->s);
-        record_size += kaa_array_get_size(record->arr, kaa_string_get_size);
-
+            record_size += kaa_array_get_size(record->arr, kaa_string_get_size);
+    
         return record_size;
     }
 
     return 0;
+}
+
+static char* nse_cpx_get_type(void *data)
+{
+    if (data) {
+        return "nse_cpx";
+    }
+    return "";
 }
 
 nse_cpx_t *nse_cpx_create(void)
@@ -186,7 +184,7 @@ nse_cpx_t *nse_cpx_deserialize(avro_reader_t reader)
         avro_binary_encoding.read_double(reader, &record->re);
         avro_binary_encoding.read_double(reader, &record->im);
         record->s = nse_person_deserialize(reader);
-        record->arr = kaa_array_deserialize_wo_ctx(reader, (deserialize_wo_ctx_fn)kaa_string_deserialize);
+            record->arr = kaa_array_deserialize_wo_ctx(reader, (deserialize_wo_ctx_fn)kaa_string_deserialize);
         }
 
     return record;

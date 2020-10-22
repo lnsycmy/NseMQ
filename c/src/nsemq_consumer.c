@@ -58,7 +58,7 @@ ErrorCode nsemq_consumer_init(const char *broker_addr) {
     return ERR_NO_ERROR;
 }
 
-ErrorCode _nsemq_consumer_subscribe(const char *topic_name,
+ErrorCode nsemq_consumer_subscribe(const char *topic_name,
                                    deserialize_func d_fun,
                                    void (*consume_callback)(void *, char *, char *)) {
     TopicList findNode;

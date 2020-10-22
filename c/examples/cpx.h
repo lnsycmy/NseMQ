@@ -17,12 +17,14 @@
 # ifndef CPX_H_
 # define CPX_H_
 
-# include "kaa_common_schema.h"
-# include "collections/kaa_list.h"
+# include "kaa/kaa_common_schema.h"
+# include "kaa/kaa_list.h"
 
 # ifdef __cplusplus
 extern "C" {
 # endif
+
+
 
 typedef struct {
     serialize_fn serialize;
@@ -32,10 +34,14 @@ typedef struct {
 
     kaa_string_t * name;
     int32_t age;
+
+
 } nse_person_t;
 
 nse_person_t *nse_person_create(void);
 nse_person_t *nse_person_deserialize(avro_reader_t reader);
+
+
 
 typedef struct {
     serialize_fn serialize;
@@ -47,6 +53,8 @@ typedef struct {
     double im;
     nse_person_t * s;
     kaa_list_t * arr;
+
+
 } nse_cpx_t;
 
 nse_cpx_t *nse_cpx_create(void);

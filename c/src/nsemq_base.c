@@ -34,14 +34,13 @@ void nsemq_consume_callback(rd_kafka_message_t *rkmessage, void *opaque){
     char *msg_type;
     char *topic_name;
     void *msg_data;
-    printf("enter nsemq_consume_callback\n");
     // 0. get the core parameter.
     msg_type = rkmessage->key;
     msg_buf = rkmessage->payload;
     msg_size = rkmessage->len;
     topic_name = (char *)rd_kafka_topic_name(rkmessage->rkt);
-    printf("received msg_type:%s, msg_size:%d\n", msg_type, msg_size);
-    printf("received topic_name:%s\n", topic_name);
+    // printf("received msg_type:%s, msg_size:%d\n", msg_type, msg_size);
+    // printf("received topic_name:%s\n", topic_name);
     // 1. search the callback function from topic_list, Judging the validity.
     TopicList topicNode = find_item(topic_list_, topic_name);
     if(!topicNode){

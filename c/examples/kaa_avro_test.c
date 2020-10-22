@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include "cpx.h"
 #include "kaa_common_schema.h"
-#include "../src/nsemq_base.h"
+#include "../include/nsemq_base.h"
 int main() {
     printf("hello cmy\n");
     char *msg_buf;

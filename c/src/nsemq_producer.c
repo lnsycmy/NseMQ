@@ -1,4 +1,5 @@
 ﻿#include "nsemq_producer.h"
+
 rd_kafka_t *producer_;                  // Producer instance handle.
 rd_kafka_conf_t *producer_conf_;        // Temporary configuration object.
 rd_kafka_topic_conf_t *topic_conf_;     // topic configuration object.
@@ -51,7 +52,7 @@ ErrorCode nsemq_producer_produce(void *msg, const char *topic_name){
     // struct is serialized into char*
     int buf_size = nsemq_encode(msg, &msg_buf, &msg_type);
 
-    printf("msg_type:%s, len:%d\n", msg_type, strlen(msg_type)+1);
+    printf("msg_type:%s, len:%zd\n", msg_type, strlen(msg_type)+1);
 
     // judge the run status.
     if(producer_run_status_ == CLOSE_STATUS){
