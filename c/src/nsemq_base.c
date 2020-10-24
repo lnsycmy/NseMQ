@@ -8,6 +8,7 @@ int nsemq_encode(void *msg_struct, char **msg_buf, char **msg_type){
     BaseType * msg_base;        // base type pointers for all data structures
     int struct_size = 0;        // struct size, get value from get_size()
     int buf_size = 0;           // buffer size, get value from avro_writer_memory()
+	avro_writer_t writer;
     // use BaseType to access msg_struct
     msg_base = (BaseType *)msg_struct;
     struct_size = msg_base->get_size(msg_base);
@@ -15,7 +16,7 @@ int nsemq_encode(void *msg_struct, char **msg_buf, char **msg_type){
     // allocate memory and complete serialization
     buf_size = sizeof(char) * struct_size;
     *msg_buf = (char *)malloc(buf_size);
-    avro_writer_t writer = avro_writer_memory(*msg_buf, buf_size);
+    writer = avro_writer_memory(*msg_buf, buf_size);
     msg_base->serialize(writer, msg_base);
     return buf_size;
 }
@@ -35,6 +36,7 @@ void nsemq_consume_callback(rd_kafka_message_t *rkmessage, void *opaque){
     char *msg_type;
     char *topic_name;
     void *msg_data;
+	TopicItem *topicItem;
     // 0. get the core parameter.
     msg_type = rkmessage->key;
     msg_buf = rkmessage->payload;
@@ -43,7 +45,7 @@ void nsemq_consume_callback(rd_kafka_message_t *rkmessage, void *opaque){
     // printf("received msg_type:%s, msg_size:%d\n", msg_type, msg_size);
     // printf("received topic_name:%s\n", topic_name);
     // 1. search the callback function from topic_map, judging the validity.
-    TopicItem *topicItem = map_get(&g_topic_map_, topic_name);
+    topicItem = map_get(&g_topic_map_, topic_name);
     if(topicItem == NULL){
         nsemq_write_error(NULL, "receive message from unknown topics.");
         return;

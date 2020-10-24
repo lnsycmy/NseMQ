@@ -48,8 +48,9 @@ static kaa_list_node_t *set_next_neighbor(kaa_list_node_t *whom, kaa_list_node_t
 
 static kaa_list_node_t *create_node(void *data)
 {
+	kaa_list_node_t *node;
     KAA_RETURN_IF_NIL(data, NULL);
-    kaa_list_node_t *node = (kaa_list_node_t *)KAA_MALLOC(sizeof(kaa_list_node_t));
+    node = (kaa_list_node_t *)KAA_MALLOC(sizeof(kaa_list_node_t));
     KAA_RETURN_IF_NIL(node, NULL);
     node->data = data;
     node->next = node->prev = NULL;
@@ -121,8 +122,9 @@ kaa_list_t *kaa_list_create(void)
 
 kaa_list_node_t *kaa_list_push_front(kaa_list_t *list, void *data)
 {
+	kaa_list_node_t *node;
     KAA_RETURN_IF_NIL2(list, data, NULL);
-    kaa_list_node_t *node = create_node(data);
+    node = create_node(data);
     KAA_RETURN_IF_NIL(node, NULL);
 
     ++list->size;
@@ -138,8 +140,9 @@ kaa_list_node_t *kaa_list_push_front(kaa_list_t *list, void *data)
 
 kaa_list_node_t *kaa_list_push_back(kaa_list_t *list, void *data)
 {
+	kaa_list_node_t *node;
     KAA_RETURN_IF_NIL(list, NULL);
-    kaa_list_node_t *node = create_node(data);
+    node = create_node(data);
     KAA_RETURN_IF_NIL(node, NULL);
 
     ++list->size;
@@ -167,10 +170,12 @@ kaa_list_node_t *kaa_list_back(kaa_list_t *list)
 
 void kaa_list_clear(kaa_list_t *list, deallocate_list_data deallocator)
 {
+	kaa_list_node_t *it;
+	kaa_list_node_t *next;
     KAA_RETURN_IF_NIL2(list, list->size, );
-    kaa_list_node_t *it = list->head;
+    it = list->head;
     while (it) {
-        kaa_list_node_t *next = it->next;
+        next = it->next;
         destroy_node(it, deallocator);
         it = next;
     }
@@ -187,9 +192,9 @@ void kaa_list_destroy(kaa_list_t *list, deallocate_list_data deallocator)
 
 kaa_list_node_t *kaa_list_remove_at(kaa_list_t *list, kaa_list_node_t *it, deallocate_list_data deallocator)
 {
+	kaa_list_node_t *next;
     KAA_RETURN_IF_NIL3(list, it, list->size, NULL);
-
-    kaa_list_node_t *next = it->next;
+    next = it->next;
     if (list->head == it) {
         list->head = next;
     }
@@ -206,9 +211,10 @@ kaa_list_node_t *kaa_list_remove_at(kaa_list_t *list, kaa_list_node_t *it, deall
 
 kaa_error_t kaa_list_remove_first(kaa_list_t *list, match_predicate pred, void *context, deallocate_list_data deallocator)
 {
+	kaa_list_node_t *it;
     KAA_RETURN_IF_NIL3(list, pred, list->size, KAA_ERR_BADPARAM);
 
-    kaa_list_node_t *it = kaa_list_find_next(kaa_list_begin(list), pred, context);
+    it = kaa_list_find_next(kaa_list_begin(list), pred, context);
     kaa_list_remove_at(list, it, deallocator);
     return it ? KAA_ERR_NONE : KAA_ERR_NOT_FOUND;
 }
@@ -274,9 +280,10 @@ static kaa_list_node_t *kaa_merge_util(kaa_list_node_t *first, kaa_list_node_t *
 
 static kaa_list_node_t *kaa_merge_sort(kaa_list_node_t *head, match_predicate pred)
 {
+	kaa_list_node_t *second;
     KAA_RETURN_IF_NIL2(head, head->next, head);
 
-    kaa_list_node_t *second = kaa_split_util(head);
+    second = kaa_split_util(head);
 
     head = kaa_merge_sort(head, pred);
     second = kaa_merge_sort(second, pred);
@@ -287,21 +294,23 @@ static kaa_list_node_t *kaa_merge_sort(kaa_list_node_t *head, match_predicate pr
 
 static kaa_list_node_t *kaa_split_util( kaa_list_node_t *head)
 {
+	kaa_list_node_t *temp;
     kaa_list_node_t *fast = head;
     kaa_list_node_t *slow = head;
     while (fast->next && fast->next->next) {
         fast = fast->next->next;
         slow = slow->next;
     }
-    kaa_list_node_t *temp = slow->next;
+    temp = slow->next;
     slow->next = NULL;
     return temp;
 }
 
 void kaa_list_sort(kaa_list_t *list, match_predicate pred)
 {
+	kaa_list_node_t *node;
     KAA_RETURN_IF_NIL(list->size,);
-    kaa_list_node_t *node = kaa_merge_sort(kaa_list_begin(list), pred);
+    node = kaa_merge_sort(kaa_list_begin(list), pred);
     list->head = node;
     while (node->next) {
         node = node->next;
@@ -311,9 +320,11 @@ void kaa_list_sort(kaa_list_t *list, match_predicate pred)
 
 int32_t kaa_list_hash(kaa_list_t *list, list_node_hash pred)
 {
+	uint32_t result;
+	kaa_list_node_t *node;
     KAA_RETURN_IF_NIL2(list, pred, 0);
-    uint32_t result = 1;
-    kaa_list_node_t *node = kaa_list_begin(list);
+    result = 1;
+    node = kaa_list_begin(list);
     while (node) {
         uint64_t element = pred(node->data);
         result = 31 * result + (uint32_t) (element ^ (element >> 32));

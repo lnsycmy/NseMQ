@@ -73,7 +73,7 @@ typedef struct {
     uint16_t version;
 } kaa_transport_protocol_id_t;
 
-static inline int kaa_transport_protocol_id_equals(const kaa_transport_protocol_id_t *first, const kaa_transport_protocol_id_t *second)
+static int kaa_transport_protocol_id_equals(const kaa_transport_protocol_id_t *first, const kaa_transport_protocol_id_t *second)
 {
     return first && second && first->id == second->id && first->version == second->version;
 }

@@ -57,8 +57,6 @@ ErrorCode nsemq_consumer_init(const char *broker_addr) {
     // initialize the consumer queue.
     topic_queue_ =  rd_kafka_queue_new(consumer_);
     consumer_run_status_ = INIT_STATUS;
-    // TODO:test log
-    nsemq_write_info(NULL, "this is a test log.");
     return ERR_NO_ERROR;
 }
 
@@ -180,13 +178,15 @@ ErrorCode nsemq_consumer_start(){
 ErrorCode nsemq_consumer_close() {
     const char *key;
     TopicItem *topicItem;
+	map_iter_t iter_stop;
+	map_iter_t iter_destroy;
     // NO.0 judge the run status.
     if(consumer_run_status_ == CLOSE_STATUS){
         nsemq_write_error(consumer_, "Failed to close: can't multiple called close() function.");
         return ERR_C_RUN_STATUS;
     }
     // NO.1 stop the consume from broker.
-    map_iter_t iter_stop = map_iter(&g_topic_map_);
+    iter_stop = map_iter(&g_topic_map_);
     while ((key = map_next(&g_topic_map_, &iter_stop))) {
         topicItem = map_get(&g_topic_map_, key);
         err_ = rd_kafka_consume_stop(topicItem->topic_object, NSEMQ_DEFAULT_PARTITION);
@@ -206,7 +206,7 @@ ErrorCode nsemq_consumer_close() {
     pthread_mutex_unlock(&status_mutex);
     pthread_cancel(consume_thread_);
     // NO.4 destroy topic object.
-    map_iter_t iter_destroy = map_iter(&g_topic_map_);
+    iter_destroy = map_iter(&g_topic_map_);
     while ((key = map_next(&g_topic_map_, &iter_destroy))) {
         topicItem = map_get(&g_topic_map_, key);
         rd_kafka_topic_destroy(topicItem->topic_object);
