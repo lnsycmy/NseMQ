@@ -56,6 +56,7 @@ CMakeFiles\NseMQ.dir\src\nsemq_consumer.c.obj: ..\include\nsemq_base.h
 CMakeFiles\NseMQ.dir\src\nsemq_consumer.c.obj: ..\include\nsemq_consumer.h
 CMakeFiles\NseMQ.dir\src\nsemq_consumer.c.obj: ..\include\pthread\pthread.h
 CMakeFiles\NseMQ.dir\src\nsemq_consumer.c.obj: ..\include\pthread\sched.h
+CMakeFiles\NseMQ.dir\src\nsemq_consumer.c.obj: ..\include\utils\uuid4.h
 CMakeFiles\NseMQ.dir\src\nsemq_consumer.c.obj: ..\src\nsemq_consumer.c
 
 CMakeFiles\NseMQ.dir\src\nsemq_producer.c.obj: ..\include\inttypes.h
@@ -68,4 +69,7 @@ CMakeFiles\NseMQ.dir\src\nsemq_producer.c.obj: ..\include\librdkafka\rdkafka.h
 CMakeFiles\NseMQ.dir\src\nsemq_producer.c.obj: ..\include\nsemq_base.h
 CMakeFiles\NseMQ.dir\src\nsemq_producer.c.obj: ..\include\nsemq_producer.h
 CMakeFiles\NseMQ.dir\src\nsemq_producer.c.obj: ..\src\nsemq_producer.c
+
+CMakeFiles\NseMQ.dir\src\uuid4.c.obj: ..\include\utils\uuid4.h
+CMakeFiles\NseMQ.dir\src\uuid4.c.obj: ..\src\uuid4.c
 

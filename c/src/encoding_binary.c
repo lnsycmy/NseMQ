@@ -257,7 +257,7 @@ static int write_null(avro_writer_t writer)
  * in a struct declaration. So hide the named parameters for Win32,
  * and initialize in the order the code was written.
  */
-avro_encoding_t avro_binary_encoding = {
+const avro_encoding_t avro_binary_encoding = {
     /* .description = */ "BINARY FORMAT",
     /*
      * string

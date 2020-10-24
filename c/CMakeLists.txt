@@ -8,8 +8,7 @@ link_directories("lib")
 link_libraries("librdkafka.dll")
 link_libraries("pthreadVC2.dll")
 
-# add_definitions(-DNSEMQ_EXPORTS)
-
+# (-DNSEMQ_EXPORTS)
 add_library(NseMQ SHARED
         include/kaa/avro_src/avro/io.h
         include/kaa/avro_src/avro/platform.h
@@ -32,7 +31,7 @@ add_library(NseMQ SHARED
         src/nsemq_producer.c
         include/nsemq_consumer.h
         src/nsemq_consumer.c
-
+        src/uuid4.c
         include/nsemq.h)
 
 add_executable(nsemq_producer_example examples/nsemq_producer_example.c examples/cpx.c)

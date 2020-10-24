@@ -12,6 +12,7 @@ set(CMAKE_DEPENDS_CHECK_C
   "E:/Project/NseMQ/c/src/nsemq_base.c" "E:/Project/NseMQ/c/cmake-build-debug-vs-2015/CMakeFiles/NseMQ.dir/src/nsemq_base.c.obj"
   "E:/Project/NseMQ/c/src/nsemq_consumer.c" "E:/Project/NseMQ/c/cmake-build-debug-vs-2015/CMakeFiles/NseMQ.dir/src/nsemq_consumer.c.obj"
   "E:/Project/NseMQ/c/src/nsemq_producer.c" "E:/Project/NseMQ/c/cmake-build-debug-vs-2015/CMakeFiles/NseMQ.dir/src/nsemq_producer.c.obj"
+  "E:/Project/NseMQ/c/src/uuid4.c" "E:/Project/NseMQ/c/cmake-build-debug-vs-2015/CMakeFiles/NseMQ.dir/src/uuid4.c.obj"
   )
 set(CMAKE_C_COMPILER_ID "MSVC")
 

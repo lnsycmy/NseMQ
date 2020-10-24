@@ -5,7 +5,6 @@ int nsemq_encode(void *msg_struct, char **msg_buf, char **msg_type){
     BaseType * msg_base;        // 所有数据结构体的基类型指针
     int struct_size = 0;        // 结构体大小
     int buf_size = 0;           // 字符数组的内存大小
-
     // 使用BaseType类型访问结构体变量，可获取变量值
     msg_base = (BaseType *)msg_struct;
     struct_size = msg_base->get_size(msg_base);
@@ -44,13 +43,13 @@ void nsemq_consume_callback(rd_kafka_message_t *rkmessage, void *opaque){
     // 1. search the callback function from topic_list, Judging the validity.
     TopicList topicNode = find_item(topic_list_, topic_name);
     if(!topicNode){
-        nsemq_write_error("receive message from unknown topics.");
+        nsemq_write_error(NULL, "receive message from unknown topics.");
         return;
     }
     // 2. decode buffer to struct object.
     msg_data = nsemq_decode(msg_buf, msg_size, topicNode->deserialize_func);
     if(!msg_data){
-        nsemq_write_error("invalid data received.");
+        nsemq_write_error(NULL, "invalid data received.");
         return;
     }
     // 3. call user-defined callback function
@@ -64,12 +63,16 @@ BOOL nsemq_judge_connect(rd_kafka_t *handle){
     return (err ==  RD_KAFKA_RESP_ERR_NO_ERROR)?TRUE:FALSE;
 }
 
-void nsemq_write_error(char *errstr_){
-    fprintf(stderr,"%% [NseMQ][ERR] %s\n", errstr_);
+void nsemq_write_error(const rd_kafka_t *rk, char *errstr){
+    rd_kafka_log_print(rk, LOG_ERR, "NseMQ", errstr);
 }
 
-void nsemq_write_info(char *infostr){
-    fprintf(stderr,"%% [NseMQ][INFO] %s\n", infostr);
+void nsemq_write_info(const rd_kafka_t *rk, char *infostr){
+    rd_kafka_log_print(rk, LOG_INFO, "NseMQ", infostr);
+}
+
+void nsemq_write_debug(const rd_kafka_t *rk, char *debugstr){
+    rd_kafka_log_print(rk, LOG_DEBUG, "NseMQ", debugstr);
 }
 
 /*** list function ***/

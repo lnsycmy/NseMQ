@@ -27,6 +27,7 @@
  */
 
 
+
 static void nse_person_destroy(void *data)
 {
     if (data) {

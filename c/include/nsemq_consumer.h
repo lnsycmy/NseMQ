@@ -6,6 +6,8 @@ extern "C" {
 #endif
 
 #include <stdio.h>
+#include <stdlib.h>
+#include "utils/uuid4.h"
 #include "pthread/pthread.h"
 #include "nsemq_base.h"
 /*

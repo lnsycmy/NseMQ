@@ -7,6 +7,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/NseMQ.dir/src/nsemq_base.c.obj"
   "CMakeFiles/NseMQ.dir/src/nsemq_consumer.c.obj"
   "CMakeFiles/NseMQ.dir/src/nsemq_producer.c.obj"
+  "CMakeFiles/NseMQ.dir/src/uuid4.c.obj"
   "NseMQ.dll"
   "NseMQ.dll.manifest"
   "NseMQ.lib"

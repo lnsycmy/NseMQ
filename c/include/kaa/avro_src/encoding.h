@@ -83,7 +83,7 @@ typedef struct avro_encoding_t avro_encoding_t;
 #define AVRO_READ(reader, buf, len)  \
 { int rval = avro_read( reader, buf, len ); if(rval) return rval; }
 
-NSEMQ_API extern avro_encoding_t avro_binary_encoding;    // in encoding_binary
+NSEMQ_API extern const avro_encoding_t avro_binary_encoding;    // in encoding_binary
 #ifdef __cplusplus
 } // extern "C"
 #endif

@@ -35,7 +35,7 @@ int main(){
 
     printf("reback main();\n");
 
-    while(time_count < 100){
+    while(time_count < 10){
         Sleep(1000);
         time_count++;
     }

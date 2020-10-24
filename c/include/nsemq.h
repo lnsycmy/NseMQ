@@ -5,6 +5,7 @@
 extern "C" {
 #endif
 
+#define NSEMQ_VERSION "1.0"
 /* nsemq defined header file */
 #include "nsemq_base.h"
 #include "nsemq_producer.h"

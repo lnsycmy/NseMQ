@@ -15,6 +15,15 @@ extern "C" {
 #else
 #define NSEMQ_API __declspec(dllimport)
 #endif
+// Log level
+#define LOG_EMERG   0
+#define LOG_ALERT   1
+#define LOG_CRIT    2
+#define LOG_ERR     3
+#define LOG_WARNING 4
+#define LOG_NOTICE  5
+#define LOG_INFO    6
+#define LOG_DEBUG   7
 
 #define TRUE 1
 #define FALSE 0
@@ -80,6 +89,7 @@ struct TopicNode {
 };
 typedef struct TopicNode *TopicList;
 
+
 /*** list function ***/
 void insert_list(TopicList *topic_list,
                  const char *topic_name,
@@ -91,10 +101,10 @@ void delete_item(TopicList *topic_list,const char *topic_name);
 void clear_list(TopicList *topic_list);
 TopicList find_item(TopicList topic_list,const char *topic_name);
 
+
 /*** encoder and decoder function ***/
 int nsemq_encode(void *msg_struct, char **msg_buf, char **msg_type);
 void* nsemq_decode(char *msg_buf, int buf_size, deserialize_func d_func);
-
 
 /*** consumer and deliver report callback function ***/
 void nsemq_consume_callback(rd_kafka_message_t *rkmessage, void *opaque);
@@ -102,8 +112,9 @@ void nsemq_consume_callback(rd_kafka_message_t *rkmessage, void *opaque);
 // void nsemq_produce_callback();
 
 // print the log
-void nsemq_write_error(char *errstr);
-void nsemq_write_info(char *infostr);
+void nsemq_write_error(const rd_kafka_t *rk, char *errstr);
+void nsemq_write_debug(const rd_kafka_t *rk, char *debugstr);
+void nsemq_write_info(const rd_kafka_t *rk, char *infostr);
 BOOL nsemq_judge_connect(rd_kafka_t *handle);
 
 #ifdef __cplusplus

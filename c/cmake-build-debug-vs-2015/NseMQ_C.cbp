@@ -381,6 +381,9 @@
 		<Unit filename="E:/Project/NseMQ/c/src/nsemq_producer.c">
 			<Option target="NseMQ"/>
 		</Unit>
+		<Unit filename="E:/Project/NseMQ/c/src/uuid4.c">
+			<Option target="NseMQ"/>
+		</Unit>
 		<Unit filename="E:/Project/NseMQ/c/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>
