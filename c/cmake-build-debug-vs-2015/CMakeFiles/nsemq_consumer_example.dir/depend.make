@@ -26,6 +26,7 @@ CMakeFiles\nsemq_consumer_example.dir\examples\nsemq_consumer_example.c.obj: ..\
 CMakeFiles\nsemq_consumer_example.dir\examples\nsemq_consumer_example.c.obj: ..\include\nsemq_producer.h
 CMakeFiles\nsemq_consumer_example.dir\examples\nsemq_consumer_example.c.obj: ..\include\pthread\pthread.h
 CMakeFiles\nsemq_consumer_example.dir\examples\nsemq_consumer_example.c.obj: ..\include\pthread\sched.h
+CMakeFiles\nsemq_consumer_example.dir\examples\nsemq_consumer_example.c.obj: ..\include\utils\map.h
 CMakeFiles\nsemq_consumer_example.dir\examples\nsemq_consumer_example.c.obj: ..\include\utils\uuid4.h
 CMakeFiles\nsemq_consumer_example.dir\examples\nsemq_consumer_example.c.obj: ..\examples\cpx.h
 CMakeFiles\nsemq_consumer_example.dir\examples\nsemq_consumer_example.c.obj: ..\examples\nsemq_consumer_example.c

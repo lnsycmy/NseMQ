@@ -10,6 +10,8 @@ extern "C" {
 #include "librdkafka/rdkafka.h"
 #include "kaa/kaa_common_schema.h"
 
+#include "utils/map.h"
+
 #ifdef NSEMQ_EXPORTS
 #define NSEMQ_API __declspec(dllexport)
 #else
@@ -79,28 +81,13 @@ typedef NSEMQ_API struct {
     destroy_fn   destroy;
 } BaseType;
 
-/*** topic list ***/
-struct TopicNode {
-    char *topic_name;      // topic name
-    rd_kafka_topic_t *topic_object;  // topic object
+/*** topic map item ***/
+typedef struct {
+    rd_kafka_topic_t *topic_object;     // topic object
     void* (*deserialize_func)(void*);   // deserialize function
     void (*consume_callback)(void *, char*, char *);  // consumer callback function.
-    struct TopicNode *next;
-};
-typedef struct TopicNode *TopicList;
-
-
-/*** list function ***/
-void insert_list(TopicList *topic_list,
-                 const char *topic_name,
-                 rd_kafka_topic_t *topic_object,
-                 void* (*deserialize_func)(void*),
-                 void (*consume_callback)(void *, char*, char *));
-void display_list(TopicList topic_list);
-void delete_item(TopicList *topic_list,const char *topic_name);
-void clear_list(TopicList *topic_list);
-TopicList find_item(TopicList topic_list,const char *topic_name);
-
+} TopicItem;
+typedef map_t(TopicItem) topic_map_t;
 
 /*** encoder and decoder function ***/
 int nsemq_encode(void *msg_struct, char **msg_buf, char **msg_type);
@@ -108,8 +95,7 @@ void* nsemq_decode(char *msg_buf, int buf_size, deserialize_func d_func);
 
 /*** consumer and deliver report callback function ***/
 void nsemq_consume_callback(rd_kafka_message_t *rkmessage, void *opaque);
-// TODO: add produce callback.
-// void nsemq_produce_callback();
+void nsemq_produce_callback(rd_kafka_t *rk, const rd_kafka_message_t *rkmessage, void *opaque);
 
 // print the log
 void nsemq_write_error(const rd_kafka_t *rk, char *errstr);

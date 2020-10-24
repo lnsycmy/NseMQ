@@ -2,14 +2,10 @@
 #include "nsemq.h"
 #include "cpx.h"
 
-static void dr_msg_cb (rd_kafka_t *rk, const rd_kafka_message_t *rkmessage, void *opaque) {
-    if (rkmessage->err){
-        fprintf(stderr, "%% Message delivery failed: %s\n",
-                rd_kafka_err2str(rkmessage->err));
-    }else{
-        fprintf(stderr,"%% Message delivered (%d bytes, partition %"PRId32")\n",
-                rkmessage->len, rkmessage->partition);
-    }
+void produce_callback(char *msg_topic, void *msg_data, int msg_size){
+    printf("this is produce_callback!\n");
+    fprintf(stderr,"%% Message delivered (%d bytes, topic %s)\n",
+    msg_size, msg_topic);
 }
 
 int main(){
@@ -18,7 +14,7 @@ int main(){
     const char * topic_name = "test1";
     const char * broker_address = "localhost:9092";
 
-    if(nsemq_producer_init(broker_address, dr_msg_cb) != ERR_NO_ERROR){
+    if(nsemq_producer_init(broker_address, produce_callback) != ERR_NO_ERROR){
         printf("initialize failed!\n");
         return -1;
     }

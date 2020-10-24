@@ -372,6 +372,9 @@
 		<Unit filename="E:/Project/NseMQ/c/src/kaa_mem.c">
 			<Option target="NseMQ"/>
 		</Unit>
+		<Unit filename="E:/Project/NseMQ/c/src/map.c">
+			<Option target="NseMQ"/>
+		</Unit>
 		<Unit filename="E:/Project/NseMQ/c/src/nsemq_base.c">
 			<Option target="NseMQ"/>
 		</Unit>

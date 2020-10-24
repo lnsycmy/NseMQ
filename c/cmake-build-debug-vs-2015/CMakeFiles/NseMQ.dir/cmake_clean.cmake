@@ -4,6 +4,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/NseMQ.dir/src/kaa_common_schema.c.obj"
   "CMakeFiles/NseMQ.dir/src/kaa_list.c.obj"
   "CMakeFiles/NseMQ.dir/src/kaa_mem.c.obj"
+  "CMakeFiles/NseMQ.dir/src/map.c.obj"
   "CMakeFiles/NseMQ.dir/src/nsemq_base.c.obj"
   "CMakeFiles/NseMQ.dir/src/nsemq_consumer.c.obj"
   "CMakeFiles/NseMQ.dir/src/nsemq_producer.c.obj"

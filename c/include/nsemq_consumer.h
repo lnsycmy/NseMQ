@@ -23,15 +23,11 @@ extern "C" {
 
 /* consumer function */
 ErrorCode NSEMQ_API nsemq_consumer_init(const char *broker_addr);
-
 ErrorCode NSEMQ_API nsemq_consumer_subscribe(const char *topic_name,
                                    deserialize_func d_fun,
                                    void (*consume_callback)(void *, char *, char *));
-
-ErrorCode NSEMQ_API nsemq_consumer_unSubscribe(const char *topic_name);
-
-ErrorCode NSEMQ_API nsemq_consumer_subscription(TopicList *topic_array);
-
+ErrorCode NSEMQ_API nsemq_consumer_unsubscribe(const char *topic_name);
+ErrorCode NSEMQ_API nsemq_consumer_subscription(char **topic_array, int *topic_count);
 ErrorCode NSEMQ_API nsemq_consumer_start();           // start to consume message from broker.
 ErrorCode NSEMQ_API nsemq_consumer_poll();            // polled to call the topic consume callback.
 ErrorCode NSEMQ_API nsemq_consumer_close();           // close the consumer.

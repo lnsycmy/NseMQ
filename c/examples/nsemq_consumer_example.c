@@ -31,10 +31,16 @@ int main(){
     NSEMQ_CONSUMER_SUBSCRIBE("test", nse_cpx, msg_callback1);
     NSEMQ_CONSUMER_SUBSCRIBE("test1", nse_person, msg_callback1);
 
+    // get subscription
+    /*int *count = 0;
+    char ** arr = (char **)malloc(255 * sizeof(char *));
+    nsemq_consumer_subscription(arr, &count);
+    printf("count:%d\n", count);
+    for(int i = 0; i < count; i++){
+        printf("topic[%d]:%s\n", i, arr[i]);
+    }*/
     nsemq_consumer_start();
-
     printf("reback main();\n");
-
     while(time_count < 10){
         Sleep(1000);
         time_count++;

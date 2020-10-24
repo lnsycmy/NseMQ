@@ -7,6 +7,8 @@ static RunStatus producer_run_status_ = NO_INIT;// consumer current status.
 static char errstr_[512];                       // librdkafka API error reporting buffer.
 static char strtemp_[512];                      // inner function error.
 
+extern void (*produce_callback)(void *, char*, int); // defined in nsemq_base.c
+
 ErrorCode nsemq_producer_init(const char * broker_addr, void *dr_msg_cb){
     // judge current status
     if(producer_run_status_ != NO_INIT){
@@ -23,7 +25,8 @@ ErrorCode nsemq_producer_init(const char * broker_addr, void *dr_msg_cb){
     }
     // Set the delivery report callback.
     if(NULL != dr_msg_cb){
-        rd_kafka_conf_set_dr_msg_cb(producer_conf_, dr_msg_cb);
+        produce_callback = dr_msg_cb;
+        rd_kafka_conf_set_dr_msg_cb(producer_conf_, nsemq_produce_callback);
     }
     // Create producer instance.
     producer_ = rd_kafka_new(RD_KAFKA_PRODUCER, producer_conf_, errstr_, sizeof(errstr_));

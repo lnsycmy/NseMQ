@@ -27,7 +27,7 @@ CMakeFiles/nsemq_producer_example.dir/examples/nsemq_producer_example.c.obj
  ../include/nsemq_producer.h
  ../include/pthread/pthread.h
  ../include/pthread/sched.h
- ../include/utils/log.h
+ ../include/utils/map.h
  ../include/utils/uuid4.h
  E:/Project/NseMQ/c/examples/cpx.h
  E:/Project/NseMQ/c/examples/nsemq_producer_example.c

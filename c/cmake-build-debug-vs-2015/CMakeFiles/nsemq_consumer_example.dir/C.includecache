@@ -81,6 +81,8 @@ librdkafka/rdkafka.h
 ../include/librdkafka/rdkafka.h
 kaa/kaa_common_schema.h
 ../include/kaa/kaa_common_schema.h
+utils/map.h
+../include/utils/map.h
 
 ../include/nsemq_consumer.h
 stdio.h
@@ -128,6 +130,10 @@ errno.h
 sys/types.h
 -
 time.h
+-
+
+../include/utils/map.h
+string.h
 -
 
 ../include/utils/uuid4.h

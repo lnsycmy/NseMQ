@@ -9,6 +9,7 @@ set(CMAKE_DEPENDS_CHECK_C
   "E:/Project/NseMQ/c/src/kaa_common_schema.c" "E:/Project/NseMQ/c/cmake-build-debug-vs-2015/CMakeFiles/NseMQ.dir/src/kaa_common_schema.c.obj"
   "E:/Project/NseMQ/c/src/kaa_list.c" "E:/Project/NseMQ/c/cmake-build-debug-vs-2015/CMakeFiles/NseMQ.dir/src/kaa_list.c.obj"
   "E:/Project/NseMQ/c/src/kaa_mem.c" "E:/Project/NseMQ/c/cmake-build-debug-vs-2015/CMakeFiles/NseMQ.dir/src/kaa_mem.c.obj"
+  "E:/Project/NseMQ/c/src/map.c" "E:/Project/NseMQ/c/cmake-build-debug-vs-2015/CMakeFiles/NseMQ.dir/src/map.c.obj"
   "E:/Project/NseMQ/c/src/nsemq_base.c" "E:/Project/NseMQ/c/cmake-build-debug-vs-2015/CMakeFiles/NseMQ.dir/src/nsemq_base.c.obj"
   "E:/Project/NseMQ/c/src/nsemq_consumer.c" "E:/Project/NseMQ/c/cmake-build-debug-vs-2015/CMakeFiles/NseMQ.dir/src/nsemq_consumer.c.obj"
   "E:/Project/NseMQ/c/src/nsemq_producer.c" "E:/Project/NseMQ/c/cmake-build-debug-vs-2015/CMakeFiles/NseMQ.dir/src/nsemq_producer.c.obj"
