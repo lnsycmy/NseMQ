@@ -1,0 +1,11 @@
+##ignore file or directory##
+/target/
+/cmake-build-debug/
+/cmake-build-vs-2015/
+/cmake-build-release/
+/test/
+/bin/
+/lib/
+/.idea/
+.lib
+.dll
