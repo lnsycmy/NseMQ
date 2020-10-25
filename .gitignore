@@ -7,3 +7,5 @@
 /bin/
 /lib/
 /.idea/
+.lib
+.dll

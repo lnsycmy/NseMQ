@@ -25,10 +25,4 @@ add_library(nsemq SHARED
 target_link_libraries(nsemq_producer_example NseMQ)
 
 add_executable(nsemq_consumer_example examples/nsemq_consumer_example.c examples/cpx.c)
-target_link_libraries(nsemq_consumer_example NseMQ)
-
-add_executable(nsemq_avrogen examples/nsemq_avrogen.c)
-target_link_libraries(nsemq_avrogen NseMQ)
-
-add_executable(kaa_avro_test examples/kaa_avro_test.c)
-target_link_libraries(kaa_avro_test NseMQ)]]
+target_link_libraries(nsemq_consumer_example NseMQ)]]
