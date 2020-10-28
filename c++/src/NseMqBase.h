@@ -53,7 +53,7 @@ namespace NseMQ{
         ERR_FAIL_CONNECT_BROKER = -100,    // failed to connect broker.
     };
 }
-class NSE_EXPORT NseMqBase{
+class NseMqBase{
 public:
     std::string errstr_;                   // error string from function.
 public:

@@ -20,7 +20,7 @@
 #include <librdkafka/rdkafkacpp.h>
 #include "NseMqBase.h"
 
-class NSE_EXPORT NseMqProducer : public NseMqBase{
+class NseMqProducer : public NseMqBase{
 private:
     std::string broker_addr_;                   // broker address by hostname:port(ie. 127.0.0.1:9092)
 

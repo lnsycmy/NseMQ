@@ -1,7 +1,10 @@
 ﻿#include "nsemq_base.h"
 
+// Global veriable,
 topic_map_t g_topic_map_;                       // topic and consume callback mapping.
-void (*produce_callback)(char*, void *, int);   // produce callback.
+void (*produce_callback)(char *, void *, int);  // user-defined produce_callback.
+
+static char strtemp_[512];                      // inner function str.
 
 // serialize msg_struct and return msg_buf
 int nsemq_encode(void *msg_struct, char **msg_buf, char **msg_type){
@@ -31,33 +34,38 @@ void* nsemq_decode(char *msg_buf, int buf_size, deserialize_func d_func){
 
 // consumer callback
 void nsemq_consume_callback(rd_kafka_message_t *rkmessage, void *opaque){
-    char *msg_buf;
-    int msg_size = 0;
-    char *msg_type;
-    char *topic_name;
-    void *msg_data;
-	TopicItem *topicItem;
-    // 0. get the core parameter.
-    msg_type = rkmessage->key;
-    msg_buf = rkmessage->payload;
-    msg_size = rkmessage->len;
+    int msg_size = 0;   // from message
+    char *msg_type;     // from message
+    char *msg_buf;      // from message
+    char *topic_name;   // from message
+    void *msg_data;     // need to decode msg_buf
+	TopicItem *topic_item;  // get topic_item by topic_name
+    char *data_type;    // from topic_item
+    // 0. get the topic name, used to get the topic_item.
     topic_name = (char *)rd_kafka_topic_name(rkmessage->rkt);
-    // printf("received msg_type:%s, msg_size:%d\n", msg_type, msg_size);
-    // printf("received topic_name:%s\n", topic_name);
-    // 1. search the callback function from topic_map, judging the validity.
-    topicItem = map_get(&g_topic_map_, topic_name);
-    if(topicItem == NULL){
+    // 1. search the topic_item from topic_map, judging the validity.
+    topic_item = map_get(&g_topic_map_, topic_name);
+    if(topic_item == NULL){
         nsemq_write_error(NULL, "receive message from unknown topics.");
         return;
     }
-    // 2. decode buffer to struct object.
-    msg_data = nsemq_decode(msg_buf, msg_size, topicItem->deserialize_func);
-    if(!msg_data){
-        nsemq_write_error(NULL, "invalid data received.");
-        return;
+    // 2. judging type consistency. if so, decode buffer to struct object.
+    msg_type = rkmessage->key;
+    data_type = topic_item->data_type;
+    if(strcmp(msg_type, data_type) == 0) {  // received data is consistent with deserialize function
+        msg_buf = rkmessage->payload;
+        msg_size = rkmessage->len;
+        msg_data = nsemq_decode(msg_buf, msg_size, topic_item->deserialize_func);
+        if(!msg_data){
+            nsemq_write_error(NULL, "invalid data received.");
+            return;
+        }
+        // call user-defined callback function
+        topic_item->consume_callback(msg_data, topic_name, msg_type);
+    }else{
+        sprintf(strtemp_ ,"received an unparseable data, the data type is %s", msg_type);
+        nsemq_write_info(NULL, strtemp_);
     }
-    // 3. call user-defined callback function
-    topicItem->consume_callback(msg_data, topic_name, msg_type);
 }
 
 // deliver report callback
@@ -68,7 +76,7 @@ void nsemq_produce_callback(rd_kafka_t *rk, const rd_kafka_message_t *rkmessage,
         nsemq_write_error(NULL,  rd_kafka_err2str(rkmessage->err));
     }else{
         topic_name = rd_kafka_topic_name(rkmessage->rkt);
-        produce_callback(rkmessage->payload, topic_name, rkmessage->len);
+        produce_callback(topic_name, rkmessage->payload, rkmessage->len);
     }
 }
 

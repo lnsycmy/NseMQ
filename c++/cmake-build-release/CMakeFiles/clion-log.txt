@@ -1,4 +1,0 @@
-"D:\Development\CLion\CLion 2020.2.1\bin\cmake\win\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Release -G "CodeBlocks - NMake Makefiles" E:\Project\NseMQ\c++
--- Configuring done
--- Generating done
--- Build files have been written to: E:/Project/NseMQ/c++/cmake-build-release

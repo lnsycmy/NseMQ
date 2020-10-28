@@ -84,7 +84,8 @@ typedef NSEMQ_API struct {
 /*** topic map item ***/
 typedef struct {
     rd_kafka_topic_t *topic_object;     // topic object
-    void* (*deserialize_func)(void*);   // deserialize function
+    const char *data_type;              // data type, a topic bind one data type
+    void* (*deserialize_func)(void*);   // deserialize function, which be consistent with the data type
     void (*consume_callback)(void *, char*, char *);  // consumer callback function.
 } TopicItem;
 typedef map_t(TopicItem) topic_map_t;

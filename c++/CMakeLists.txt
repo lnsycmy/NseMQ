@@ -3,6 +3,8 @@ project(NseMQ_C++)
 
 set(CMAKE_CXX_STANDARD 11)
 
+# add_definitions(-DNseMQ_EXPORTS)
+
 include_directories("../include")
 
 link_directories("lib\\vs2015\\x64\\Debug")
@@ -17,7 +19,7 @@ endif()
 include_directories(${Boost_INCLUDE_DIRS})
 link_directories(${Boost_LIBRARY_DIRS})
 
-add_library(NseMQ++ SHARED
+add_library(NseMQ++
         src/NseMqProducer.cpp
         src/NseMqProducer.h
         src/NseMqConsumer.cpp

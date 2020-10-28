@@ -8,7 +8,7 @@ static char group_id[UUID4_LEN];            // consumer group id.
 
 static RunStatus consumer_run_status_ = NO_INIT;     // consumer current status.
 static char errstr_[512];                   // librdkafka API error reporting buffer.
-static char strtemp_[512];                  // inner function error.
+static char strtemp_[512];                  // inner function str.
 static pthread_t consume_thread_;           // consumer thread.
 
 pthread_mutex_t topic_mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -37,6 +37,7 @@ ErrorCode nsemq_consumer_init(const char *broker_addr) {
         return ERR_C_INIT_BROKER_ADDRESS;
     }
     // conf_res = rd_kafka_conf_set(consumer_conf_,"group.id", group_id, errstr_, sizeof(errstr_));
+    // printf("group.id:%s\n", group_id);
     conf_res = rd_kafka_conf_set(consumer_conf_,"group.instance.id", group_id, errstr_, sizeof(errstr_));
     if(conf_res != RD_KAFKA_CONF_OK){
         nsemq_write_error(NULL,"No vaild group id specified.");
@@ -60,7 +61,8 @@ ErrorCode nsemq_consumer_init(const char *broker_addr) {
     return ERR_NO_ERROR;
 }
 
-ErrorCode nsemq_consumer_subscribe(const char *topic_name,
+ErrorCode nsemq_consumer_subscribe_internal(const char *topic_name,
+                                   const char *data_type,
                                    deserialize_func d_fun,
                                    void (*consume_callback)(void *, char *, char *)) {
     int start_res = 0;
@@ -91,6 +93,7 @@ ErrorCode nsemq_consumer_subscribe(const char *topic_name,
     // save the mapping by topic name¡¢topic object¡¢msg_consume
     pthread_mutex_lock(&topic_mutex);
     topic_item.topic_object = topic_object;
+    topic_item.data_type = data_type;
     topic_item.deserialize_func = d_fun;
     topic_item.consume_callback = consume_callback;
     map_set(&g_topic_map_, topic_name, topic_item);

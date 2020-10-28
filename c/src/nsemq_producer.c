@@ -7,8 +7,6 @@ static RunStatus producer_run_status_ = NO_INIT;// consumer current status.
 static char errstr_[512];                       // librdkafka API error reporting buffer.
 static char strtemp_[512];                      // inner function error.
 
-extern void (*produce_callback)(void *, char*, int); // defined in nsemq_base.c
-
 ErrorCode nsemq_producer_init(const char * broker_addr, void *dr_msg_cb){
     // judge current status
     if(producer_run_status_ != NO_INIT){
@@ -52,9 +50,6 @@ ErrorCode nsemq_producer_produce(void *msg, const char *topic_name){
     char *msg_type;     // 原结构体的类型。
     // struct is serialized into char*
     int buf_size = nsemq_encode(msg, &msg_buf, &msg_type);
-
-    printf("msg_type:%s, len:%zd\n", msg_type, strlen(msg_type)+1);
-
     // judge the run status.
     if(producer_run_status_ == CLOSE_STATUS){
         nsemq_write_error(producer_, "Failed to produce: don't allow call produce() after close().");

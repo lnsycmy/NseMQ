@@ -4,7 +4,7 @@
 
 void produce_callback(char *msg_topic, void *msg_data, int msg_size){
     printf("this is produce_callback!\n");
-    fprintf(stderr,"%% Message delivered (%d bytes, topic %s)\n",
+    fprintf(stderr,"%% Message delivered (%d bytes, topic：%s)\n",
     msg_size, msg_topic);
 }
 
@@ -18,20 +18,12 @@ int main(){
 
 	printf("*** main() start.\n");
 	broker_address = "localhost:9092";
-	topic_name = "test1";
-	topic_name2 = "test";
-	
+	topic_name = "test";
 
     if(nsemq_producer_init(broker_address, produce_callback) != ERR_NO_ERROR){
         printf("initialize failed!\n");
         return -1;
     }
-
-    person = nse_person_create();
-    person->name = kaa_string_copy_create("cmy");
-    person->age = 24;
-
-    nsemq_producer_produce(person, topic_name);
     
     cpx = nse_cpx_create();
     cpx->im = 1996;
@@ -39,9 +31,6 @@ int main(){
     cpx->s = nse_person_create();
     cpx->s->name = kaa_string_copy_create("cmy");
     cpx->s->age = 24;
-
-    
-    nsemq_producer_produce(cpx, topic_name2);
+    nsemq_producer_produce(cpx, topic_name);
     nsemq_producer_close();
-	system("pause");
 }

@@ -26,7 +26,7 @@
 
 #define CALLBACK_TIMEOUT_MS 1000
 
-class NSE_EXPORT NseMqConsumer : public NseMqBase{
+class  NseMqConsumer : public NseMqBase{
 private:
     std::string broker_addr_;                   // broker address by hostname:port(ie. 127.0.0.1:9092)
 

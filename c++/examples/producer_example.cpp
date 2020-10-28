@@ -53,5 +53,6 @@ int main(){
     if(producer.produce<NseMQ::cpx>(c1, topic_name2) != NseMQ::ERR_NO_ERROR){
         std::cout << "failed cpx student in main()"<< std::endl;
     }
+    system("pause");
     return 0;
 }

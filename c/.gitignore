@@ -5,6 +5,7 @@
 /test/
 /bin/
 /lib/
+/lib32/
 /.idea/
 .lib
 .dll
