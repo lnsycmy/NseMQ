@@ -31,13 +31,13 @@ int main(){
     printf("reback main();\n");
     while(time_count < 100){
         if(time_count == 10){
-            nsemq_consumer_subscribe("test2", nse_cpx, msg_callback);
+            nsemq_consumer_stop();
         }else if(time_count == 20){
-            nsemq_consumer_unsubscribe("test");
+            nsemq_consumer_start(NSEMQ_ASYNC);
         }
         Sleep(1000);
         time_count++;
     }
-    nsemq_consumer_stop();
+    nsemq_consumer_close();
     printf("main() end!\n");
 }

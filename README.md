@@ -88,7 +88,7 @@ java -jar avrogen.jar cpx.json . cpx
 **生产者API**
 
 ```c
-ErrorCode nsemq_producer_init(const char *broker_addr, void *dr_msg_cb);  // initialize producer
+ErrorCode nsemq_producer_init(const char *broker_addr, void *dr_msg_cb);  // initialize producer, and bind dr_msg_cb.
 ErrorCode nsemq_producer_produce(void *msg, const char *topic_name);      // produce message with 'msg' and topic 'topic_name'
 ErrorCode nsemq_producer_close();                                         // close producer and clear memory
 ```
@@ -130,14 +130,15 @@ int main(){
 **消费者API**
 
 ```c
-ErrorCode nsemq_consumer_init(const char *broker_addr);       // initialize consumer
-ErrorCode nsemq_consumer_subscribe(const char *topic_name,    // subscribe topic and bind consume callback
-                                   const char *msg_type,
-                                   void (*consume_callback)(void *, char *, char *));
-ErrorCode nsemq_consumer_unsubscribe(const char *topic_name); // unsubscribe topic
-ErrorCode nsemq_consumer_subscription(char **topic_array, int *topic_count);  // get subscribed topic names.
-ErrorCode nsemq_consumer_start();           // start to consume message from broker.
-ErrorCode nsemq_consumer_close();           // close the consumer.
+ErrorCode nsemq_consumer_init(const char *broker_addr);         // initialize consumer, and specify a consumer
+ErrorCode nsemq_consumer_subscribe(const char *topic_name,      // subscribe topic and bind consume callback
+                                   void *msg_type,              // @param msg_type:message struct name, i.e. nse_cpx
+                                   void (*consume_callback)(void *, char *, char *)); // @param callback function.
+ErrorCode nsemq_consumer_unsubscribe(const char *topic);        // unsubscribe topic
+ErrorCode nsemq_consumer_subscriptions(list_t *topic_list);     // get subscribed topic names.
+ErrorCode nsemq_consumer_start(int async);                      // start to consume message from broker.
+ErrorCode nsemq_consumer_stop();                                // stop to consume message from broker.
+ErrorCode nsemq_consumer_close();                               // close the consumer.
 ```
 
 * 使用时，需要用户自定义回调函数，实现数据的处理；
