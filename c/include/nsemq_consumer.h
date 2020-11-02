@@ -24,15 +24,17 @@ extern "C" {
         nsemq_consumer_subscribe_internal(topic, #type, type##_deserialize, cb_func);
 
 ErrorCode NSEMQ_API nsemq_consumer_init(const char *broker_addr);   // initialize consumer, and return nsemq handle.
-ErrorCode NSEMQ_API nsemq_consumer_subscribe_internal(const char *topic_name, // subscribe topic and bind consume callback
+ErrorCode NSEMQ_API nsemq_consumer_subscribe_internal(const char *topic_name,   // subscribe topic and bind consume callback
                                                       const char *data_type,
                                                       deserialize_func d_fun,
                                                       void (*consume_callback)(void *, char *, char *));
 ErrorCode NSEMQ_API nsemq_consumer_unsubscribe(const char *topic);  // unsubscribe topic
-ErrorCode NSEMQ_API nsemq_consumer_subscriptions(list_t *topic_list);// get subscribed topic names and save list.
-ErrorCode NSEMQ_API nsemq_consumer_start(int async);             // start to consume message from broker.
-ErrorCode NSEMQ_API nsemq_consumer_stop();              // stop the consumer.
-ErrorCode NSEMQ_API nsemq_consumer_close();             // close the consumer.
+ErrorCode NSEMQ_API nsemq_consumer_get_subscriptions(list_t *topic_list);// get subscribed topic names and save list.
+ErrorCode NSEMQ_API nsemq_consumer_start(int async);                // start to consume message from broker.
+ErrorCode NSEMQ_API nsemq_consumer_stop();                          // stop the consumer.
+ErrorCode NSEMQ_API nsemq_consumer_close();                         // close the consumer.
+
+
 
 #ifdef __cplusplus
 }

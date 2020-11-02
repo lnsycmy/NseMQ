@@ -27,16 +27,6 @@ int main(){
     nsemq_consumer_subscribe("test", nse_cpx, msg_callback);
     nsemq_consumer_subscribe("test1", nse_cpx, msg_callback);
 
-    // get subscription
-    /*list_t *topic_list = list_new();
-    nsemq_consumer_get_subscriptions(topic_list);
-    list_node_t *node;
-    list_iterator_t *it = list_iterator_new(topic_list, LIST_HEAD);
-    while ((node = list_iterator_next(it))) {
-        printf("topic:%s\n", node->val);
-    }
-    list_destroy(topic_list);*/
-
     nsemq_consumer_start(NSEMQ_ASYNC);
     printf("reback main();\n");
     while(time_count < 100){

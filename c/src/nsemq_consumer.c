@@ -142,7 +142,7 @@ ErrorCode nsemq_consumer_unsubscribe(const char *topic_name){
     return ERR_NO_ERROR;
 }
 
-ErrorCode nsemq_consumer_subscriptions(list_t *topic_list){
+ErrorCode nsemq_consumer_get_subscriptions(list_t *topic_list){
     const char *key;
     map_iter_t iter;
     if(NULL == topic_list){

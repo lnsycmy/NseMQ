@@ -27,7 +27,7 @@ int main(){
 
     // get subscribed topic.
     list_t *topic_list = list_new();
-    // nsemq_consumer_get_subscriptions(topic_list);
+    nsemq_consumer_subscriptions(topic_list);
     list_node_t *node;
     list_iterator_t *it = list_iterator_new(topic_list, LIST_HEAD);
     while ((node = list_iterator_next(it))) {
