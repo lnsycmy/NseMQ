@@ -18,6 +18,7 @@ extern "C" {
 // #define NSEMQ_DEFAULT_OFFSET RD_KAFKA_OFFSET_STORED
 #define NSEMQ_DEFAULT_OFFSET RD_KAFKA_OFFSET_END
 #define NSEMQ_DEFAULT_PARTITION 0
+#define NSEMQ_MAX_FLUSH_TIME 1000
 
 #define nsemq_consumer_subscribe(topic, type, cb_func)  \
         nsemq_consumer_subscribe_internal(topic, #type, type##_deserialize, cb_func);
@@ -28,14 +29,10 @@ ErrorCode NSEMQ_API nsemq_consumer_subscribe_internal(const char *topic_name, //
                                                       deserialize_func d_fun,
                                                       void (*consume_callback)(void *, char *, char *));
 ErrorCode NSEMQ_API nsemq_consumer_unsubscribe(const char *topic);  // unsubscribe topic
-ErrorCode NSEMQ_API nsemq_consumer_get_subscriptions(list_t *topic_list);// get subscribed topic names and save list.
-ErrorCode NSEMQ_API nsemq_consumer_start();             // start to consume message from broker.
+ErrorCode NSEMQ_API nsemq_consumer_subscriptions(list_t *topic_list);// get subscribed topic names and save list.
+ErrorCode NSEMQ_API nsemq_consumer_start(int async);             // start to consume message from broker.
 ErrorCode NSEMQ_API nsemq_consumer_stop();              // stop the consumer.
 ErrorCode NSEMQ_API nsemq_consumer_close();             // close the consumer.
-
-/* reserved function */
-ErrorCode nsemq_consumer_pause(char *topic);  // pause one topic, or all topic if parameter is NULL.
-ErrorCode nsemq_consumer_resume(char *topic); // resume one topic, or all topic if parameter is NULL.
 
 #ifdef __cplusplus
 }

@@ -27,11 +27,15 @@ extern "C" {
 #define LOG_INFO    6
 #define LOG_DEBUG   7
 
-#define TRUE 1
-#define FALSE 0
+// consume flag
+#define NSEMQ_ASYNC 1
+#define NSEMQ_SYNC  0
+
+#define TRUE        1
+#define FALSE       0
 
 typedef int BOOL;
-typedef void* (*deserialize_func)(void*);
+typedef void* (*deserialize_func)(void *reader);// used to deserialize function when decode.
 
 typedef rd_kafka_t  nsemq_handle_t;
 
@@ -62,7 +66,8 @@ typedef NSEMQ_API enum{
     ERR_C_POLL_TOPIC_EMPTY = -31,       // failed to find topic as no have subscribed topic.
     ERR_C_START_CREATE_THREAD = -32,    // failed to create thread when called start().
     ERR_C_RUN_STATUS = -33,             // error to call function with limit run status.
-    ERR_C_GET_SUBS_MEMORY = -34,        // Not enough memory allocated when acquiring subscription.
+    ERR_C_GET_SUBS_MEMORY = -34,        // not enough memory allocated when acquiring subscription.
+    ERR_C_STOP_CANCEL_THRED = -35,      // failed to cancel thread, the return value of pthread_cancel is not 0.
 
     /* general error code */
     ERR_FAIL_CONNECT_BROKER = -100,    // failed to connect broker.
@@ -73,7 +78,8 @@ typedef NSEMQ_API enum {
     NO_INIT = -1,
     INIT_STATUS = 0,
     START_STATUS = 1,
-    CLOSE_STATUS = 2,
+    STOP_STATUS = 2,
+    CLOSE_STATUS = 3,
 } RunStatus;
 
 /*** Basic types of data ***/
@@ -86,8 +92,8 @@ typedef NSEMQ_API struct {
 
 /*** topic map item ***/
 typedef struct {
+    char *bind_data_type;               // data type, a topic bind one data type
     rd_kafka_topic_t *topic_object;     // topic object
-    char *data_type;                    // data type, a topic bind one data type
     void* (*deserialize_func)(void*);   // deserialize function, which be consistent with the data type
     void (*consume_callback)(void *, char*, char *);  // consumer callback function.
     int subs_status;                    // subscribe status, 1

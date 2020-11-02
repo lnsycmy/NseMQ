@@ -51,7 +51,7 @@ void nsemq_consume_callback(rd_kafka_message_t *rkmessage, void *opaque){
     }
     // 2. judging type consistency. if so, decode buffer to struct object.
     msg_type = rkmessage->key;
-    data_type = topic_item->data_type;
+    data_type = topic_item->bind_data_type;
     if(msg_type && data_type && strcmp(msg_type, data_type) == 0) {  // received data is consistent with deserialize function
         msg_buf = rkmessage->payload;
         msg_size = rkmessage->len;

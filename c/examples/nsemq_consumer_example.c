@@ -37,9 +37,14 @@ int main(){
     }
     list_destroy(topic_list);*/
 
-    nsemq_consumer_start();
+    nsemq_consumer_start(NSEMQ_ASYNC);
     printf("reback main();\n");
     while(time_count < 100){
+        if(time_count == 10){
+            nsemq_consumer_subscribe("test2", nse_cpx, msg_callback);
+        }else if(time_count == 20){
+            nsemq_consumer_unsubscribe("test");
+        }
         Sleep(1000);
         time_count++;
     }
