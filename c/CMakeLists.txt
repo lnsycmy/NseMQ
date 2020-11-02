@@ -10,13 +10,14 @@ link_libraries("pthreadVC2.dll")
 
 # add_definitions(-DNSEMQ_EXPORTS)
 add_library(nsemq SHARED
-        src/encoding_binary.c
-        src/io.c
-        src/kaa_list.c
-        src/kaa_mem.c
-        src/kaa_common_schema.c
-        src/uuid4.c
-        src/map.c
+        src/kaa/encoding_binary.c
+        src/kaa/io.c
+        src/kaa/kaa_list.c
+        src/kaa/kaa_mem.c
+        src/kaa/kaa_common_schema.c
+        src/utils/uuid4.c
+        src/utils/map.c
+        src/utils/list.c
         src/nsemq_base.c
         src/nsemq_producer.c
         src/nsemq_consumer.c)

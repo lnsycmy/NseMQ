@@ -1,5 +1,5 @@
-﻿#ifndef NSEMQ_C_NSEMQ_BASE_H
-#define NSEMQ_C_NSEMQ_BASE_H
+﻿#ifndef NSEMQ_BASE_H_
+#define NSEMQ_BASE_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -33,6 +33,8 @@ extern "C" {
 typedef int BOOL;
 typedef void* (*deserialize_func)(void*);
 
+typedef rd_kafka_t  nsemq_handle_t;
+
 typedef NSEMQ_API enum{
     ERR_NO_ERROR = 0,                   // execution succeed, no-error.
     /* producer error code. -1~-20 */
@@ -60,6 +62,7 @@ typedef NSEMQ_API enum{
     ERR_C_POLL_TOPIC_EMPTY = -31,       // failed to find topic as no have subscribed topic.
     ERR_C_START_CREATE_THREAD = -32,    // failed to create thread when called start().
     ERR_C_RUN_STATUS = -33,             // error to call function with limit run status.
+    ERR_C_GET_SUBS_MEMORY = -34,        // Not enough memory allocated when acquiring subscription.
 
     /* general error code */
     ERR_FAIL_CONNECT_BROKER = -100,    // failed to connect broker.
@@ -84,9 +87,10 @@ typedef NSEMQ_API struct {
 /*** topic map item ***/
 typedef struct {
     rd_kafka_topic_t *topic_object;     // topic object
-    const char *data_type;              // data type, a topic bind one data type
+    char *data_type;                    // data type, a topic bind one data type
     void* (*deserialize_func)(void*);   // deserialize function, which be consistent with the data type
     void (*consume_callback)(void *, char*, char *);  // consumer callback function.
+    int subs_status;                    // subscribe status, 1
 } TopicItem;
 typedef map_t(TopicItem) topic_map_t;
 
@@ -107,4 +111,4 @@ BOOL nsemq_judge_connect(rd_kafka_t *handle);
 #ifdef __cplusplus
 }      /* extern "C" */
 #endif
-#endif //NSEMQ_C_NSEMQ_BASE_H
+#endif //NSEMQ_BASE_H_

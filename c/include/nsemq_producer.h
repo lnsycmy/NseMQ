@@ -1,5 +1,5 @@
-﻿#ifndef NSEMQ_NSEMQ_PRODUCER_H
-#define NSEMQ_NSEMQ_PRODUCER_H
+﻿#ifndef NSEMQ_PRODUCER_H_
+#define NSEMQ_PRODUCER_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -8,11 +8,22 @@ extern "C" {
 #include <stdio.h>
 #include "nsemq_base.h"
 
-NSEMQ_API ErrorCode nsemq_producer_init(const char *broker_addr, void *dr_msg_cb);  // initialize producer
-NSEMQ_API ErrorCode nsemq_producer_produce(void *msg, const char *topic_name);      // produce message with 'msg' and topic 'topic_name'
-NSEMQ_API ErrorCode nsemq_producer_close();                                         // close producer and clear memory
+/* initialize producer
+ * @param broker_addr: the broker server address , i.e. "localhost:9092".
+ * @param dr_msg_cb: deliver report callback function pointer, which defined by the user and will be auto-called internally.
+ */
+NSEMQ_API ErrorCode nsemq_producer_init(const char *broker_addr, void *dr_msg_cb);
+
+/* produce message with 'msg' and topic 'topic'
+ * @param msg: message to be produced, which is the struct pointer type, i.e. nse_cpx *cpx.
+ * @param topic: topic to be published belong above msg.
+ */
+NSEMQ_API ErrorCode nsemq_producer_produce(void *msg, const char *topic);
+
+/* close producer and clear memory */
+NSEMQ_API ErrorCode nsemq_producer_close();
 
 #ifdef __cplusplus
 }
 #endif
-#endif //NSEMQ_NSEMQ_PRODUCER_H
+#endif //NSEMQ_PRODUCER_H_

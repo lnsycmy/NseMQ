@@ -96,6 +96,7 @@ ErrorCode nsemq_consumer_subscribe_internal(const char *topic_name,
     topic_item.data_type = data_type;
     topic_item.deserialize_func = d_fun;
     topic_item.consume_callback = consume_callback;
+    topic_item.subs_status = TRUE;
     map_set(&g_topic_map_, topic_name, topic_item);
     pthread_mutex_unlock(&topic_mutex);
     return ERR_NO_ERROR;
@@ -117,13 +118,14 @@ ErrorCode nsemq_consumer_unsubscribe(const char *topic_name){
         nsemq_write_error(consumer_, strtemp_);
         return ERR_C_UNSUBS_TOPIC_NO_FIND;
     }
-    // when it exists, call consume_stop(), cancle subscribe the topic.
+    // when it exists, call consume_stop(), unsubscribe and destroy the topic.
     stop_res = rd_kafka_consume_stop(topic_item->topic_object, NSEMQ_DEFAULT_PARTITION);
     if(stop_res != 0){
         err_ = rd_kafka_last_error();
         nsemq_write_error(consumer_, (char *)rd_kafka_err2str(err_));
         return ERR_C_UNSUNS_BROKER_TOPIC;
     }
+    rd_kafka_topic_destroy(topic_item->topic_object);
     // delete topic from topic callback map.
     pthread_mutex_lock(&topic_mutex);
     map_remove(&g_topic_map_, topic_name);
@@ -131,16 +133,18 @@ ErrorCode nsemq_consumer_unsubscribe(const char *topic_name){
     return ERR_NO_ERROR;
 }
 
-ErrorCode nsemq_consumer_subscription(char **topic_array, int *topic_count){
+ErrorCode nsemq_consumer_get_subscriptions(list_t *topic_list){
     const char *key;
     int count = 0;
+    if(NULL == topic_list){
+        nsemq_write_error(consumer_, "Not enough memory allocated when acquiring subscription.");
+        return ERR_C_GET_SUBS_MEMORY;
+    }
     map_iter_t iter = map_iter(&g_topic_map_);
     while ((key = map_next(&g_topic_map_, &iter))) {
-        topic_array[count] = (char *)key;
-        printf("inner topic:%s\n", topic_array[count]);
+        list_rpush(topic_list, list_node_new(key));
         count ++;
     }
-    *topic_count = count;
     return ERR_NO_ERROR;
 }
 
@@ -160,6 +164,8 @@ void *thread_function(void *agr){
     pthread_exit(NULL);
     return NULL;
 }
+
+/* start to consume message from broker */
 ErrorCode nsemq_consumer_start(){
     int create_res, i = 0;
     // judge the run status.
@@ -177,7 +183,57 @@ ErrorCode nsemq_consumer_start(){
     return ERR_NO_ERROR;
 }
 
-// close the consumer.
+/* pause one topic, for internal use only */
+void pause_one_topic_internal(char *topic_name){
+    TopicItem *topic_item;
+    topic_item = map_get(&g_topic_map_, topic_name);
+    if(topic_item && topic_item->subs_status){ // have subscribed this topic
+        printf("pause topic_item->subs_status:%d", topic_item->subs_status);
+        err_ = rd_kafka_consume_stop(topic_item->topic_object, NSEMQ_DEFAULT_PARTITION);
+        if(err_ != ERR_NO_ERROR){
+            err_ = rd_kafka_last_error();
+            sprintf(strtemp_, "Failed to pause consuming topic(%s):%s", topic_name, (char *)rd_kafka_err2str(err_));
+            nsemq_write_error(consumer_, strtemp_);
+        }else{
+            // set subscription status is FALSE for current topic.
+            topic_item->subs_status = FALSE;
+        }
+    }else{
+        sprintf(strtemp_, "Failed to pause topic(%s), because have not subscribed", topic_name);
+        nsemq_write_error(consumer_, strtemp_);
+    }
+}
+
+/* resume one topic, for internal use only */
+void resume_one_topic_internal(char *topic_name){
+    TopicItem *topic_item;
+    int resume_res = 0;
+    topic_item = map_get(&g_topic_map_, topic_name);
+    if(topic_item && !topic_item->subs_status){
+        printf("resume topic_item->subs_status:%d", topic_item->subs_status);
+        resume_res = rd_kafka_consume_start_queue(topic_item->topic_object, NSEMQ_DEFAULT_PARTITION, NSEMQ_DEFAULT_OFFSET, topic_queue_);
+        if(resume_res == -1) {
+            err_ = rd_kafka_last_error();
+            sprintf(strtemp_, "Failed to resume consuming topic(%s):%s", topic_name, rd_kafka_err2str(err_));
+            nsemq_write_error(consumer_, strtemp_);
+            if (err_ == RD_KAFKA_RESP_ERR__INVALID_ARG){
+                nsemq_write_error(consumer_, "Broker based offset storage requires a group.id");
+            }
+        }else{
+            topic_item->subs_status = TRUE;
+        }
+    }else{
+        sprintf(strtemp_, "Failed to resume consuming topic(%s), because have not subscribed or not pause.", topic_name);
+        nsemq_write_error(consumer_, strtemp_);
+    }
+}
+
+/* stop the consume message from broker */
+ErrorCode nsemq_consumer_stop() {
+    
+}
+
+/* stop the consume message from broker and close consumer handle. */
 ErrorCode nsemq_consumer_close() {
     const char *key;
     TopicItem *topicItem;
@@ -222,5 +278,54 @@ ErrorCode nsemq_consumer_close() {
     rd_kafka_queue_destroy(topic_queue_);
     // NO.7 destroy handle
     rd_kafka_destroy(consumer_);
+    return ERR_NO_ERROR;
+}
+
+/* Reserved function
+ * @date 2020.11.01
+ * @fun nsemq_consumer_pause
+ * @fun nsemq_consumer_resume
+ */
+/* pause consumption */
+ErrorCode nsemq_consumer_pause(char *topic_name){
+    const char *key;
+    map_iter_t iter_pause;
+    // judge the run status.
+    if(consumer_run_status_ != START_STATUS){
+        nsemq_write_error(consumer_, "Failed to pause: Only pause consumption in the running state.");
+        return ERR_C_RUN_STATUS;
+    }
+    // determine whether topic_name is NULL
+    if(NULL == topic_name){ // pause all topic
+        iter_pause = map_iter(&g_topic_map_);
+        while ((key = map_next(&g_topic_map_, &iter_pause))) {
+            pause_one_topic_internal(key);
+        }
+    } else { // pause one topic
+        pause_one_topic_internal(topic_name);
+    }
+    return ERR_NO_ERROR;
+}
+
+/* resume consumption */
+ErrorCode nsemq_consumer_resume(char *topic_name){
+    const char *key;
+    TopicItem *topic_item;
+    map_iter_t iter_resume;
+    int resum_res = 0;
+    // judge the run status.
+    if(consumer_run_status_ != START_STATUS){
+        nsemq_write_error(consumer_, "Failed to resume: Only resume consumption in the running state.");
+        return ERR_C_RUN_STATUS;
+    }
+    // determine whether topic_name is NULL
+    if(NULL == topic_name){ // resume all topic
+        iter_resume = map_iter(&g_topic_map_);
+        while ((key = map_next(&g_topic_map_, &iter_resume))) {
+            resume_one_topic_internal(key);
+        }
+    } else { // resume one topic
+        resume_one_topic_internal(topic_name);
+    }
     return ERR_NO_ERROR;
 }

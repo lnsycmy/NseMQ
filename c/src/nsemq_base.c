@@ -52,7 +52,7 @@ void nsemq_consume_callback(rd_kafka_message_t *rkmessage, void *opaque){
     // 2. judging type consistency. if so, decode buffer to struct object.
     msg_type = rkmessage->key;
     data_type = topic_item->data_type;
-    if(strcmp(msg_type, data_type) == 0) {  // received data is consistent with deserialize function
+    if(msg_type && data_type && strcmp(msg_type, data_type) == 0) {  // received data is consistent with deserialize function
         msg_buf = rkmessage->payload;
         msg_size = rkmessage->len;
         msg_data = nsemq_decode(msg_buf, msg_size, topic_item->deserialize_func);
@@ -62,8 +62,11 @@ void nsemq_consume_callback(rd_kafka_message_t *rkmessage, void *opaque){
         }
         // call user-defined callback function
         topic_item->consume_callback(msg_data, topic_name, msg_type);
-    }else{
+    }else if(msg_type != NULL){
         sprintf(strtemp_ ,"received an unparseable data, the data type is %s", msg_type);
+        nsemq_write_info(NULL, strtemp_);
+    }else {
+        sprintf(strtemp_ ,"received an null topic type data, because %s", (char *)rkmessage->payload);
         nsemq_write_info(NULL, strtemp_);
     }
 }
@@ -73,7 +76,7 @@ void nsemq_produce_callback(rd_kafka_t *rk, const rd_kafka_message_t *rkmessage,
     const char * topic_name;
     if (rkmessage->err){
         nsemq_write_error(NULL, "Message delivery failed.");
-        nsemq_write_error(NULL,  rd_kafka_err2str(rkmessage->err));
+        nsemq_write_error(NULL,  (char *)rd_kafka_err2str(rkmessage->err));
     }else{
         topic_name = rd_kafka_topic_name(rkmessage->rkt);
         produce_callback(topic_name, rkmessage->payload, rkmessage->len);

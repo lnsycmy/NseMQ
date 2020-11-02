@@ -72,10 +72,10 @@ NseMQ库中的数据结构使用JSON文件进行定义，可通过`bin目录`工
 * 进入`avrogen.jar`根目录，执行如下语句生成.h和.c文件。
 
 ```shell script
-java -jar avrogen.jar student.json . student
+java -jar avrogen.jar cpx.json . cpx
 ```
 
-上述语句中，`student.json`指定输入的.json文件，`.`指定输出的.h和.c的目录，`student`指定源的名称。
+上述语句中，`cpx.json`指定输入的.json文件，`.`指定输出的.h和.c的目录，`cpx`指定源的名称。
 
 生成的详细数据结构请参考 [cpx.h](c/examples/cpx.h) , [cpx.c](c/examples/cpx.c) 。
 
@@ -131,7 +131,7 @@ int main(){
 
 ```c
 ErrorCode nsemq_consumer_init(const char *broker_addr);       // initialize consumer
-ErrorCode NSEMQ_CONSUMER_SUBSCRIBE(const char *topic_name,    // subscribe topic and bind consume callback
+ErrorCode nsemq_consumer_subscribe(const char *topic_name,    // subscribe topic and bind consume callback
                                    const char *msg_type,
                                    void (*consume_callback)(void *, char *, char *));
 ErrorCode nsemq_consumer_unsubscribe(const char *topic_name); // unsubscribe topic
@@ -160,8 +160,8 @@ int main(){
         return -1;
     }
     
-    NSEMQ_CONSUMER_SUBSCRIBE("test", nse_cpx, msg_callback1);
-    NSEMQ_CONSUMER_SUBSCRIBE("test1", nse_person, msg_callback1);
+    nsemq_consumer_subscribe("test", nse_cpx, msg_callback1);
+    nsemq_consumer_subscribe("test1", nse_person, msg_callback1);
 
     nsemq_consumer_start();
     // keep the main() running for 20s

@@ -19,7 +19,7 @@ endif()
 include_directories(${Boost_INCLUDE_DIRS})
 link_directories(${Boost_LIBRARY_DIRS})
 
-add_library(NseMQ++
+add_library(NseMQ++ SHARED
         src/NseMqProducer.cpp
         src/NseMqProducer.h
         src/NseMqConsumer.cpp
