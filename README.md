@@ -164,7 +164,7 @@ int main(){
     nsemq_consumer_subscribe("test", nse_cpx, msg_callback1);
     nsemq_consumer_subscribe("test1", nse_person, msg_callback1);
 
-    nsemq_consumer_start();
+    nsemq_consumer_start(NSEMQ_ASYNC);
     // keep the main() running for 20s
     while(time_count < 20){
         Sleep(1000);
@@ -176,5 +176,5 @@ int main(){
 消费者异步的从Broker拉取数据，当接收数据后可以正常触发回调函数。
 
 **注意：**
-1. 需要维持主程序处于运行状态，数据消费的进程才能正常运行（待修复）;
+1. 异步消费模式中，NseMQ为消费者分配了单个线程实现消费轮询，因此需要维持主程序处于运行状态，数据消费线程才能正常运行;
 2. 不要在回调函数中执行长时间的处理程序，否则会堵塞数据接收。

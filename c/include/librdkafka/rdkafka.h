@@ -43,10 +43,14 @@
 /* @cond NO_DOC */
 #ifndef _RDKAFKA_H_
 #define _RDKAFKA_H_
-
 #include <stdio.h>
-#include <inttypes.h>
 #include <sys/types.h>
+// 2020.11.04 cmy: only include inttypes.h in VS
+#ifdef _MSC_VER
+#include "inttypes.h"
+#else
+#include <inttypes.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -62,6 +66,7 @@ extern "C" {
 #endif
 #include <winsock2.h>  /* for sockaddr, .. */
 
+// 2020.11.04 cmy: only defined ssize_t in VS.
 # ifdef _MSC_VER
 #ifndef _SSIZE_T_DEFINED
 #define _SSIZE_T_DEFINED
