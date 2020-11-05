@@ -39,7 +39,7 @@ typedef void* (*deserialize_func)(void *reader);// used to deserialize function 
 
 typedef rd_kafka_t  nsemq_handle_t;
 
-typedef NSEMQ_API enum{
+typedef enum{
     ERR_NO_ERROR = 0,                   // execution succeed, no-error.
     /* producer error code. -1~-20 */
     ERR_P_INIT_BROKER_ADDRESS = -1,     // failed to set up broker address.
@@ -74,7 +74,7 @@ typedef NSEMQ_API enum{
 } ErrorCode;
 
 /*** Value of running status ***/
-typedef NSEMQ_API enum {
+typedef enum {
     NO_INIT = -1,
     INIT_STATUS = 0,
     START_STATUS = 1,
@@ -83,12 +83,12 @@ typedef NSEMQ_API enum {
 } RunStatus;
 
 /*** Basic types of data ***/
-typedef NSEMQ_API struct {
+typedef struct {
     serialize_fn serialize;
     get_size_fn  get_size;
     get_type_fn  get_type;
     destroy_fn   destroy;
-} BaseType;
+} NSEMQ_API BaseType;
 
 /*** topic map item ***/
 typedef struct {

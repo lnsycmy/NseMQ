@@ -35,7 +35,7 @@ extern "C" {
  * list_t iterator direction.
  */
 
-typedef NSEMQ_API enum {
+typedef enum {
     LIST_HEAD
   , LIST_TAIL
 } list_direction_t;
@@ -44,7 +44,7 @@ typedef NSEMQ_API enum {
  * list_t node struct.
  */
 
-typedef NSEMQ_API struct list_node {
+typedef struct list_node {
   struct list_node *prev;
   struct list_node *next;
   void *val;

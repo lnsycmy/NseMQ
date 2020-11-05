@@ -4,11 +4,11 @@ project(NseMQ_C)
 set(CMAKE_C_STANDARD 11)
 
 include_directories(include)
-link_directories("lib32")
+link_directories(lib/MinGW/x64)
 link_libraries("librdkafka.dll")
 link_libraries("pthreadVC2.dll")
 
-#add_definitions(-DNSEMQ_EXPORTS)
+add_definitions(-DNSEMQ_EXPORTS)
 add_library(nsemq SHARED
         src/kaa/encoding_binary.c
         src/kaa/io.c
@@ -23,10 +23,10 @@ add_library(nsemq SHARED
         src/nsemq_consumer.c)
 
 add_executable(nsemq_producer_example examples/nsemq_producer_example.c examples/cpx.c)
-target_link_libraries(nsemq_producer_example nsemq)
+target_link_libraries(nsemq_producer_example libnsemq)
 
 add_executable(nsemq_consumer_example examples/nsemq_consumer_example.c examples/cpx.c)
-target_link_libraries(nsemq_consumer_example nsemq)
+target_link_libraries(nsemq_consumer_example libnsemq)
 
 add_executable(nsemq_consumer_subscription examples/nsemq_consumer_subscription.c examples/cpx.c)
-target_link_libraries(nsemq_consumer_subscription nsemq)
+target_link_libraries(nsemq_consumer_subscription libnsemq)

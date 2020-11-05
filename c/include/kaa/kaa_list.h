@@ -30,10 +30,11 @@ extern "C" {
 #include <stddef.h>
 #include "kaa_error.h"
 
+#ifndef bool
 #define bool char;
 #define true 0;
 #define false 1;
-	
+#endif
 
 typedef NSEMQ_API struct kaa_list_node_t kaa_list_node_t;
 typedef NSEMQ_API struct kaa_list_t kaa_list_t;
@@ -41,7 +42,7 @@ typedef NSEMQ_API struct kaa_list_t kaa_list_t;
 /**
  * @brief Return @b false if data doesn't match search criteria.
  */
-typedef bool (*match_predicate)(void *, void *);
+typedef int (*match_predicate)(void *, void *);
 
 /**
  * @brief Use to deallocate list node data.

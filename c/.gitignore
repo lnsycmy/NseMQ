@@ -1,7 +1,6 @@
 ##ignore file or directory##
 /target/
-/cmake-build-debug/
-/cmake-build-debug-vs-2015/
+/cmake-build-*
 /test/
 /bin/
 /lib/

@@ -99,7 +99,7 @@ ErrorCode nsemq_consumer_subscribe_internal(const char *topic_name,
     }
     // 4.add topic to topic_map
     pthread_mutex_lock(&topic_mutex);
-    topic_item.bind_data_type = data_type;
+    topic_item.bind_data_type = (char *)data_type;
     topic_item.topic_object = topic_object;
     topic_item.deserialize_func = d_fun;
     topic_item.consume_callback = consume_callback;
@@ -141,7 +141,7 @@ ErrorCode nsemq_consumer_unsubscribe(const char *topic_name) {
     rd_kafka_topic_destroy(topic_item->topic_object);
     // 4.remove topic from topic_map
     pthread_mutex_lock(&topic_mutex);
-    map_remove_(&g_topic_map_, topic_name);
+    map_remove(&g_topic_map_, topic_name);
     pthread_mutex_unlock(&topic_mutex);
     return ERR_NO_ERROR;
 }
@@ -155,7 +155,7 @@ ErrorCode nsemq_consumer_subscriptions(list_t *topic_list) {
     }
     iter = map_iter(&g_topic_map_);
     while ((key = map_next(&g_topic_map_, &iter))) {
-        list_rpush(topic_list, list_node_new(key));
+        list_rpush(topic_list, list_node_new((void *)key));
     }
     return ERR_NO_ERROR;
 }

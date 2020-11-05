@@ -2,7 +2,9 @@
 
 // Global veriable,
 topic_map_t g_topic_map_;                       // topic and consume callback mapping.
-void (*produce_callback)(char *, void *, int);  // user-defined produce_callback.
+void (*produce_callback)(char *msg_topic,
+                         void *msg_data,
+                         int msg_size);         // user-defined produce_callback.
 
 static char strtemp_[512];                      // inner function str.
 
@@ -73,12 +75,12 @@ void nsemq_consume_callback(rd_kafka_message_t *rkmessage, void *opaque){
 
 // deliver report callback
 void nsemq_produce_callback(rd_kafka_t *rk, const rd_kafka_message_t *rkmessage, void *opaque){
-    const char * topic_name;
+    char * topic_name;
     if (rkmessage->err){
         nsemq_write_error(NULL, "Message delivery failed.");
         nsemq_write_error(NULL,  (char *)rd_kafka_err2str(rkmessage->err));
     }else{
-        topic_name = rd_kafka_topic_name(rkmessage->rkt);
+        topic_name = (char *)rd_kafka_topic_name(rkmessage->rkt);
         produce_callback(topic_name, rkmessage->payload, rkmessage->len);
     }
 }
