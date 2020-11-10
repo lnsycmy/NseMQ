@@ -35,7 +35,7 @@ extern "C" {
 #define FALSE       0
 
 typedef int BOOL;
-typedef void* (*deserialize_func)(void *reader);// used to deserialize function when decode.
+typedef void* (*deserialize_func)(avro_reader_t reader);// used to deserialize function when decode.
 
 typedef rd_kafka_t  nsemq_handle_t;
 
@@ -94,7 +94,7 @@ typedef struct {
 typedef struct {
     char *bind_data_type;               // data type, a topic bind one data type
     rd_kafka_topic_t *topic_object;     // topic object
-    void* (*deserialize_func)(void*);   // deserialize function, which be consistent with the data type
+    void* (*deserialize_func)(avro_reader_t);   // deserialize function, which be consistent with the data type
     void (*consume_callback)(void *, char*, char *);  // consumer callback function.
     int subs_status;                    // subscribe status, 1
 } TopicItem;

@@ -44,7 +44,7 @@ typedef enum {
  * list_t node struct.
  */
 
-typedef struct list_node {
+typedef NSEMQ_API struct list_node {
   struct list_node *prev;
   struct list_node *next;
   void *val;

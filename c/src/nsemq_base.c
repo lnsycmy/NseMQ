@@ -31,7 +31,7 @@ void* nsemq_decode(char *msg_buf, int buf_size, deserialize_func d_func){
     // 1. read fixed-length memory
     avro_reader_t reader = avro_reader_memory(msg_buf, buf_size);
     // 2. call the deserialization function
-    return d_func(reader);
+    return (void *)d_func(reader);
 }
 
 // consumer callback

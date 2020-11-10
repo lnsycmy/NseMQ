@@ -47,9 +47,10 @@
 #include <sys/types.h>
 // 2020.11.04 cmy: only include inttypes.h in VS
 #ifdef _MSC_VER
-#include "inttypes.h"
+#include <inttypes.h>
 #else
 #include <inttypes.h>
+#include <stdint.h>
 #endif
 
 #ifdef __cplusplus

@@ -19,7 +19,7 @@ extern "C" {
 #define NSEMQ_MAX_FLUSH_TIME 1000
 
 #define nsemq_consumer_subscribe(topic, type, cb_func)  \
-        nsemq_consumer_subscribe_internal(topic, #type, type##_deserialize, cb_func);
+        nsemq_consumer_subscribe_internal(topic, #type, (deserialize_func)(type##_deserialize), cb_func);
 
 ErrorCode NSEMQ_API nsemq_consumer_init(const char *broker_addr);   // initialize consumer, and return nsemq handle.
 ErrorCode NSEMQ_API

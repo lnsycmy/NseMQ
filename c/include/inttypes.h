@@ -29,12 +29,13 @@
 // 
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef _MSC_VER // [
-#error "Use this header only with Microsoft Visual C++ compilers!"
-#endif // _MSC_VER ]
+
+
 
 #ifndef _MSC_INTTYPES_H_ // [
 #define _MSC_INTTYPES_H_
+
+#ifdef _MSC_VER // [
 
 #if _MSC_VER > 1000
 #pragma once
@@ -301,5 +302,5 @@ imaxdiv_t __cdecl imaxdiv(intmax_t numer, intmax_t denom)
 #define wcstoimax _wcstoi64
 #define wcstoumax _wcstoui64
 
-
+#endif // _MSC_VER ]
 #endif // _MSC_INTTYPES_H_ ]
