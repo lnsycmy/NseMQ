@@ -2,9 +2,10 @@
 
 // Global veriable,
 topic_map_t g_topic_map_;                       // topic and consume callback mapping.
-void (*produce_callback)(char *msg_topic,
+/*void (*produce_callback)(char *msg_topic,
                          void *msg_data,
-                         int msg_size);         // user-defined produce_callback.
+                         int msg_size);         //*/
+dr_cb_func produce_callback;                    // user-defined produce_callback.
 
 static char strtemp_[512];                      // inner function str.
 
@@ -27,7 +28,7 @@ int nsemq_encode(void *msg_struct, char **msg_buf, char **msg_type){
 }
 
 // deserialize msg_buf and call the deserialized function
-void* nsemq_decode(char *msg_buf, int buf_size, deserialize_func d_func){
+void* nsemq_decode(char *msg_buf, int buf_size, ds_msg_func d_func){
     // 1. read fixed-length memory
     avro_reader_t reader = avro_reader_memory(msg_buf, buf_size);
     // 2. call the deserialization function

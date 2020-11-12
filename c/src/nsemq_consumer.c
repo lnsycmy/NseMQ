@@ -7,13 +7,14 @@ static rd_kafka_resp_err_t err_;            // kafka error code.
 static rd_kafka_queue_t *topic_queue_;      // topic queue.
 static char group_id[UUID4_LEN];            // consumer group id.
 
-static RunStatus consumer_run_status_ = NO_INIT;     // consumer current status.
+static RunStatus consumer_run_status_ = NO_INIT; // consumer current status.
 static char errstr_[512];                   // librdkafka API error reporting buffer.
 static char strtemp_[512];                  // inner function str.
 static pthread_t consume_thread_;           // consumer thread.
 
 pthread_mutex_t topic_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t status_mutex = PTHREAD_MUTEX_INITIALIZER;
+
 extern topic_map_t g_topic_map_;        // defined in nsemq_base.c
 
 /* consumer function */
@@ -61,8 +62,8 @@ ErrorCode nsemq_consumer_init(const char *broker_addr) {
 
 ErrorCode nsemq_consumer_subscribe_internal(const char *topic_name,
                                             const char *data_type,
-                                            deserialize_func d_fun,
-                                            void (*consume_callback)(void *, char *, char *)) {
+                                            ds_msg_func deserialize_func,
+                                            msg_cb_func consume_callback) {
     int start_res = 0;
     rd_kafka_topic_t *topic_object;
     TopicItem topic_item;
@@ -101,7 +102,7 @@ ErrorCode nsemq_consumer_subscribe_internal(const char *topic_name,
     pthread_mutex_lock(&topic_mutex);
     topic_item.bind_data_type = (char *)data_type;
     topic_item.topic_object = topic_object;
-    topic_item.deserialize_func = d_fun;
+    topic_item.deserialize_func = deserialize_func;
     topic_item.consume_callback = consume_callback;
     topic_item.subs_status = TRUE;
     map_set(&g_topic_map_, topic_name, topic_item);

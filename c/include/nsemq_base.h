@@ -27,7 +27,7 @@ extern "C" {
 #define LOG_INFO    6
 #define LOG_DEBUG   7
 
-// consume flag
+// Consume flag
 #define NSEMQ_ASYNC 1
 #define NSEMQ_SYNC  0
 
@@ -35,7 +35,12 @@ extern "C" {
 #define FALSE       0
 
 typedef int BOOL;
-typedef void* (*deserialize_func)(avro_reader_t reader);// used to deserialize function when decode.
+// Used to define the deliver report callback function.
+typedef void (*dr_cb_func)(char *msg_topic, void *msg_data, int msg_size);
+// Used to define the consumer callback function.
+typedef void (*msg_cb_func)(void *msg_data, char *msg_topic, char *msg_type);
+// Used to define the deserialize message function.
+typedef void* (*ds_msg_func)(avro_reader_t reader);
 
 typedef rd_kafka_t  nsemq_handle_t;
 
@@ -94,24 +99,26 @@ typedef struct {
 typedef struct {
     char *bind_data_type;               // data type, a topic bind one data type
     rd_kafka_topic_t *topic_object;     // topic object
-    void* (*deserialize_func)(avro_reader_t);   // deserialize function, which be consistent with the data type
-    void (*consume_callback)(void *, char*, char *);  // consumer callback function.
+    ds_msg_func deserialize_func;       // deserialize function, which be consistent with the data type
+    msg_cb_func consume_callback;       // consumer callback function.
     int subs_status;                    // subscribe status, 1
 } TopicItem;
 typedef map_t(TopicItem) topic_map_t;
 
 /*** encoder and decoder function ***/
 int nsemq_encode(void *msg_struct, char **msg_buf, char **msg_type);
-void* nsemq_decode(char *msg_buf, int buf_size, deserialize_func d_func);
+void* nsemq_decode(char *msg_buf, int buf_size, ds_msg_func deserialize_func);
 
 /*** consumer and deliver report callback function ***/
 void nsemq_consume_callback(rd_kafka_message_t *rkmessage, void *opaque);
 void nsemq_produce_callback(rd_kafka_t *rk, const rd_kafka_message_t *rkmessage, void *opaque);
 
-// print the log
+/*** print the log to stderr ***/
 void nsemq_write_error(const rd_kafka_t *rk, char *errstr);
 void nsemq_write_debug(const rd_kafka_t *rk, char *debugstr);
 void nsemq_write_info(const rd_kafka_t *rk, char *infostr);
+
+/*** determine whether the connection is successful ***/
 BOOL nsemq_judge_connect(rd_kafka_t *handle);
 
 #ifdef __cplusplus

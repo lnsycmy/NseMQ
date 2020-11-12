@@ -7,11 +7,13 @@ static RunStatus producer_run_status_ = NO_INIT;// consumer current status.
 static char errstr_[512];                       // librdkafka API error reporting buffer.
 static char strtemp_[512];                      // inner function error.
 
-extern void (*produce_callback)(char *msg_topic,
+/*extern void (*produce_callback)(char *msg_topic,
                            void *msg_data,
-                           int msg_size); // defined at nsemq_base.c
+                           int msg_size); // defined at nsemq_base.c*/
 
-ErrorCode nsemq_producer_init(const char * broker_addr, void *dr_msg_cb){
+extern dr_cb_func produce_callback;             // defined at nsemq_base.c
+
+ErrorCode nsemq_producer_init(const char * broker_addr, dr_cb_func dr_msg_cb){
     // judge current status
     if(producer_run_status_ != NO_INIT){
         nsemq_write_error(NULL, "Don't initialize producer multiple times.");
@@ -50,8 +52,8 @@ ErrorCode nsemq_producer_produce(void *msg, const char *topic_name){
     rd_kafka_resp_err_t err;
     BOOL resend_flag = FALSE;
     ErrorCode err_temp = ERR_NO_ERROR;
-    char *msg_buf;      // 序列化后的字符数组
-    char *msg_type;     // 原结构体的类型。
+    char *msg_buf;      // the serialized char array
+    char *msg_type;     // type of original structure
     // struct is serialized into char*
     int buf_size = nsemq_encode(msg, &msg_buf, &msg_type);
     // judge the run status.
