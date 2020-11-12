@@ -8,7 +8,7 @@ link_directories(lib/VS/x64)
 link_libraries("librdkafka.dll")
 link_libraries("pthreadVC2.dll")
 
-#add_definitions(-DNSEMQ_EXPORTS)
+# add_definitions(-DNSEMQ_EXPORTS)
 add_library(nsemq SHARED
         src/kaa/encoding_binary.c
         src/kaa/io.c

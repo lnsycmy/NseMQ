@@ -10,8 +10,8 @@ extern "C" {
 #include "utils/uuid4.h"
 #include "utils/list.h"
 #include "nsemq_base.h"
-// 2020.11.12 cmy: only include "pthread/pthread.h" in VS
-#ifdef _MSC_VER
+// 2020.11.12 cmy: include "pthread/pthread.h" in VS and mingw32
+#if (defined(_MSC_VER) || defined(__MINGW32_VERSION))
 #include "pthread/pthread.h"
 #else
 #include <pthread.h>
