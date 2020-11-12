@@ -1,9 +1,0 @@
-{
-    "type": "record", 
-    "name": "student",
-    "fields" : [
-        {"name": "name","type" : "string",  "default": "null"},
-        {"name": "age", "type" : "int",     "default": 0},
-        {"name": "sex", "type" : "string",  "default": "null"}
-    ]
-}
