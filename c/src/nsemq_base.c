@@ -1,15 +1,12 @@
 ﻿#include "nsemq_base.h"
 
 // Global veriable,
-topic_map_t g_topic_map_;                       // topic and consume callback mapping.
-/*void (*produce_callback)(char *msg_topic,
-                         void *msg_data,
-                         int msg_size);         //*/
-dr_cb_func produce_callback;                    // user-defined produce_callback.
+topic_map_t g_topic_map_;       // topic and consume callback mapping.
+dr_cb_func produce_callback;    // user-defined produce_callback.
 
-static char strtemp_[512];                      // inner function str.
+static char strtemp_[512];      // inner function str.
 
-// serialize msg_struct and return msg_buf
+// serialize msg_struct and return msg_buf, msg_type and buf_size
 int nsemq_encode(void *msg_struct, char **msg_buf, char **msg_type){
     BaseType * msg_base;        // base type pointers for all data structures
     int struct_size = 0;        // struct size, get value from get_size()
@@ -35,7 +32,19 @@ void* nsemq_decode(char *msg_buf, int buf_size, ds_msg_func d_func){
     return (void *)d_func(reader);
 }
 
-// consumer callback
+// deliver report callback function pointer,  called internally.
+void nsemq_produce_callback(rd_kafka_t *rk, const rd_kafka_message_t *rkmessage, void *opaque){
+    char * topic_name;
+    if (rkmessage->err){
+        nsemq_write_error(NULL, "Message delivery failed.");
+        nsemq_write_error(NULL,  (char *)rd_kafka_err2str(rkmessage->err));
+    }else{
+        topic_name = (char *)rd_kafka_topic_name(rkmessage->rkt);
+        produce_callback(topic_name, rkmessage->payload, rkmessage->len);
+    }
+}
+
+// consumer callback function, called internally.
 void nsemq_consume_callback(rd_kafka_message_t *rkmessage, void *opaque){
     int msg_size = 0;   // from message
     char *msg_type;     // from message
@@ -74,23 +83,11 @@ void nsemq_consume_callback(rd_kafka_message_t *rkmessage, void *opaque){
     }
 }
 
-// deliver report callback
-void nsemq_produce_callback(rd_kafka_t *rk, const rd_kafka_message_t *rkmessage, void *opaque){
-    char * topic_name;
-    if (rkmessage->err){
-        nsemq_write_error(NULL, "Message delivery failed.");
-        nsemq_write_error(NULL,  (char *)rd_kafka_err2str(rkmessage->err));
-    }else{
-        topic_name = (char *)rd_kafka_topic_name(rkmessage->rkt);
-        produce_callback(topic_name, rkmessage->payload, rkmessage->len);
-    }
-}
-
 /*** judge connection function ***/
 BOOL nsemq_judge_connect(rd_kafka_t *handle){
     const struct rd_kafka_metadata *metadata;
     rd_kafka_resp_err_t err = rd_kafka_metadata(handle, 1, NULL, &metadata, 1000);
-    return (err ==  RD_KAFKA_RESP_ERR_NO_ERROR)?TRUE:FALSE;
+    return (err == RD_KAFKA_RESP_ERR_NO_ERROR)?TRUE:FALSE;
 }
 
 /*** inner logger function ***/

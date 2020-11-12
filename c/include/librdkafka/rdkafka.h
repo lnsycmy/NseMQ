@@ -45,11 +45,9 @@
 #define _RDKAFKA_H_
 #include <stdio.h>
 #include <sys/types.h>
-// 2020.11.04 cmy: only include inttypes.h in VS
-#ifdef _MSC_VER
 #include <inttypes.h>
-#else
-#include <inttypes.h>
+// only include stdint.h in MinGW
+#ifndef _MSC_VER
 #include <stdint.h>
 #endif
 

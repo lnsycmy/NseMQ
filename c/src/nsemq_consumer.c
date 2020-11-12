@@ -15,14 +15,14 @@ static pthread_t consume_thread_;           // consumer thread.
 pthread_mutex_t topic_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t status_mutex = PTHREAD_MUTEX_INITIALIZER;
 
-extern topic_map_t g_topic_map_;        // defined in nsemq_base.c
+extern topic_map_t g_topic_map_;            // defined in nsemq_base.c
 
-/* consumer function */
+/* Initialize the consumer by broker address, the consumer handle created internally. */
 ErrorCode nsemq_consumer_init(const char *broker_addr) {
     rd_kafka_conf_res_t conf_res;
     memset(errstr_, 0, sizeof(errstr_));
-    consumer_conf_ = rd_kafka_conf_new(); // Kafka configuration
-    topic_conf_ = rd_kafka_topic_conf_new(); // Topic configuration
+    consumer_conf_ = rd_kafka_conf_new();   // Kafka configuration
+    topic_conf_ = rd_kafka_topic_conf_new();// Topic configuration
     // 0.judge current status
     if (consumer_run_status_ != NO_INIT) {
         nsemq_write_error(NULL, "Don't initialize consumer multiple times.");
@@ -60,6 +60,7 @@ ErrorCode nsemq_consumer_init(const char *broker_addr) {
     return ERR_NO_ERROR;
 }
 
+/* subscribe topic function, called by nsemq_consumer_subscribe() internally */
 ErrorCode nsemq_consumer_subscribe_internal(const char *topic_name,
                                             const char *data_type,
                                             ds_msg_func deserialize_func,
@@ -110,6 +111,7 @@ ErrorCode nsemq_consumer_subscribe_internal(const char *topic_name,
     return ERR_NO_ERROR;
 }
 
+/* unsubscribe one topic, stop consuming this topic if start() have been called */
 ErrorCode nsemq_consumer_unsubscribe(const char *topic_name) {
     int stop_res = 0;
     rd_kafka_topic_t *topic_object;
@@ -147,6 +149,7 @@ ErrorCode nsemq_consumer_unsubscribe(const char *topic_name) {
     return ERR_NO_ERROR;
 }
 
+/* get all subscribed topic names and save it to topic_list. */
 ErrorCode nsemq_consumer_subscriptions(list_t *topic_list) {
     const char *key;
     map_iter_t iter;

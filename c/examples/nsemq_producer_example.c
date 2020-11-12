@@ -32,5 +32,7 @@ int main(){
     cpx->s->name = kaa_string_copy_create("cmy");
     cpx->s->age = 24;
     nsemq_producer_produce(cpx, topic_name);
+
+    cpx->destroy(cpx);
     nsemq_producer_close();
 }

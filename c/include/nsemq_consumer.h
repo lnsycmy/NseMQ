@@ -4,13 +4,13 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-/* start consuming from partition */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "utils/uuid4.h"
 #include "utils/list.h"
 #include "nsemq_base.h"
-// 2020.11.12 cmy: include "pthread/pthread.h" in VS and mingw32
+/* include "pthread/pthread.h" in VS and mingw32 */
 #if (defined(_MSC_VER) || defined(__MINGW32_VERSION))
 #include "pthread/pthread.h"
 #else
@@ -41,7 +41,7 @@ extern "C" {
 ErrorCode NSEMQ_API nsemq_consumer_init(const char *broker_addr);
 
 /**
- * [internal function] subscribe topic function, called by nsemq_consumer_subscribe() above.
+ * [internal] subscribe topic function, called by nsemq_consumer_subscribe() internally.
  * @param topic_name: topic to be subscribed, the type is char*, i.e. "test".
  * @param data_type: bind the data type of consumption, i.e. "nse_cpx".
  * @param d_fun: bind the deserialize function pointer of data type, i.e. nse_cpx_deserialize.

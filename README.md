@@ -88,10 +88,31 @@ java -jar avrogen.jar cpx.json . cpx
 **生产者API**
 
 ```c
-ErrorCode nsemq_producer_init(const char *broker_addr, void *dr_msg_cb);  // initialize producer, and bind dr_msg_cb.
-ErrorCode nsemq_producer_produce(void *msg, const char *topic_name);      // produce message with 'msg' and topic 'topic_name'
-ErrorCode nsemq_producer_close();                                         // close producer and clear memory
+ErrorCode nsemq_producer_init(const char *broker_addr, 
+                              dr_cb_func dr_msg_cb);            // initialize producer and bind deliver report function.
+ErrorCode nsemq_producer_produce(void *msg, const char *topic); // produce message with 'msg' to topic with `topic'.
+ErrorCode nsemq_producer_close();                               // close the producer handle.
 ```
+
+**使用说明**
+
+数据生产的流程：`初始化生产者` -> `生产消息` -> `关闭生产者`。
+
+* 初始化生产者时，需要指定`broker`服务器的ip地址和端口号，如`"localhost:9092"`；
+* 生产消息时，传入生产的消息对象以及消息所属的主题即可，内部实现消息对象的序列化；
+    * 消息对象由用户自己创建和销毁，例如创建`nse_cpx_t *cpx = nse_cpx_create()`以及销毁`cpx->destroy(cpx)`；
+    * 若需要在生产数据后接收消息传递的反馈回调，可在初始化函数中传入消息传递回调函数`dr_msg_cb`，其函数类型如下；
+    * 若无需接收消息传递回调，初始化函数中的`dr_msg_cb`参数传入`NULL`即可。
+```c
+/**
+ * Used to define the deliver report callback function.
+ * @param msg_topic: topic of the deliver message.
+ * @param msg_data: message buffer which have been delivered.
+ * @param msg_size: size of message buffer.
+ */
+void dr_cb_func(char *msg_topic, void *msg_data, int msg_size){ ... }
+```
+* 生产完成后，需要调用`close()`函数关闭生产者，在此函数内部会销毁为生产者分配的内存。
 
 **生产者范例**
 
@@ -106,22 +127,29 @@ void produce_callback(char *msg_topic, void *msg_data, int msg_size){
 }
 // main function
 int main(){
+    // 1. use nse_person_create() to create data object.
+    nse_person_t *person;
+    person = nse_person_create(); 
+    person->name = kaa_string_copy_create("nse");
+    person->age = 24;
+
+    // 2. initialize the producer with broker address and producer callback function.
     if(nsemq_producer_init("localhost:9092", produce_callback) != ERR_NO_ERROR){
         printf("initialize failed!\n");
         return -1;
     }
-    
-    person = nse_person_create();
-    person->name = kaa_string_copy_create("nse");
-    person->age = 24;
-    
-    nsemq_producer_produce(person, topic_name);
+
+    // 3. produce one data message `person` to the topic `topic_test`.
+    nsemq_producer_produce(person, "topic_test");
+
+    // 4. destroy the data object, and close the producer.
+    person->destroy(person);
     nsemq_producer_close();
     return 0;
 }
 ```
 使用`produce`生产数据后，将生产的数据插入本地队列后（等待发送）立即返回，不提示是否发送成功。
-可通过自身实现`produce_callback`函数，实现消息发送成功的回调。
+可通过实现`produce_callback`回调函数，获取消息传递到`broker`的成功通知。
 
 ### 数据消费
 
@@ -130,19 +158,40 @@ int main(){
 **消费者API**
 
 ```c
-ErrorCode nsemq_consumer_init(const char *broker_addr);         // initialize consumer, and specify a consumer
-ErrorCode nsemq_consumer_subscribe(const char *topic_name,      // subscribe topic and bind consume callback
-                                   void *msg_type,              // @param msg_type:message struct name, i.e. nse_cpx
-                                   void (*consume_callback)(void *, char *, char *)); // @param callback function.
-ErrorCode nsemq_consumer_unsubscribe(const char *topic);        // unsubscribe topic
+ErrorCode nsemq_consumer_init(const char *broker_addr);         // initialize consumer with one broker address.
+ErrorCode nsemq_consumer_subscribe(const char *topic_name,      // subscribe topic and bind consume callback.
+                                   macro_t msg_type,            // @param msg_type:message struct name, i.e. nse_cpx
+                                   msg_cb_func msg_callback);   // @param consume message callback function pointer.
+ErrorCode nsemq_consumer_unsubscribe(const char *topic);        // unsubscribe one topic.
 ErrorCode nsemq_consumer_subscriptions(list_t *topic_list);     // get subscribed topic names.
 ErrorCode nsemq_consumer_start(int async);                      // start to consume message from broker.
 ErrorCode nsemq_consumer_stop();                                // stop to consume message from broker.
 ErrorCode nsemq_consumer_close();                               // close the consumer.
 ```
 
-* 使用时，需要用户自定义回调函数，实现数据的处理；
-* 一个`topic`对应一个消费回调函数`consume_callback`，需要在订阅时将两者绑定。
+**使用说明**
+
+数据消费的流程：`初始化消费者` -> `订阅主题` -> `开始消费` -> `触发回调` -> `结束消费` -> `关闭消费者`。
+
+* 初始化消费者时，需要指定`broker`服务器的ip地址和端口号，如`"localhost:9092"`；
+* 订阅主题时，将主题`topic`、消息类型`msg_type`和消费回调函数`msg_callback`三者绑定；
+    * 消息类型`msg_type`不是字符串（不加引号），而是宏定义类型，例如`nse_cpx`，而非`"nse_cpx"`；
+    * 需要自定义消费回调函数（如`msg_callback`），函数内可以处理接收到的数据，消费回调函数的类型如下；
+    * 一个主题对应一个消息类型，多个主题可以使用同一个消费回调函数，可以通过调用多次`subscribe()`函数订阅多个主题；
+```c
+/**
+ * Used to define the consume callback function.
+ * @param msg_data: Serialized message data, can be converted to other data types.
+ * @param msg_topic: consume the topic of this message.
+ * @param msg_type: message data type, i.e. "nse_cpx".
+ */
+void msg_callback(void *msg_data, char *msg_topic, char *msg_type){ ... }
+``` 
+* 开始消费时，指定消费模式是同步`NSEMQ_SYNC`还是异步`NSEMQ_ASYNC`，接收到数据后可以正常触发回调函数；
+    * 同步消费：堵塞主程序，直到调用`stop()`函数时才能停止消费，继续执行主程序代码；
+    * 异步消费：不堵塞主程序，消费者在独立的线程中接收消息，但要维持主程序处于运行状态；
+* 消费过程后，可调用`stop()`函数停止消费，之后可再次调用`start()`函数恢复消费；
+* 消费完成后，调用`close()`函数关闭消费者，在此函数内部会销毁为消费者分配的内存。
 
 **消费者范例:**
 ```c
@@ -157,24 +206,34 @@ void msg_callback(void *msg_data, char *msg_topic, char *msg_type){
 }
 // main function
 int main(){
+    int time_count = 0;
+
+    // 1. initialize consumer with the broker addrsss.
     if(nsemq_consumer_init("localhost:9092") != ERR_NO_ERROR) {
         return -1;
     }
-    
-    nsemq_consumer_subscribe("test", nse_cpx, msg_callback1);
-    nsemq_consumer_subscribe("test1", nse_person, msg_callback1);
 
+    // 2. subscribe two topic, bind data type and callback function 'msg_callback'
+    nsemq_consumer_subscribe("test", nse_cpx, msg_callback);
+    nsemq_consumer_subscribe("test1", nse_person, msg_callback);
+
+    // 3. start to consume message from broker asynchronously.
     nsemq_consumer_start(NSEMQ_ASYNC);
-    // keep the main() running for 20s
-    while(time_count < 20){
+
+    // 4. keep main() running for 100s to ensure asynchronous consumption.
+    while(time_count < 100){
+        if(time_count == 10){ // stop consumption at 10s
+            nsemq_consumer_stop();
+        }else if(time_count == 20){ // resume consumption at 20s
+            nsemq_consumer_start(NSEMQ_ASYNC);
+        }
         Sleep(1000);
         time_count++;
     }
+    
+    // 5. close the consumer.
     nsemq_consumer_close();
 }
 ```
-消费者异步的从Broker拉取数据，当接收数据后可以正常触发回调函数。
 
-**注意：**
-1. 异步消费模式中，NseMQ为消费者分配了单个线程实现消费轮询，因此需要维持主程序处于运行状态，数据消费线程才能正常运行;
-2. 不要在回调函数中执行长时间的处理程序，否则会堵塞数据接收。
+**注意：** 不要在回调函数中执行长时间的处理程序，否则会堵塞数据接收。

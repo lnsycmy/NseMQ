@@ -35,16 +35,36 @@ extern "C" {
 #define FALSE       0
 
 typedef int BOOL;
-// Used to define the deliver report callback function.
+
+/**
+ * Used to define the deliver report callback function.
+ * @param msg_topic: topic of the deliver message.
+ * @param msg_data: message buffer which have been delivered.
+ * @param msg_size: size of message buffer.
+ */
+
 typedef void (*dr_cb_func)(char *msg_topic, void *msg_data, int msg_size);
-// Used to define the consumer callback function.
+
+/**
+ * Used to define the consume callback function.
+ * @param msg_data: Serialized message data, can be converted to other data types.
+ * @param msg_topic: consume the topic of this message.
+ * @param msg_type: message data type, i.e. "nse_cpx".
+ */
+
 typedef void (*msg_cb_func)(void *msg_data, char *msg_topic, char *msg_type);
-// Used to define the deserialize message function.
-typedef void* (*ds_msg_func)(avro_reader_t reader);
 
-typedef rd_kafka_t  nsemq_handle_t;
+/**
+ * [internal] Used to define the deserialize message function.
+ * @param reader: avro reade, used to deserialize message.
+ */
+typedef void *(*ds_msg_func)(avro_reader_t reader);
 
-typedef enum{
+/* used to obtain the handle of internal producer or consumer. */
+typedef rd_kafka_t nsemq_handle_t;
+
+/* error code, returned from function, used to locate the cause of the error. */
+typedef enum {
     ERR_NO_ERROR = 0,                   // execution succeed, no-error.
     /* producer error code. -1~-20 */
     ERR_P_INIT_BROKER_ADDRESS = -1,     // failed to set up broker address.
@@ -78,24 +98,24 @@ typedef enum{
     ERR_FAIL_CONNECT_BROKER = -100,    // failed to connect broker.
 } ErrorCode;
 
-/*** Value of running status ***/
+/* Value of running status */
 typedef enum {
-    NO_INIT = -1,
-    INIT_STATUS = 0,
-    START_STATUS = 1,
-    STOP_STATUS = 2,
-    CLOSE_STATUS = 3,
+    NO_INIT = -1,       // not initialize, default status.
+    INIT_STATUS = 0,    // complete initialization, after call init().
+    START_STATUS = 1,   // running the main program, after call produce() or start().
+    STOP_STATUS = 2,    // stop the main program in consumer, after call stop().
+    CLOSE_STATUS = 3,   // close the
 } RunStatus;
 
-/*** Basic types of data ***/
+/* Basic types of data */
 typedef struct {
     serialize_fn serialize;
-    get_size_fn  get_size;
-    get_type_fn  get_type;
-    destroy_fn   destroy;
-} NSEMQ_API BaseType;
+    get_size_fn get_size;
+    get_type_fn get_type;
+    destroy_fn destroy;
+} BaseType;
 
-/*** topic map item ***/
+/* [internal] topic map item */
 typedef struct {
     char *bind_data_type;               // data type, a topic bind one data type
     rd_kafka_topic_t *topic_object;     // topic object
@@ -103,23 +123,29 @@ typedef struct {
     msg_cb_func consume_callback;       // consumer callback function.
     int subs_status;                    // subscribe status, 1
 } TopicItem;
+
+/*** [internal] topic map composed of TopicItem ***/
 typedef map_t(TopicItem) topic_map_t;
 
-/*** encoder and decoder function ***/
+/*** [internal] encoder and decoder function ***/
 int nsemq_encode(void *msg_struct, char **msg_buf, char **msg_type);
-void* nsemq_decode(char *msg_buf, int buf_size, ds_msg_func deserialize_func);
 
-/*** consumer and deliver report callback function ***/
+void *nsemq_decode(char *msg_buf, int buf_size, ds_msg_func deserialize_func);
+
+/*** [internal] consumer and deliver report callback function ***/
 void nsemq_consume_callback(rd_kafka_message_t *rkmessage, void *opaque);
+
 void nsemq_produce_callback(rd_kafka_t *rk, const rd_kafka_message_t *rkmessage, void *opaque);
 
-/*** print the log to stderr ***/
+/*** [internal] print the log to stderr ***/
 void nsemq_write_error(const rd_kafka_t *rk, char *errstr);
+
 void nsemq_write_debug(const rd_kafka_t *rk, char *debugstr);
+
 void nsemq_write_info(const rd_kafka_t *rk, char *infostr);
 
-/*** determine whether the connection is successful ***/
-BOOL nsemq_judge_connect(rd_kafka_t *handle);
+/*** [internal] whether the connection is successful ***/
+BOOL nsemq_judge_connect(nsemq_handle_t *handle);
 
 #ifdef __cplusplus
 }      /* extern "C" */

@@ -16,13 +16,13 @@ extern "C" {
 NSEMQ_API ErrorCode nsemq_producer_init(const char *broker_addr, dr_cb_func dr_msg_cb);
 
 /**
- * produce message with 'msg' and topic 'topic'
+ * produce message with 'msg' to topic with `topic'
  * @param msg: message to be produced, which is the struct pointer type, i.e. nse_cpx *cpx.
  * @param topic: topic to be published belong above msg.
  */
 NSEMQ_API ErrorCode nsemq_producer_produce(void *msg, const char *topic);
 
-/* close producer and clear memory */
+/* close the producer handle, and destroy the allocated memory. */
 NSEMQ_API ErrorCode nsemq_producer_close();
 
 #ifdef __cplusplus
