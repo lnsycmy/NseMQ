@@ -11,9 +11,8 @@ static RunStatus consumer_run_status_ = NO_INIT; // consumer current status.
 static char errstr_[512];                   // librdkafka API error reporting buffer.
 static char strtemp_[512];                  // inner function str.
 static pthread_t consume_thread_;           // consumer thread.
-
-pthread_mutex_t topic_mutex = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t status_mutex = PTHREAD_MUTEX_INITIALIZER;
+static pthread_mutex_t topic_mutex = PTHREAD_MUTEX_INITIALIZER;
+static pthread_mutex_t status_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 extern topic_map_t g_topic_map_;            // defined in nsemq_base.c
 
@@ -167,27 +166,37 @@ ErrorCode nsemq_consumer_subscriptions(list_t *topic_list) {
 /* used to create consumer thread */
 void *consume_thread_func(void *agr) {
     int consume_res, i = 0;
-    while (consumer_run_status_ == START_STATUS) {
-        // consume multiple messages from queue with callback.
+    while (1) {
+        pthread_mutex_lock(&status_mutex);
+        if(consumer_run_status_ != START_STATUS) {
+            pthread_mutex_unlock(&status_mutex);
+            break;
+        }
         printf("enter poll()\n");
+        // consume multiple messages from queue with callback.
         consume_res = rd_kafka_consume_callback_queue(topic_queue_, 1000,/* timeout_ms */
                                                       nsemq_consume_callback, NULL);
+        // add unlock after callback, ensure topic_queue_ can't be destroyed between called callback_queue.
+        pthread_mutex_unlock(&status_mutex);
         if (consume_res == -1) { // error
             nsemq_write_error(consumer_, "Failed to start consume callback.");
             break;
         }
-        rd_kafka_poll(consumer_, 0);
+        rd_kafka_consumer_poll(consumer_,0);
     }
-    pthread_exit(NULL);
+    printf("thread exit();\n");
+    pthread_detach(pthread_self());
+    // return ((void *)0);
     return NULL;
 }
 
 /* start to consume message from broker */
 ErrorCode nsemq_consumer_start(int async_flag) {
-    int start_res, create_res = 0;
+    int start_res, create_res = -1;
     const char *key;
     map_iter_t iter;
     TopicItem *topic_item;
+    pthread_attr_t attr;    // set attr PTHREAD_CREATE_DETACHED.
     // 0.judge the run status.
     if (consumer_run_status_ != INIT_STATUS && consumer_run_status_ != STOP_STATUS) {
         nsemq_write_error(consumer_, "Failed to start: only allow to start consume after called init() or stop().");
@@ -213,8 +222,13 @@ ErrorCode nsemq_consumer_start(int async_flag) {
     pthread_mutex_lock(&status_mutex);
     consumer_run_status_ = START_STATUS;
     pthread_mutex_unlock(&status_mutex);
-    // 3.create consume callback thread, and detach the thread to achieve async or sync.
+    // 3.create consume callback thread.
     create_res = pthread_create(&consume_thread_, NULL, consume_thread_func, NULL);
+    if(create_res != 0){
+        sprintf(strtemp_, "Failed to create consume thread, errno is %d", errno);
+        return ERR_C_START_CREATE_THREAD;
+    }
+    // 4.achieve async or sync through pthread_detach()/pthread_join()
     if (async_flag) {
         pthread_detach(consume_thread_);
     } else {
@@ -225,7 +239,7 @@ ErrorCode nsemq_consumer_start(int async_flag) {
 
 /* stop to consume message from broker */
 ErrorCode nsemq_consumer_stop() {
-    int stop_res, cancel_res = 0;
+    int stop_res, cancel_res = 0, kill_rc = 0;
     int flush_wait_time = 0, flush_step_time = 10;
     const char *key;
     map_iter_t iter;
@@ -257,12 +271,6 @@ ErrorCode nsemq_consumer_stop() {
     pthread_mutex_lock(&status_mutex);
     consumer_run_status_ = STOP_STATUS;
     pthread_mutex_unlock(&status_mutex);
-    // 4.stop consume callback thread.
-    cancel_res = pthread_cancel(consume_thread_);
-    if (cancel_res != 0) {
-        nsemq_write_error(consumer_, "Failed to stop consuming thread.");
-        return ERR_C_STOP_CANCEL_THRED;
-    }
     return ERR_NO_ERROR;
 }
 
@@ -278,14 +286,11 @@ ErrorCode nsemq_consumer_close() {
         return ERR_C_RUN_STATUS;
     } else if (consumer_run_status_ == START_STATUS) {
         // if in START_STATUS, to called stop() automatically.
+        printf("*** start to stop() \n");
         nsemq_consumer_stop();
+        printf("*** end stop() \n");
     }
-    // NO.1 determine the consume_thread have cancelled.
-    kill_rc = pthread_kill(consume_thread_, 0);
-    if (kill_rc != ESRCH && kill_rc != EINVAL) {
-        pthread_cancel(consume_thread_);
-    }
-    // NO.2 destroy topic object, and clear topic map.
+    // NO.1 destroy topic object, and clear topic map.
     pthread_mutex_lock(&topic_mutex);
     iter_destroy = map_iter(&g_topic_map_);
     while ((key = map_next(&g_topic_map_, &iter_destroy))) {
@@ -294,11 +299,13 @@ ErrorCode nsemq_consumer_close() {
     }
     map_deinit(&g_topic_map_);
     pthread_mutex_unlock(&topic_mutex);
-    // NO.3 destroy topic queue.
+    // [Deprecated] wait consume_callback_queue for 1.2s.
+    Sleep(1200);
+    // NO.2 destroy topic queue.
     rd_kafka_queue_destroy(topic_queue_);
-    // NO.4 destroy handle.
+    // NO.3 destroy handle.
     rd_kafka_destroy(consumer_);
-    // NO.5 set CLOSE_STATUS.
+    // NO.4 set CLOSE_STATUS.
     pthread_mutex_lock(&status_mutex);
     consumer_run_status_ = CLOSE_STATUS;
     pthread_mutex_unlock(&status_mutex);

@@ -62,9 +62,9 @@ void nsemq_consume_callback(rd_kafka_message_t *rkmessage, void *opaque){
         return;
     }
     // 2. judging type consistency. if so, decode buffer to struct object.
-    msg_type = rkmessage->key;
+    msg_type = (char *)rkmessage->key;
     data_type = topic_item->bind_data_type;
-    if(msg_type && data_type && strcmp(msg_type, data_type) == 0) {  // received data is consistent with deserialize function
+    if(msg_type && data_type && (strcmp(msg_type, data_type) == 0)) {  // received data is consistent with deserialize function
         msg_buf = rkmessage->payload;
         msg_size = rkmessage->len;
         msg_data = nsemq_decode(msg_buf, msg_size, topic_item->deserialize_func);
@@ -78,9 +78,11 @@ void nsemq_consume_callback(rd_kafka_message_t *rkmessage, void *opaque){
         sprintf(strtemp_ ,"received an unparseable data, the data type is %s", msg_type);
         nsemq_write_info(NULL, strtemp_);
     }else {
-        sprintf(strtemp_ ,"received an null topic type data, because %s", (char *)rkmessage->payload);
+        sprintf(strtemp_ ,"received an null topic type data, the data is %s", (char *)rkmessage->payload);
         nsemq_write_info(NULL, strtemp_);
     }
+    // The provided consume_cb function is called for each message,
+    // the application MUST NOT call rd_kafka_message_destroy() on the provided rkmessage.
 }
 
 /*** judge connection function ***/

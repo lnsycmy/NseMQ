@@ -10,7 +10,7 @@ extern "C" {
 #include "utils/uuid4.h"
 #include "utils/list.h"
 #include "nsemq_base.h"
-/* include "pthread/pthread.h" in VS and mingw32 */
+// include "pthread/pthread.h" in VS and mingw32
 #if (defined(_MSC_VER) || defined(__MINGW32_VERSION))
 #include "pthread/pthread.h"
 #else

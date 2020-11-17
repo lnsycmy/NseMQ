@@ -30,12 +30,6 @@ extern "C" {
 #include <stddef.h>
 #include "kaa_error.h"
 
-#ifndef bool
-#define bool char;
-#define true 0;
-#define false 1;
-#endif
-
 typedef NSEMQ_API struct kaa_list_node_t kaa_list_node_t;
 typedef NSEMQ_API struct kaa_list_t kaa_list_t;
 

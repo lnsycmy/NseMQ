@@ -54,21 +54,21 @@ ErrorCode nsemq_producer_produce(void *msg, const char *topic_name){
     ErrorCode err_temp = ERR_NO_ERROR;
     char *msg_buf;      // the serialized char array
     char *msg_type;     // type of original structure
-    // struct is serialized into char*
-    int buf_size = nsemq_encode(msg, &msg_buf, &msg_type);
-    // judge the run status.
+    int buf_size;       // messagew buffer size
+    // 0. judge the run status.
     if(producer_run_status_ == CLOSE_STATUS){
         nsemq_write_error(producer_, "Failed to produce: don't allow call produce() after close().");
         return ERR_P_RUN_STATUS;
     }else if(producer_run_status_ != START_STATUS){
         producer_run_status_ = START_STATUS;
     }
-    // judge message whether empty.
+    // 1. struct is serialized into char*, and judge message whether empty.
+    buf_size = nsemq_encode(msg, &msg_buf, &msg_type);
     if (buf_size == 0) {
         rd_kafka_poll(producer_, 0/*non-blocking */);
         return ERR_P_SEND_MSG_EMPTY; // 退出
     }
-    // Send/Produce message.
+    // 2. produce one message.
     retry:
     err = rd_kafka_producev(
             /* Producer handle */
@@ -80,11 +80,13 @@ ErrorCode nsemq_producer_produce(void *msg, const char *topic_name){
             /* Message value and length */
             RD_KAFKA_V_VALUE(msg_buf, buf_size),
             /* Message key pointer and length (const void *, size_t) */
+            // why strlen(msg_type)+1? the char* has '\0' at the end.
             RD_KAFKA_V_KEY(msg_type,strlen(msg_type)+1),
             /* Per-Message opaque */
             RD_KAFKA_V_OPAQUE(NULL),
             /* End sentinel */
             RD_KAFKA_V_END);
+    // 3. determine whether the production is successful.
     if (err) {
         // Failed to *enqueue* message for producing.
         sprintf(strtemp_, "Failed to produce to topic(%s):%s", topic_name, rd_kafka_err2str(err));

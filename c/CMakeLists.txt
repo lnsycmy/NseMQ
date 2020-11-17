@@ -4,11 +4,23 @@ project(NseMQ_C)
 set(CMAKE_C_STANDARD 11)
 
 include_directories(include)
-link_directories(lib/VS/x64)
+if(MSVC)
+    message(STATUS "compiler is: MSVC")
+    if(CMAKE_CL_64)
+        link_directories(lib/VS/x64)
+    else(CMAKE_CL_64)
+        link_directories(lib/VS/x86)
+    endif(CMAKE_CL_64)
+    link_libraries("pthreadVC2.dll")
+else(MSVC)
+    message(STATUS "compiler is: MinGW")
+    link_directories(lib/MinGW/x86)
+    link_libraries("pthreadVC2.dll")
+#     link_directories(lib/MinGW/x64)
+endif(MSVC)
 link_libraries("librdkafka.dll")
-link_libraries("pthreadVC2.dll")
 
-# add_definitions(-DNSEMQ_EXPORTS)
+add_definitions(-DNSEMQ_EXPORTS)
 add_library(nsemq SHARED
         src/kaa/encoding_binary.c
         src/kaa/io.c
