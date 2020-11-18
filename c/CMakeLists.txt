@@ -42,3 +42,6 @@ target_link_libraries(nsemq_consumer_example nsemq)
 
 add_executable(nsemq_consumer_subscription examples/nsemq_consumer_subscription.c examples/cpx.c)
 target_link_libraries(nsemq_consumer_subscription nsemq)
+
+add_executable(nsemq_schema_assignment examples/nsemq_schema_assignment.c examples/cpx.c)
+target_link_libraries(nsemq_schema_assignment nsemq)
