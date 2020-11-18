@@ -15,6 +15,7 @@ extern "C" {
 #include "kaa/kaa_common_schema.h"
 #include "kaa/kaa_common.h"
 #include "kaa/kaa_error.h"
+#include "kaa/kaa_list.h"
 /* librdkafka all header file */
 #include "librdkafka/rdkafka.h"
 

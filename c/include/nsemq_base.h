@@ -43,7 +43,7 @@ typedef int BOOL;
  * @param msg_size: size of message buffer.
  */
 
-typedef void (*dr_cb_func)(char *msg_topic, void *msg_data, int msg_size);
+typedef void (*dr_cb_func)(const char *msg_topic, void *msg_data, int msg_size);
 
 /**
  * Used to define the consume callback function.

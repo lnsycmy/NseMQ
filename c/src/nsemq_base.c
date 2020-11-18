@@ -40,6 +40,7 @@ void nsemq_produce_callback(rd_kafka_t *rk, const rd_kafka_message_t *rkmessage,
         nsemq_write_error(NULL,  (char *)rd_kafka_err2str(rkmessage->err));
     }else{
         topic_name = (char *)rd_kafka_topic_name(rkmessage->rkt);
+        printf("topic_name:%s\n", topic_name);
         produce_callback(topic_name, rkmessage->payload, rkmessage->len);
     }
 }

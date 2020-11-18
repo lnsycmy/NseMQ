@@ -10,10 +10,19 @@ void msg_callback(void *msg_data, char *msg_topic, char *msg_type){
         printf("cpx: im: %lf, re: %lf, name: %s, age: %d\n",
                 cpx->im, cpx->re, cpx->s->name->data, cpx->s->age);
         printf("cpx msg_topic:%s\n",msg_topic);
+        kaa_list_node_t *iterator;
+        iterator = kaa_list_begin(cpx->arr);
+        while(iterator){
+            kaa_string_t *temp = (kaa_string_t *)kaa_list_get_data(iterator);
+            printf("arr item:%s\n", temp->data);
+            iterator = kaa_list_next(iterator);
+        }
+        cpx->destroy(cpx);
     }else if(strcmp(msg_type, "nse_person") == 0){
         nse_person_t *person = (nse_person_t *)msg_data;
         printf("person: name: %s, age: %d\n",
                person->name->data, person->age);
+        person->destroy(person);
     }
 }
 
