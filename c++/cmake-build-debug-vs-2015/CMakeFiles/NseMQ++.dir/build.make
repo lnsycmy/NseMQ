@@ -64,57 +64,57 @@ include CMakeFiles\NseMQ++.dir\flags.make
 CMakeFiles\NseMQ++.dir\src\NseMqProducer.cpp.obj: CMakeFiles\NseMQ++.dir\flags.make
 CMakeFiles\NseMQ++.dir\src\NseMqProducer.cpp.obj: ..\src\NseMqProducer.cpp
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=E:\Project\NseMQ\c++\cmake-build-debug-vs-2015\CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/NseMQ++.dir/src/NseMqProducer.cpp.obj"
-	"D:\Development\Visual Studio 2015\VC\bin\amd64\cl.exe" @<<
+	"D:\Development\Visual Studio 2015\VC\bin\cl.exe" @<<
  /nologo /TP $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) /FoCMakeFiles\NseMQ++.dir\src\NseMqProducer.cpp.obj /FdCMakeFiles\NseMQ++.dir\ /FS -c E:\Project\NseMQ\c++\src\NseMqProducer.cpp
 <<
 
 CMakeFiles\NseMQ++.dir\src\NseMqProducer.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/NseMQ++.dir/src/NseMqProducer.cpp.i"
-	"D:\Development\Visual Studio 2015\VC\bin\amd64\cl.exe" > CMakeFiles\NseMQ++.dir\src\NseMqProducer.cpp.i @<<
+	"D:\Development\Visual Studio 2015\VC\bin\cl.exe" > CMakeFiles\NseMQ++.dir\src\NseMqProducer.cpp.i @<<
  /nologo /TP $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E E:\Project\NseMQ\c++\src\NseMqProducer.cpp
 <<
 
 CMakeFiles\NseMQ++.dir\src\NseMqProducer.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/NseMQ++.dir/src/NseMqProducer.cpp.s"
-	"D:\Development\Visual Studio 2015\VC\bin\amd64\cl.exe" @<<
+	"D:\Development\Visual Studio 2015\VC\bin\cl.exe" @<<
  /nologo /TP $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) /FoNUL /FAs /FaCMakeFiles\NseMQ++.dir\src\NseMqProducer.cpp.s /c E:\Project\NseMQ\c++\src\NseMqProducer.cpp
 <<
 
 CMakeFiles\NseMQ++.dir\src\NseMqConsumer.cpp.obj: CMakeFiles\NseMQ++.dir\flags.make
 CMakeFiles\NseMQ++.dir\src\NseMqConsumer.cpp.obj: ..\src\NseMqConsumer.cpp
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=E:\Project\NseMQ\c++\cmake-build-debug-vs-2015\CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/NseMQ++.dir/src/NseMqConsumer.cpp.obj"
-	"D:\Development\Visual Studio 2015\VC\bin\amd64\cl.exe" @<<
+	"D:\Development\Visual Studio 2015\VC\bin\cl.exe" @<<
  /nologo /TP $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) /FoCMakeFiles\NseMQ++.dir\src\NseMqConsumer.cpp.obj /FdCMakeFiles\NseMQ++.dir\ /FS -c E:\Project\NseMQ\c++\src\NseMqConsumer.cpp
 <<
 
 CMakeFiles\NseMQ++.dir\src\NseMqConsumer.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/NseMQ++.dir/src/NseMqConsumer.cpp.i"
-	"D:\Development\Visual Studio 2015\VC\bin\amd64\cl.exe" > CMakeFiles\NseMQ++.dir\src\NseMqConsumer.cpp.i @<<
+	"D:\Development\Visual Studio 2015\VC\bin\cl.exe" > CMakeFiles\NseMQ++.dir\src\NseMqConsumer.cpp.i @<<
  /nologo /TP $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E E:\Project\NseMQ\c++\src\NseMqConsumer.cpp
 <<
 
 CMakeFiles\NseMQ++.dir\src\NseMqConsumer.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/NseMQ++.dir/src/NseMqConsumer.cpp.s"
-	"D:\Development\Visual Studio 2015\VC\bin\amd64\cl.exe" @<<
+	"D:\Development\Visual Studio 2015\VC\bin\cl.exe" @<<
  /nologo /TP $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) /FoNUL /FAs /FaCMakeFiles\NseMQ++.dir\src\NseMqConsumer.cpp.s /c E:\Project\NseMQ\c++\src\NseMqConsumer.cpp
 <<
 
 CMakeFiles\NseMQ++.dir\src\NseMqBase.cpp.obj: CMakeFiles\NseMQ++.dir\flags.make
 CMakeFiles\NseMQ++.dir\src\NseMqBase.cpp.obj: ..\src\NseMqBase.cpp
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=E:\Project\NseMQ\c++\cmake-build-debug-vs-2015\CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/NseMQ++.dir/src/NseMqBase.cpp.obj"
-	"D:\Development\Visual Studio 2015\VC\bin\amd64\cl.exe" @<<
+	"D:\Development\Visual Studio 2015\VC\bin\cl.exe" @<<
  /nologo /TP $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) /FoCMakeFiles\NseMQ++.dir\src\NseMqBase.cpp.obj /FdCMakeFiles\NseMQ++.dir\ /FS -c E:\Project\NseMQ\c++\src\NseMqBase.cpp
 <<
 
 CMakeFiles\NseMQ++.dir\src\NseMqBase.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/NseMQ++.dir/src/NseMqBase.cpp.i"
-	"D:\Development\Visual Studio 2015\VC\bin\amd64\cl.exe" > CMakeFiles\NseMQ++.dir\src\NseMqBase.cpp.i @<<
+	"D:\Development\Visual Studio 2015\VC\bin\cl.exe" > CMakeFiles\NseMQ++.dir\src\NseMqBase.cpp.i @<<
  /nologo /TP $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E E:\Project\NseMQ\c++\src\NseMqBase.cpp
 <<
 
 CMakeFiles\NseMQ++.dir\src\NseMqBase.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/NseMQ++.dir/src/NseMqBase.cpp.s"
-	"D:\Development\Visual Studio 2015\VC\bin\amd64\cl.exe" @<<
+	"D:\Development\Visual Studio 2015\VC\bin\cl.exe" @<<
  /nologo /TP $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) /FoNUL /FAs /FaCMakeFiles\NseMQ++.dir\src\NseMqBase.cpp.s /c E:\Project\NseMQ\c++\src\NseMqBase.cpp
 <<
 
@@ -133,8 +133,8 @@ NseMQ++.dll: CMakeFiles\NseMQ++.dir\src\NseMqBase.cpp.obj
 NseMQ++.dll: CMakeFiles\NseMQ++.dir\build.make
 NseMQ++.dll: CMakeFiles\NseMQ++.dir\objects1.rsp
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=E:\Project\NseMQ\c++\cmake-build-debug-vs-2015\CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX shared library NseMQ++.dll"
-	"D:\Development\CLion\CLion 2020.2.1\bin\cmake\win\bin\cmake.exe" -E vs_link_dll --intdir=CMakeFiles\NseMQ++.dir --rc=C:\PROGRA~2\WI3CF2~1\8.1\bin\x64\rc.exe --mt=C:\PROGRA~2\WI3CF2~1\8.1\bin\x64\mt.exe --manifests  -- "D:\Development\Visual Studio 2015\VC\bin\amd64\link.exe" /nologo @CMakeFiles\NseMQ++.dir\objects1.rsp @<<
- /out:NseMQ++.dll /implib:NseMQ++.lib /pdb:E:\Project\NseMQ\c++\cmake-build-debug-vs-2015\NseMQ++.pdb /dll /version:0.0 /machine:x64 /debug /INCREMENTAL   -LIBPATH:E:\Project\NseMQ\c++\lib\vs2015\x64\Debug  -LIBPATH:D:\Program\boost1.72.0\boost_1_72_0\lib64-msvc-14.0  librdkafkacpp.lib avrocpp.lib kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib  
+	"D:\Development\CLion\CLion 2020.2.1\bin\cmake\win\bin\cmake.exe" -E vs_link_dll --intdir=CMakeFiles\NseMQ++.dir --rc=C:\PROGRA~2\WI3CF2~1\8.1\bin\x86\rc.exe --mt=C:\PROGRA~2\WI3CF2~1\8.1\bin\x86\mt.exe --manifests  -- "D:\Development\Visual Studio 2015\VC\bin\link.exe" /nologo @CMakeFiles\NseMQ++.dir\objects1.rsp @<<
+ /out:NseMQ++.dll /implib:NseMQ++.lib /pdb:E:\Project\NseMQ\c++\cmake-build-debug-vs-2015\NseMQ++.pdb /dll /version:0.0 /machine:X86 /debug /INCREMENTAL   -LIBPATH:E:\Project\NseMQ\c++\lib\vs2015\x64\Debug  librdkafkacpp.lib avrocpp.lib kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib  
 <<
 
 # Rule to build all files generated by this target.
