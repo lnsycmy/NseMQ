@@ -68,22 +68,27 @@ NseMQ库中的数据结构使用JSON文件进行定义，可通过`bin目录`工
 上述JSON描述语句中，定义了`cpx`结构体及其相关属性。
 
 JSON描述语句中，支持的类型包括：`int, long, float, double, boolean, string, bytes, array, fixed, enum, union, null`。
-其中， 
-* `string`使用`kaa_string_copy_create(const char *data)`赋值；
-* `bytes`使用`kaa_bytes_copy_create(const uint8_t *data, size_t data_len)`赋值；
-* `fixed`使用`kaa_fixed_copy_create(const uint8_t *data, size_t data_len)`赋值；
 
 值得注意的是，结构体可以实现嵌套，如`cpx`结构体中嵌套了`Person`结构体。
 
 * 进入`avrogen.jar`根目录，执行如下语句生成.h和.c文件。
 
 ```shell script
-java -jar avrogen.jar cpx.json . cpx
+java -jar avrogen.jar cpx.json . cpx nse
 ```
 
-上述语句中，`cpx.json`指定输入的.json文件，`.`指定输出的.h和.c的目录，`cpx`指定源的名称。
+上述语句中，
+* `cpx.json`指定输入的.json文件路径；
+* `.`指定输出的.h和.c的目录；
+* `cpx`指定源的名称；
+* `nse`指定结构体和操作函数的前缀（默认为nse）。
 
 生成的详细数据结构请参考 [cpx.h](c/examples/cpx.h) , [cpx.c](c/examples/cpx.c) 。
+
+生成结构体时，需要注意以下3个类型的赋值方式：
+* `string`可以使用`kaa_string_copy_create(const char *data)`赋值；
+* `bytes`可以使用`kaa_bytes_copy_create(const uint8_t *data, size_t data_len)`赋值；
+* `fixed`可以使用`kaa_fixed_copy_create(const uint8_t *data, size_t data_len)`赋值；
 
 ### 数据生产
 
