@@ -1,5 +1,0 @@
-"D:\Development\CLion\CLion 2020.2.1\bin\cmake\win\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - NMake Makefiles" E:\Project\NseMQ\c++
--- Could NOT find Boost (missing: system filesystem iostreams program_options regex thread) (found suitable version "1.72.0", minimum required is "1.72.0")
--- Configuring done
--- Generating done
--- Build files have been written to: E:/Project/NseMQ/c++/cmake-build-debug-vs-2015
