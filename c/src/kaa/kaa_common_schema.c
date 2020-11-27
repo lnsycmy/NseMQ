@@ -44,11 +44,16 @@ size_t avro_long_get_size(int64_t l)
 void kaa_string_serialize(avro_writer_t writer, void *data)
 {
 	kaa_string_t *str;
-    KAA_RETURN_IF_NIL2(writer, data,);
-
-    str = (kaa_string_t *)data;
-    if (str->data) {
-        avro_binary_encoding.write_string(writer, str->data);
+	// 20201127 cmy when the data is NULL, write an empty string "".
+    // KAA_RETURN_IF_NIL2(writer, data,);
+    KAA_RETURN_IF_NIL(writer,);
+    if(NULL == data){
+        avro_binary_encoding.write_string(writer, "");
+    }else{
+        str = (kaa_string_t *)data;
+        if (str->data) {
+            avro_binary_encoding.write_string(writer, str->data);
+        }
     }
 }
 
@@ -194,9 +199,15 @@ kaa_bytes_t *kaa_bytes_deserialize(avro_reader_t reader)
 void kaa_bytes_serialize(avro_writer_t writer, void *data)
 {
     kaa_bytes_t *bytes = (kaa_bytes_t *)data;
-    KAA_RETURN_IF_NIL4(writer, bytes, bytes->buffer, bytes->size, );
-
-    avro_binary_encoding.write_bytes(writer, (char *)bytes->buffer, bytes->size);
+    // 20201127 cmy When the data is NULL, write an empty bytes "".
+    //KAA_RETURN_IF_NIL4(writer, bytes, bytes->buffer, bytes->size, );
+    KAA_RETURN_IF_NIL(writer,);
+    if(NULL == data){
+        avro_binary_encoding.write_bytes(writer, "", 0);
+    }else{
+        KAA_RETURN_IF_NIL4(writer, bytes, bytes->buffer, bytes->size, );
+        avro_binary_encoding.write_bytes(writer, (char *)bytes->buffer, bytes->size);
+    }
 }
 
 size_t kaa_bytes_get_size(void *data)
@@ -511,6 +522,12 @@ size_t kaa_null_get_size(void* data)
 {
     (void)data;
     return AVRO_NULL_SIZE;
+}
+
+char *kaa_null_get_type(void* data)
+{
+    (void)data;
+    return "";
 }
 
 void kaa_data_destroy(void *data)
