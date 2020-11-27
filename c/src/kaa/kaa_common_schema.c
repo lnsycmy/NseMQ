@@ -199,9 +199,15 @@ kaa_bytes_t *kaa_bytes_deserialize(avro_reader_t reader)
 void kaa_bytes_serialize(avro_writer_t writer, void *data)
 {
     kaa_bytes_t *bytes = (kaa_bytes_t *)data;
-    KAA_RETURN_IF_NIL4(writer, bytes, bytes->buffer, bytes->size, );
-
-    avro_binary_encoding.write_bytes(writer, (char *)bytes->buffer, bytes->size);
+    // 20201127 cmy When the data is NULL, write an empty bytes "".
+    //KAA_RETURN_IF_NIL4(writer, bytes, bytes->buffer, bytes->size, );
+    KAA_RETURN_IF_NIL(writer,);
+    if(NULL == data){
+        avro_binary_encoding.write_bytes(writer, "", 0);
+    }else{
+        KAA_RETURN_IF_NIL4(writer, bytes, bytes->buffer, bytes->size, );
+        avro_binary_encoding.write_bytes(writer, (char *)bytes->buffer, bytes->size);
+    }
 }
 
 size_t kaa_bytes_get_size(void *data)
