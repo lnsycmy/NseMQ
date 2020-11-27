@@ -163,6 +163,7 @@ NSEMQ_API void kaa_null_serialize(avro_writer_t writer, void *data);
 NSEMQ_API void *kaa_null_deserialize(avro_reader_t reader);
 NSEMQ_API void kaa_null_destroy(void *data);
 NSEMQ_API size_t kaa_null_get_size(void* data);
+NSEMQ_API char*  kaa_null_get_type(void* data);
 
 NSEMQ_API void kaa_data_destroy(void *data);
 
