@@ -70,6 +70,8 @@ NseMQ库中的数据结构使用JSON文件进行定义，可通过`bin目录`工
 JSON描述语句中，支持的类型包括：`int, long, float, double, boolean, string, bytes, array, fixed, enum, union, null`。
 
 值得注意的是，结构体可以实现嵌套，如`cpx`结构体中嵌套了`Person`结构体。
+此种情况下，需要对变量`s`进行初始化，保证在序列化前为其分配内存。
+
 
 * 进入`avrogen.jar`根目录，执行如下语句生成.h和.c文件。
 
