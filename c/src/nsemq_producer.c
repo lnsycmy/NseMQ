@@ -15,7 +15,7 @@ extern dr_cb_func produce_callback;             // defined at nsemq_base.c
 
 ErrorCode nsemq_producer_init(const char * broker_addr, dr_cb_func dr_msg_cb){
     // judge current status
-    if(producer_run_status_ != NO_INIT){
+    if(producer_run_status_ != NO_INIT && producer_run_status_ != CLOSE_STATUS){
         nsemq_write_error(NULL, "Don't initialize producer multiple times.");
         return ERR_P_INIT_MULTIPLE_INIT;
     }

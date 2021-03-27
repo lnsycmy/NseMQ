@@ -76,14 +76,13 @@ JSON描述语句中，支持的类型包括：`int, long, float, double, boolean
 * 进入`avrogen.jar`根目录，执行如下语句生成.h和.c文件。
 
 ```shell script
-java -jar avrogen.jar cpx.json . cpx nse
+java -jar avrogen.jar -schema cpx.json -output .  -filename cpx
 ```
 
 上述语句中，
-* `cpx.json`指定输入的.json文件路径；
-* `.`指定输出的.h和.c的目录；
-* `cpx`指定源的名称；
-* `nse`指定结构体和操作函数的前缀（默认为nse）。
+* `-schema cpx.json`指定输入的.json文件路径；
+* `-output .`指定输出的.h和.c的目录；
+* `-filename cpx`指定输出.h和.c的文件名；
 
 生成的详细数据结构请参考 [cpx.h](c/examples/cpx.h) , [cpx.c](c/examples/cpx.c) 。
 
@@ -123,7 +122,7 @@ ErrorCode nsemq_producer_close();                               // close the pro
  * @param msg_data: message buffer which have been delivered.
  * @param msg_size: size of message buffer.
  */
-void dr_cb_func(char *msg_topic, void *msg_data, int msg_size){ ... }
+void dr_cb_func(const char *msg_topic, void *msg_data, int msg_size){ ... }
 ```
 * 生产完成后，需要调用`close()`函数关闭生产者，在此函数内部会销毁为生产者分配的内存。
 

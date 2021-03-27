@@ -23,7 +23,7 @@ ErrorCode nsemq_consumer_init(const char *broker_addr) {
     consumer_conf_ = rd_kafka_conf_new();   // Kafka configuration
     topic_conf_ = rd_kafka_topic_conf_new();// Topic configuration
     // 0.judge current status
-    if (consumer_run_status_ != NO_INIT) {
+    if (consumer_run_status_ != NO_INIT && consumer_run_status_ != CLOSE_STATUS) {
         nsemq_write_error(NULL, "Don't initialize consumer multiple times.");
         return ERR_C_INIT_MULTIPLE_INIT;
     }
@@ -286,9 +286,9 @@ ErrorCode nsemq_consumer_close() {
         return ERR_C_RUN_STATUS;
     } else if (consumer_run_status_ == START_STATUS) {
         // if in START_STATUS, to called stop() automatically.
-        printf("*** start to stop() \n");
+        printf("start to stop() \n");
         nsemq_consumer_stop();
-        printf("*** end stop() \n");
+        printf("end stop() \n");
     }
     // NO.1 destroy topic object, and clear topic map.
     pthread_mutex_lock(&topic_mutex);
