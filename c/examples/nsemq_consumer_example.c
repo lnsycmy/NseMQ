@@ -38,7 +38,7 @@ int main(){
 
     nsemq_consumer_start(NSEMQ_ASYNC);
     printf("reback main();\n");
-    while(time_count < 100){
+    while(time_count < 3){
         if(time_count == 10){
             nsemq_consumer_stop();
         }else if(time_count == 20){
@@ -48,5 +48,10 @@ int main(){
         time_count++;
     }
     nsemq_consumer_close();
+    while(time_count < 30){
+        printf("enter last while()\n");
+        Sleep(1000);
+        time_count++;
+    }
     printf("main() end!\n");
 }

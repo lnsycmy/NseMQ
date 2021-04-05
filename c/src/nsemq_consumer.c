@@ -15,6 +15,7 @@ static pthread_mutex_t topic_mutex = PTHREAD_MUTEX_INITIALIZER;
 static pthread_mutex_t status_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 extern topic_map_t g_topic_map_;            // defined in nsemq_base.c
+extern int         log_level;               // defined in nsemq_base.c
 
 /* Initialize the consumer by broker address, the consumer handle created internally. */
 ErrorCode nsemq_consumer_init(const char *broker_addr) {
@@ -53,8 +54,12 @@ ErrorCode nsemq_consumer_init(const char *broker_addr) {
         nsemq_write_error(NULL, "Failed to connect broker.");
         return ERR_FAIL_CONNECT_BROKER;
     }
-    // 5.initialize the consumer queue.
+    // 5.initialize the consumer queue and topic map.
     topic_queue_ = rd_kafka_queue_new(consumer_);
+    map_init(&g_topic_map_);
+    // 6.set log level
+    rd_kafka_set_log_level(consumer_, LOG_INFO);
+    log_level = LOG_INFO;
     consumer_run_status_ = INIT_STATUS;
     return ERR_NO_ERROR;
 }
@@ -165,14 +170,14 @@ ErrorCode nsemq_consumer_subscriptions(list_t *topic_list) {
 
 /* used to create consumer thread */
 void *consume_thread_func(void *agr) {
-    int consume_res, i = 0;
+    int consume_res;
     while (1) {
         pthread_mutex_lock(&status_mutex);
         if(consumer_run_status_ != START_STATUS) {
             pthread_mutex_unlock(&status_mutex);
             break;
         }
-        printf("enter poll()\n");
+        nsemq_write_info(consumer_, "Enter poll(): refresh the received message");
         // consume multiple messages from queue with callback.
         consume_res = rd_kafka_consume_callback_queue(topic_queue_, 1000,/* timeout_ms */
                                                       nsemq_consume_callback, NULL);
@@ -184,9 +189,7 @@ void *consume_thread_func(void *agr) {
         }
         rd_kafka_consumer_poll(consumer_,0);
     }
-    printf("thread exit();\n");
     pthread_detach(pthread_self());
-    // return ((void *)0);
     return NULL;
 }
 
@@ -246,7 +249,7 @@ ErrorCode nsemq_consumer_stop() {
     TopicItem *topic_item;
     // 0.judge the run status.
     if (consumer_run_status_ != START_STATUS) {
-        nsemq_write_error(consumer_, "Failed to start: only allow to stop consume after called start().");
+        nsemq_write_error(consumer_, "Failed to stop: only allow to stop consume after called start().");
         return ERR_C_RUN_STATUS;
     }
     // 1.traverse the topic map and stop consumption.
@@ -262,33 +265,22 @@ ErrorCode nsemq_consumer_stop() {
             continue;
         }
     }
-    // 2.flush the local queue.
-    while (rd_kafka_outq_len(consumer_) > 0 && flush_wait_time < NSEMQ_MAX_FLUSH_TIME) {
-        rd_kafka_poll(consumer_, flush_step_time);
-        flush_wait_time += flush_step_time;
-    }
-    // 3.set stop status, ensure that thread can be cancelled.
+    // 2.set stop status, ensure that thread can be cancelled.
     pthread_mutex_lock(&status_mutex);
     consumer_run_status_ = STOP_STATUS;
     pthread_mutex_unlock(&status_mutex);
+    nsemq_write_info(consumer_, "Stopped consuming messages.");
     return ERR_NO_ERROR;
 }
 
-/* stop the consume message from broker and close consumer handle. */
-ErrorCode nsemq_consumer_close() {
+void *close_thread_func(void *agr) {
     const char *key;
     TopicItem *topic_item;
     map_iter_t iter_destroy;
-    int kill_rc;
-    // NO.0 judge the run status.
-    if (consumer_run_status_ == CLOSE_STATUS) {
-        nsemq_write_error(consumer_, "Failed to close: can't multiple called close() function.");
-        return ERR_C_RUN_STATUS;
-    } else if (consumer_run_status_ == START_STATUS) {
-        // if in START_STATUS, to called stop() automatically.
-        printf("start to stop() \n");
-        nsemq_consumer_stop();
-        printf("end stop() \n");
+    int        max_wait_time = 5;
+    // NO.0 flush the local queue.
+    while (rd_kafka_outq_len(consumer_) > 0) {
+        rd_kafka_poll(consumer_, 10);
     }
     // NO.1 destroy topic object, and clear topic map.
     pthread_mutex_lock(&topic_mutex);
@@ -299,13 +291,37 @@ ErrorCode nsemq_consumer_close() {
     }
     map_deinit(&g_topic_map_);
     pthread_mutex_unlock(&topic_mutex);
-    // [Deprecated] wait consume_callback_queue for 1.2s.
-    Sleep(1200);
     // NO.2 destroy topic queue.
     rd_kafka_queue_destroy(topic_queue_);
     // NO.3 destroy handle.
     rd_kafka_destroy(consumer_);
-    // NO.4 set CLOSE_STATUS.
+    // NO.4 let background threads clean up and terminate cleanly.
+    while(max_wait_time-- > 0 &&  rd_kafka_wait_destroyed(1000) == -1);
+    nsemq_write_info(NULL, "Successfully close the consumer.");
+    pthread_detach(pthread_self());
+    return NULL;
+}
+
+/* stop the consume message from broker and close consumer handle. */
+ErrorCode nsemq_consumer_close() {
+    pthread_t   close_thread_;
+    int         close_res = -1;
+    // NO.0 judge the run status.
+    if (consumer_run_status_ == CLOSE_STATUS) {
+        nsemq_write_error(consumer_, "Failed to close: can't multiple called close() function.");
+        return ERR_C_RUN_STATUS;
+    } else if (consumer_run_status_ == START_STATUS) {
+        // if in START_STATUS, to called stop() automatically.
+        nsemq_consumer_stop();
+    }
+    // NO.1 create a new close thread.
+    close_res = pthread_create(&close_thread_, NULL, close_thread_func, NULL);
+    if(close_res != 0){
+        sprintf(strtemp_, "Failed to create close thread.");
+        nsemq_write_error(consumer_, strtemp_);
+        return ERR_C_START_CREATE_THREAD;
+    }
+    // NO.2 set CLOSE_STATUS.
     pthread_mutex_lock(&status_mutex);
     consumer_run_status_ = CLOSE_STATUS;
     pthread_mutex_unlock(&status_mutex);

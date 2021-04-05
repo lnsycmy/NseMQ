@@ -21,7 +21,7 @@ extern "C" {
 // #define RD_KAFKA_OFFSET_BEGINNING/RD_KAFKA_OFFSET_END/RD_KAFKA_OFFSET_STORED
 #define NSEMQ_DEFAULT_OFFSET RD_KAFKA_OFFSET_END
 #define NSEMQ_DEFAULT_PARTITION 0
-#define NSEMQ_MAX_FLUSH_TIME 1000
+
 
 /**
  * Subscribe topic, bind consume message type and consume callback function.

@@ -2,8 +2,8 @@
 
 // Global veriable,
 topic_map_t g_topic_map_;       // topic and consume callback mapping.
-dr_cb_func produce_callback;    // user-defined produce_callback.
-
+dr_cb_func  produce_callback;   // user-defined produce_callback.
+int         log_level;          // current log level.
 static char strtemp_[512];      // inner function str.
 
 // serialize msg_struct and return msg_buf, msg_type and buf_size
@@ -34,14 +34,11 @@ void* nsemq_decode(char *msg_buf, int buf_size, ds_msg_func d_func){
 
 // deliver report callback function pointer,  called internally.
 void nsemq_produce_callback(rd_kafka_t *rk, const rd_kafka_message_t *rkmessage, void *opaque){
-    char * topic_name;
     if (rkmessage->err){
         nsemq_write_error(NULL, "Message delivery failed.");
         nsemq_write_error(NULL,  (char *)rd_kafka_err2str(rkmessage->err));
-    }else{
-        topic_name = (char *)rd_kafka_topic_name(rkmessage->rkt);
-        printf("topic_name:%s\n", topic_name);
-        produce_callback(topic_name, rkmessage->payload, rkmessage->len);
+    }else if(produce_callback != NULL){
+        produce_callback((char *)rd_kafka_topic_name(rkmessage->rkt), rkmessage->payload, rkmessage->len);
     }
 }
 
@@ -59,7 +56,7 @@ void nsemq_consume_callback(rd_kafka_message_t *rkmessage, void *opaque){
     // 1. search the topic_item from topic_map, judging the validity.
     topic_item = map_get(&g_topic_map_, topic_name);
     if(topic_item == NULL){
-        nsemq_write_error(NULL, "receive message from unknown topics.");
+        nsemq_write_debug(NULL, "receive message from unknown topics.");
         return;
     }
     // 2. judging type consistency. if so, decode buffer to struct object.
@@ -77,10 +74,10 @@ void nsemq_consume_callback(rd_kafka_message_t *rkmessage, void *opaque){
         topic_item->consume_callback(msg_data, topic_name, msg_type);
     }else if(msg_type != NULL){
         sprintf(strtemp_ ,"received an unparseable data, the data type is %s", msg_type);
-        nsemq_write_info(NULL, strtemp_);
+        nsemq_write_debug(NULL, strtemp_);
     }else {
         sprintf(strtemp_ ,"received an null topic type data, the data is %s", (char *)rkmessage->payload);
-        nsemq_write_info(NULL, strtemp_);
+        nsemq_write_debug(NULL, strtemp_);
     }
     // The provided consume_cb function is called for each message,
     // the application MUST NOT call rd_kafka_message_destroy() on the provided rkmessage.
@@ -99,9 +96,13 @@ void nsemq_write_error(const rd_kafka_t *rk, char *errstr){
 }
 
 void nsemq_write_info(const rd_kafka_t *rk, char *infostr){
-    rd_kafka_log_print(rk, LOG_INFO, "NseMQ", infostr);
+    if(log_level >= LOG_INFO) {
+        rd_kafka_log_print(rk, LOG_INFO, "NseMQ", infostr);
+    }
 }
 
 void nsemq_write_debug(const rd_kafka_t *rk, char *debugstr){
-    rd_kafka_log_print(rk, LOG_DEBUG, "NseMQ", debugstr);
+    if(log_level >= LOG_DEBUG) { // manually judge the log level
+        rd_kafka_log_print(rk, LOG_DEBUG, "NseMQ", debugstr);
+    }
 }

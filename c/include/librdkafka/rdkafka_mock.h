@@ -129,6 +129,14 @@ rd_kafka_mock_cluster_bootstraps (const rd_kafka_mock_cluster_t *mcluster);
 
 
 /**
+ * @brief Clear the cluster's error state for the given \p ApiKey.
+ */
+RD_EXPORT
+void rd_kafka_mock_clear_request_errors (rd_kafka_mock_cluster_t *mcluster,
+                                         int16_t ApiKey);
+
+
+/**
  * @brief Push \p cnt errors in the \p ... va-arg list onto the cluster's
  *        error stack for the given \p ApiKey.
  *
@@ -141,6 +149,17 @@ rd_kafka_mock_cluster_bootstraps (const rd_kafka_mock_cluster_t *mcluster);
 RD_EXPORT
 void rd_kafka_mock_push_request_errors (rd_kafka_mock_cluster_t *mcluster,
                                         int16_t ApiKey, size_t cnt, ...);
+
+
+/**
+ * @brief Same as rd_kafka_mock_push_request_errors() but takes
+ *        an array of errors.
+ */
+RD_EXPORT void
+rd_kafka_mock_push_request_errors_array (rd_kafka_mock_cluster_t *mcluster,
+                                         int16_t ApiKey,
+                                         size_t cnt,
+                                         const rd_kafka_resp_err_t *errors);
 
 
 /**
@@ -185,7 +204,8 @@ rd_kafka_mock_topic_create (rd_kafka_mock_cluster_t *mcluster,
  *
  * The topic will be created if it does not exist.
  *
- * \p broker_id needs to be an existing broker.
+ * \p broker_id needs to be an existing broker, or -1 to make the
+ * partition leader-less.
  */
 RD_EXPORT rd_kafka_resp_err_t
 rd_kafka_mock_partition_set_leader (rd_kafka_mock_cluster_t *mcluster,

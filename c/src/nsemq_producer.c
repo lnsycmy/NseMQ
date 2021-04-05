@@ -7,11 +7,8 @@ static RunStatus producer_run_status_ = NO_INIT;// consumer current status.
 static char errstr_[512];                       // librdkafka API error reporting buffer.
 static char strtemp_[512];                      // inner function error.
 
-/*extern void (*produce_callback)(char *msg_topic,
-                           void *msg_data,
-                           int msg_size); // defined at nsemq_base.c*/
-
-extern dr_cb_func produce_callback;             // defined at nsemq_base.c
+extern dr_cb_func   produce_callback;           // defined at nsemq_base.c
+extern int          log_level;                  // defined in nsemq_base.c
 
 ErrorCode nsemq_producer_init(const char * broker_addr, dr_cb_func dr_msg_cb){
     // judge current status
@@ -135,7 +132,7 @@ ErrorCode nsemq_producer_close(){
         sprintf(strtemp_, "message(s) were not delivered.");
         nsemq_write_info(producer_, strtemp_);
     }
-    // Destroy the producer instance
+    // Destroy the producer instance, let background threads clean up and terminate cleanly.
     rd_kafka_destroy(producer_);
     rd_kafka_wait_destroyed(5000);
     producer_run_status_ = CLOSE_STATUS;

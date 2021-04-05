@@ -302,5 +302,7 @@ imaxdiv_t __cdecl imaxdiv(intmax_t numer, intmax_t denom)
 #define wcstoimax _wcstoi64
 #define wcstoumax _wcstoui64
 
+#else // [not _MSC_VER]
+#include <stdint-gcc.h> // add the int32_t head file.
 #endif // _MSC_VER ]
 #endif // _MSC_INTTYPES_H_ ]
