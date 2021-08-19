@@ -4,6 +4,8 @@ NseMQ基于`C`实现，集成了目前流行的 [Kafka](http://kafka.apachecn.or
 底层使用`Kafka`的C/C++客户端库 [librdkafka](https://github.com/edenhill/librdkafka) 实现， 屏蔽了大量的使用细节，简单易用。
 
 > 目前主要使用C版本NseMQ，C++版本仍在完善中。
+> 
+> 目前的库文件可用，但至少有100种方法可以让它死掉，非常欢迎大家一起维护NseMQ。
 
 ## 特点
 

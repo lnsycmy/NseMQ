@@ -2,7 +2,6 @@
 
 static rd_kafka_t *producer_;                   // Producer instance handle.
 static rd_kafka_conf_t *producer_conf_;         // Temporary configuration object.
-static rd_kafka_topic_conf_t *topic_conf_;      // topic configuration object.
 static RunStatus producer_run_status_ = NO_INIT;// consumer current status.
 static char errstr_[512];                       // librdkafka API error reporting buffer.
 static char strtemp_[512];                      // inner function error.
@@ -39,6 +38,7 @@ ErrorCode nsemq_producer_init(const char * broker_addr, dr_cb_func dr_msg_cb){
     // judge connection with broker.
     if(TRUE != nsemq_judge_connect(producer_)){
         nsemq_write_error(NULL, "Failed to connect broker.");
+        rd_kafka_destroy(producer_);
         return ERR_FAIL_CONNECT_BROKER;
     }
     producer_run_status_ = INIT_STATUS;
@@ -77,8 +77,7 @@ ErrorCode nsemq_producer_produce(void *msg, const char *topic_name){
             /* Message value and length */
             RD_KAFKA_V_VALUE(msg_buf, buf_size),
             /* Message key pointer and length (const void *, size_t) */
-            // why strlen(msg_type)+1? the char* has '\0' at the end.
-            RD_KAFKA_V_KEY(msg_type,strlen(msg_type)+1),
+            RD_KAFKA_V_KEY(msg_type,strlen(msg_type)),
             /* Per-Message opaque */
             RD_KAFKA_V_OPAQUE(NULL),
             /* End sentinel */

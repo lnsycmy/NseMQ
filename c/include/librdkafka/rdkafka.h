@@ -61,10 +61,15 @@ extern "C" {
 #define WIN32_MEAN_AND_LEAN
 #endif
 #include <winsock2.h>  /* for sockaddr, .. */
+
+// 2020.11.04 cmy: only defined ssize_t in VS.
+#ifdef _MSC_VER
 #ifndef _SSIZE_T_DEFINED
 #define _SSIZE_T_DEFINED
 typedef SSIZE_T ssize_t;
 #endif
+#endif
+
 #define RD_UNUSED
 #define RD_INLINE __inline
 #define RD_DEPRECATED __declspec(deprecated)

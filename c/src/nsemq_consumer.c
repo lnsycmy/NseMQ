@@ -2,7 +2,6 @@
 
 static rd_kafka_t *consumer_;               // consumer instance handle.
 static rd_kafka_conf_t *consumer_conf_;     // consumer configuration object.
-static rd_kafka_topic_conf_t *topic_conf_;  // topic configuration object.
 static rd_kafka_resp_err_t err_;            // kafka error code.
 static rd_kafka_queue_t *topic_queue_;      // topic queue.
 static char group_id[UUID4_LEN];            // consumer group id.
@@ -22,7 +21,6 @@ ErrorCode nsemq_consumer_init(const char *broker_addr) {
     rd_kafka_conf_res_t conf_res;
     memset(errstr_, 0, sizeof(errstr_));
     consumer_conf_ = rd_kafka_conf_new();   // Kafka configuration
-    topic_conf_ = rd_kafka_topic_conf_new();// Topic configuration
     // 0.judge current status
     if (consumer_run_status_ != NO_INIT && consumer_run_status_ != CLOSE_STATUS) {
         nsemq_write_error(NULL, "Don't initialize consumer multiple times.");
@@ -52,6 +50,7 @@ ErrorCode nsemq_consumer_init(const char *broker_addr) {
     // 4.judge connection with broker.
     if (TRUE != nsemq_judge_connect(consumer_)) {
         nsemq_write_error(NULL, "Failed to connect broker.");
+        rd_kafka_destroy(consumer_);
         return ERR_FAIL_CONNECT_BROKER;
     }
     // 5.initialize the consumer queue and topic map.
@@ -177,7 +176,7 @@ void *consume_thread_func(void *agr) {
             pthread_mutex_unlock(&status_mutex);
             break;
         }
-        nsemq_write_info(consumer_, "Enter poll(): refresh the received message");
+        nsemq_write_debug(consumer_, "Enter poll(): refresh the received message");
         // consume multiple messages from queue with callback.
         consume_res = rd_kafka_consume_callback_queue(topic_queue_, 1000,/* timeout_ms */
                                                       nsemq_consume_callback, NULL);
@@ -240,19 +239,12 @@ ErrorCode nsemq_consumer_start(int async_flag) {
     return ERR_NO_ERROR;
 }
 
-/* stop to consume message from broker */
-ErrorCode nsemq_consumer_stop() {
-    int stop_res, cancel_res = 0, kill_rc = 0;
-    int flush_wait_time = 0, flush_step_time = 10;
+/* stop the consumer asynchronously by one thread */
+void* stop_thread_func(void *agr) {
     const char *key;
     map_iter_t iter;
     TopicItem *topic_item;
-    // 0.judge the run status.
-    if (consumer_run_status_ != START_STATUS) {
-        nsemq_write_error(consumer_, "Failed to stop: only allow to stop consume after called start().");
-        return ERR_C_RUN_STATUS;
-    }
-    // 1.traverse the topic map and stop consumption.
+    // traverse the topic map and stop consumption.
     iter = map_iter(&g_topic_map_);
     while ((key = map_next(&g_topic_map_, &iter))) {
         // get the topic item, and stop using this topic's message.
@@ -265,6 +257,27 @@ ErrorCode nsemq_consumer_stop() {
             continue;
         }
     }
+    pthread_detach(pthread_self());
+    return NULL;
+}
+
+/* stop to consume message from broker */
+ErrorCode nsemq_consumer_stop() {
+    pthread_t   stop_thread;
+    int         stop_res = -1;
+    // 0.judge the run status.
+    if (consumer_run_status_ != START_STATUS) {
+        nsemq_write_error(consumer_, "Failed to stop: only allow to stop consume after called start().");
+        return ERR_C_RUN_STATUS;
+    }
+    // 1.create new thread, and traverse the topic map and stop consumption.
+    stop_res = pthread_create(&stop_thread, NULL, stop_thread_func, NULL);
+    if(stop_res != 0){
+        sprintf(strtemp_, "Failed to create stop thread.");
+        nsemq_write_error(consumer_, strtemp_);
+        return ERR_C_START_CREATE_THREAD;
+    }
+    pthread_detach(stop_thread);
     // 2.set stop status, ensure that thread can be cancelled.
     pthread_mutex_lock(&status_mutex);
     consumer_run_status_ = STOP_STATUS;
@@ -273,7 +286,7 @@ ErrorCode nsemq_consumer_stop() {
     return ERR_NO_ERROR;
 }
 
-void *close_thread_func(void *agr) {
+void* close_thread_func(void *agr) {
     const char *key;
     TopicItem *topic_item;
     map_iter_t iter_destroy;
@@ -304,7 +317,7 @@ void *close_thread_func(void *agr) {
 
 /* stop the consume message from broker and close consumer handle. */
 ErrorCode nsemq_consumer_close() {
-    pthread_t   close_thread_;
+    pthread_t   close_thread;
     int         close_res = -1;
     // NO.0 judge the run status.
     if (consumer_run_status_ == CLOSE_STATUS) {
@@ -315,12 +328,13 @@ ErrorCode nsemq_consumer_close() {
         nsemq_consumer_stop();
     }
     // NO.1 create a new close thread.
-    close_res = pthread_create(&close_thread_, NULL, close_thread_func, NULL);
+    close_res = pthread_create(&close_thread, NULL, close_thread_func, NULL);
     if(close_res != 0){
         sprintf(strtemp_, "Failed to create close thread.");
         nsemq_write_error(consumer_, strtemp_);
         return ERR_C_START_CREATE_THREAD;
     }
+    pthread_detach(close_thread);
     // NO.2 set CLOSE_STATUS.
     pthread_mutex_lock(&status_mutex);
     consumer_run_status_ = CLOSE_STATUS;

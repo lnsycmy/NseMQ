@@ -49,7 +49,7 @@ public:
     void consume_cb(RdKafka::Message &msg, void *opaque){
         switch (msg.err()) {
             case RdKafka::ERR_NO_ERROR:
-                // Real message
+                // Deal message
                 this->msg_package(msg);
                 break;
             case RdKafka::ERR__TIMED_OUT:

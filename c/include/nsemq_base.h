@@ -104,7 +104,7 @@ typedef enum {
     INIT_STATUS = 0,    // complete initialization, after call init().
     START_STATUS = 1,   // running the main program, after call produce() or start().
     STOP_STATUS = 2,    // stop the main program in consumer, after call stop().
-    CLOSE_STATUS = 3,   // close the
+    CLOSE_STATUS = 3,   //
 } RunStatus;
 
 /* Basic types of data */

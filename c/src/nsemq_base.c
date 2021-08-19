@@ -13,6 +13,7 @@ int nsemq_encode(void *msg_struct, char **msg_buf, char **msg_type){
     int buf_size = 0;           // buffer size, get value from avro_writer_memory()
 	avro_writer_t writer;
     // use BaseType to access msg_struct
+    if(!msg_struct) return 0;
     msg_base = (BaseType *)msg_struct;
     struct_size = msg_base->get_size(msg_base);
     *msg_type = msg_base->get_type(msg_base);
@@ -45,7 +46,7 @@ void nsemq_produce_callback(rd_kafka_t *rk, const rd_kafka_message_t *rkmessage,
 // consumer callback function, called internally.
 void nsemq_consume_callback(rd_kafka_message_t *rkmessage, void *opaque){
     int msg_size = 0;   // from message
-    char *msg_type;     // from message
+    char msg_type[256]; // from message
     char *msg_buf;      // from message
     char *topic_name;   // from message
     void *msg_data;     // need to decode msg_buf
@@ -60,9 +61,9 @@ void nsemq_consume_callback(rd_kafka_message_t *rkmessage, void *opaque){
         return;
     }
     // 2. judging type consistency. if so, decode buffer to struct object.
-    msg_type = (char *)rkmessage->key;
+    strncpy(msg_type, rkmessage->key, rkmessage->key_len);
     data_type = topic_item->bind_data_type;
-    if(msg_type && data_type && (strcmp(msg_type, data_type) == 0)) {  // received data is consistent with deserialize function
+    if(msg_type && data_type && (strncmp(msg_type, data_type, rkmessage->key_len) == 0)) {  // received data is consistent with deserialize function
         msg_buf = rkmessage->payload;
         msg_size = rkmessage->len;
         msg_data = nsemq_decode(msg_buf, msg_size, topic_item->deserialize_func);

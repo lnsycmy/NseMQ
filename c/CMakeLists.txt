@@ -20,7 +20,7 @@ else(MSVC)
 endif(MSVC)
 link_libraries("librdkafka.dll")
 
-# add_definitions(-DNSEMQ_EXPORTS)
+add_definitions(-DNSEMQ_EXPORTS)
 add_library(nsemq SHARED
         src/kaa/encoding_binary.c
         src/kaa/io.c

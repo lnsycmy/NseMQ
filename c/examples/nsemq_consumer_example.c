@@ -38,12 +38,12 @@ int main(){
 
     nsemq_consumer_start(NSEMQ_ASYNC);
     printf("reback main();\n");
-    while(time_count < 3){
-        if(time_count == 10){
+    while(time_count < 100){
+        /*if(time_count == 10){
             nsemq_consumer_stop();
         }else if(time_count == 20){
             nsemq_consumer_start(NSEMQ_ASYNC);
-        }
+        }*/
         Sleep(1000);
         time_count++;
     }
