@@ -45,4 +45,5 @@ int main(){
 
     cpx->destroy(cpx);
     nsemq_producer_close();
+	system("pause");
 }

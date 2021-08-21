@@ -6,11 +6,12 @@
 void msg_callback(void *msg_data, char *msg_topic, char *msg_type){
     printf("received a message!\n");
     if(strcmp(msg_type, "nse_cpx") == 0){
+		kaa_list_node_t *iterator;
         nse_cpx_t *cpx = (nse_cpx_t *)msg_data;
         printf("cpx: im: %lf, re: %lf, name: %s, age: %d\n",
                 cpx->im, cpx->re, cpx->s->name->data, cpx->s->age);
-        printf("cpx msg_topic:%s\n",msg_topic);
-        kaa_list_node_t *iterator;
+        printf("cpx msg_topic:%s msg_type:%s msg_type_len:%d\n",
+			msg_topic, msg_type, strlen(msg_type));
         iterator = kaa_list_begin(cpx->arr);
         while(iterator){
             kaa_string_t *temp = (kaa_string_t *)kaa_list_get_data(iterator);
